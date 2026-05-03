@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SK Consultant Dashboard</title>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "XXXX",
+    appId: "XXXX"
+};
+
+firebase.initializeApp(firebaseConfig);
+const storage = firebase.storage();
+const db = firebase.database();
+/* FIREBASE LOAD GST */
+db.ref("gstClients").on("value", snapshot => {
+    let data = snapshot.val();
+    if(!data) return;
+
+    gstClients = Object.values(data);
+    renderGST();
+    updateAll();
+});
+
+/* FIREBASE LOAD ITR */
+db.ref("itrClients").on("value", snapshot => {
+    let data = snapshot.val();
+    if(!data) return;
+
+    itrClients = Object.values(data);
+    renderITR();
+    updateAll();
+});
+</script>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Bookman Old Style", Georgia;
+    display: flex;
+    background: #f5f5f5;
+}
+
+/* SIDEBAR (UNCHANGED) */
+.sidebar {
+    width: 220px;
+    background: #111;
+    color: white;
+    height: 100vh;
+    padding-top: 20px;
+}
+.sidebar.hide {
+    width: 0;
+    overflow: hidden;
+}
+.sidebar a {
+    display: block;
+    padding: 12px 20px;
+    cursor: pointer;
+}
+.sidebar a:hover {
+    background: #333;
+}
+
+/* MAIN */
+.main { flex: 1; }
+
+/* HEADER (UNCHANGED) */
+.header {
+    background: #111;
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.menu-btn { font-size: 28px; cursor: pointer; margin-right: 15px; }
+.center-text { flex: 1; text-align: center; }
+.title { font-size: 42px; }
+.subtitle { color: #d4af37; }
+.header-logo {
+    position: absolute;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #d4af37;
+    background: white;
+    padding: 5px;
+}
+
+/* SECTION */
+.section { display: none; padding: 20px; }
+.active { display: block; }
+
+/* TABLE */
+table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+    background: white;
+    table-layout: fixed;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    word-wrap: break-word;
+}
+
+/* DASHBOARD */
+.dashboard-cards {
+    display: flex;
+    gap: 20px;
+}
+.dash-card {
+    flex: 1;
+    background: #000;
+    color: #d4af37;
+    border: 2px solid #d4af37;
+    padding: 25px;
+    text-align: center;
+}
+
+/* SETTINGS */
+.settings-box {
+    background: white;
+    padding: 20px;
+    margin-top: 15px;
+    border: 2px solid #d4af37;
+}
+.settings-box select,
+.settings-box input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+/* BUTTON */
+button {
+    background: black;
+    color: white;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+/* FOOTER (UNCHANGED) */
+.footer {
+    background: #0a0a0a;
+    color: #d4af37;
+    margin-top: 40px;
+    padding: 40px 20px;
+    border-top: 2px solid #d4af37;
+}
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+.footer-left, .footer-middle, .footer-right {
+    flex: 1;
+    min-width: 250px;
+}
+.footer-middle { text-align: center; }
+.footer-right { text-align: right; }
+.footer h2, .footer h3 { color: white; }
+.footer-bottom {
+    text-align: center;
+    margin-top: 25px;
+    border-top: 1px solid #d4af37;
+    padding-top: 10px;
+    font-size: 13px;
+}
+
+/* PASSWORD */
+.pass-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.pass-wrap input { width: 100%; }
+.toggle-pass {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    background: black;
+    color: #d4af37;
+    border: 1px solid #d4af37;
+    padding: 3px 6px;
+}
+
+.pass-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.pass-text {
+    display: inline-block;
+    min-width: 80px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.title {
+    animation: fadeUp 0.6s ease-out;
+}
+
+.subtitle {
+    animation: fadeUp 0.9s ease-out;
+}
+
+@keyframes fadeUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR (UNCHANGED) -->
+<div class="sidebar" id="sidebar">
+    <a onclick="showSection('dashboard')">Dashboard</a>
+    <a onclick="showSection('gst')">GST Client</a>
+    <a onclick="showSection('itr')">ITR Client</a>
+    <a onclick="showSection('reports')">Reports</a>
+    <a onclick="showSection('upload')">Upload Files</a>
+    <a onclick="showSection('settings')">Settings</a>
+</div>
+
+<div class="main">
+
+<!-- HEADER (UNCHANGED) -->
+<div class="header">
+    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+    <div class="center-text">
+        <div class="title">SK CONSULTANT</div>
+        <div class="subtitle">ADVOCATE • GST & LEGAL ADVISORY</div>
+    </div>
+    <img src="logo.png" class="header-logo">
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="section active">
+    <h2>Dashboard</h2>
+    <div class="dashboard-cards">
+        <div class="dash-card">
+            <h2>GST Clients</h2>
+            <h1 id="gstCount">0</h1>
+        </div>
+        <div class="dash-card">
+            <h2>ITR Clients</h2>
+            <h1 id="itrCount">0</h1>
+        </div>
+    </div>
+</div>
+
+<!-- GST -->
+<div id="gst" class="section">
+    <h2>GST Client</h2>
+    <input id="gst_trade" placeholder="Trade Name">
+    <input id="gst_legal" placeholder="Legal Name">
+    <input id="gst_gstin" placeholder="GSTIN">
+    <input id="gst_user" placeholder="Username">
+
+    <div class="pass-wrap">
+        <input id="gst_pass" type="password" placeholder="Password">
+        <span class="toggle-pass" onclick="togglePassword('gst_pass', this)">Show</span>
+    </div>
+
+    <button onclick="addGST()">Add</button>
+    <table><tbody id="gstTable"></tbody></table>
+</div>
+
+<!-- ITR -->
+<div id="itr" class="section">
+    <h2>ITR Client</h2>
+    <input id="itr_trade" placeholder="Trade Name">
+    <input id="itr_legal" placeholder="Legal Name">
+    <input id="itr_pan" placeholder="PAN">
+    <input id="itr_user" placeholder="Username">
+
+    <div class="pass-wrap">
+        <input id="itr_pass" type="password" placeholder="Password">
+        <span class="toggle-pass" onclick="togglePassword('itr_pass', this)">Show</span>
+    </div>
+
+    <button onclick="addITR()">Add</button>
+    <table><tbody id="itrTable"></tbody></table>
+</div>
+
+<!-- REPORTS -->
+<div id="reports" class="section">
+    <h2>Reports</h2>
+    <div class="settings-box">
+        <p>GST Clients: <span id="rep_gst">0</span></p>
+        <p>ITR Clients: <span id="rep_itr">0</span></p>
+        <button onclick="generateReport()">Download Report</button>
+    </div>
+</div>
+
+<!-- UPLOAD (UNCHANGED STRUCTURE) -->
+<div id="upload" class="section">
+    <h2>Upload Files</h2>
+    <div class="settings-box">
+        <select id="uploadType" onchange="loadUploadClients()">
+            <option value="gst">GST Client</option>
+            <option value="itr">ITR Client</option>
+        </select>
+
+        <select id="uploadClientSelect"></select>
+        <input type="file" id="fileInput">
+        <button onclick="uploadFile()">Upload</button>
+    </div>
+</div>
+
+<!-- SETTINGS (UNCHANGED STRUCTURE) -->
+<div id="settings" class="section">
+    <h2>Settings</h2>
+    <div class="settings-box">
+        <select id="typeSelect">
+            <option value="gst">GST</option>
+            <option value="itr">ITR</option>
+        </select>
+
+        <select id="clientSelect"></select>
+
+        <input id="edit_trade">
+        <input id="edit_legal">
+        <input id="edit_extra">
+        <input id="edit_user">
+
+        <div class="pass-wrap">
+            <input id="edit_pass" type="password">
+            <span class="toggle-pass" onclick="togglePassword('edit_pass', this)">Show</span>
+        </div>
+
+        <button>Save</button>
+        <button style="background:red;">Delete</button>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <div class="footer-container">
+
+        <div class="footer-left">
+            <h2>SK CONSULTANT</h2>
+            <p>Advocate Mohamad Faizan Shaikh</p>
+            <p>Enrollment No.: G/3018/2025</p>
+            <p>GST & Income Tax Practice</p>
+        </div>
+
+        <div class="footer-middle">
+            <h3>CONTACT</h3>
+            <p>+91 9173321079</p>
+        </div>
+
+        <div class="footer-right">
+            <h3>OFFICE ADDRESS</h3>
+            <p>7/4284, Suthar Faliya</p>
+            <p>Galemandi, Mahidharpura</p>
+            <p>Surat - 395003</p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 SK CONSULTANT
+    </div>
+</div>
+
+<script>
+
+let gstClients = [];
+let itrClients = [];
+
+/* NAV */
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("hide");
+}
+
+function showSection(id){
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+/* ADD */
+function addGST(){
+    gstClients.push({
+        trade: gst_trade.value,
+        legal: gst_legal.value,
+        gstin: gst_gstin.value,
+        user: gst_user.value,
+        pass: gst_pass.value
+    });
+    renderGST();
+    updateAll();
+db.ref("gstClients").push(gstClients[gstClients.length - 1]);
+}
+
+function addITR(){
+    itrClients.push({
+        trade: itr_trade.value,
+        legal: itr_legal.value,
+        pan: itr_pan.value,
+        user: itr_user.value,
+        pass: itr_pass.value
+    });
+    renderITR();
+    updateAll();
+db.ref("itrClients").push(itrClients[itrClients.length - 1]);
+}
+
+/* RENDER FIXED */
+function renderGST(){
+    document.getElementById("gstTable").innerHTML =
+    gstClients.map((c,i)=>`
+        <tr>
+            <td>${c.trade}</td>
+            <td>${c.legal}</td>
+            <td>${c.gstin}</td>
+            <td>${c.user}</td>
+            <td>
+                <div class="pass-cell">
+                    <span id="gst_pass_${i}" class="pass-text" data-pass="${c.pass}" data-visible="0">••••••</span>
+                    <span onclick="toggleTablePass('gst_pass_${i}', this)">👁️</span>
+                </div>
+            </td>
+        </tr>
+    `).join("");
+}
+
+function renderITR(){
+    document.getElementById("itrTable").innerHTML =
+    itrClients.map((c,i)=>`
+        <tr>
+            <td>${c.trade}</td>
+            <td>${c.legal}</td>
+            <td>${c.pan}</td>
+            <td>${c.user}</td>
+            <td>
+                <div class="pass-cell">
+                    <span id="itr_pass_${i}" class="pass-text" data-pass="${c.pass}" data-visible="0">••••••</span>
+                    <span onclick="toggleTablePass('itr_pass_${i}', this)">👁️</span>
+                </div>
+            </td>
+        </tr>
+    `).join("");
+}
+
+/* UPDATE ALL */
+function updateAll(){
+    document.getElementById("gstCount").innerText = gstClients.length;
+    document.getElementById("itrCount").innerText = itrClients.length;
+
+    document.getElementById("rep_gst").innerText = gstClients.length;
+    document.getElementById("rep_itr").innerText = itrClients.length;
+}
+
+/* PASSWORD */
+function togglePassword(id, el){
+    let input = document.getElementById(id);
+    if(input.type === "password"){
+        input.type = "text";
+        el.innerText = "Hide";
+    } else {
+        input.type = "password";
+        el.innerText = "Show";
+    }
+}
+
+function toggleTablePass(id, icon){
+    let el = document.getElementById(id);
+
+    if(el.dataset.visible === "0"){
+        el.innerText = el.dataset.pass;
+        el.dataset.visible = "1";
+        icon.innerText = "👁️";
+    } else {
+        el.innerText = "••••••";
+        el.dataset.visible = "0";
+        icon.innerText = "👁️";
+    }
+}
+
+/* REPORT */
+function generateReport(){
+    let data = `GST Clients: ${gstClients.length}\nITR Clients: ${itrClients.length}`;
+    let blob = new Blob([data], {type:"text/plain"});
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "report.txt";
+    a.click();
+}
+
+</script>
+
+</body>
+</html>
