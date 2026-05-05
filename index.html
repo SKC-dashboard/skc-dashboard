@@ -20,27 +20,58 @@
     messagingSenderId: "229004472072",
     appId: "1:229004472072:web:ab83017636f1d41ea8c6bd"
   };
+  
 firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 const db = firebase.database();
 /* FIREBASE LOAD GST */
 db.ref("gstClients").on("value", snapshot => {
     let data = snapshot.val();
-    if(!data) return;
-
-    gstClients = Object.values(data);
+    gstClients = data ? Object.values(data) : [];
     renderGST();
     updateAll();
+    loadUploadClients();
+    loadSettingsClients();
 });
+  function loadUploadClients(){
+    let type = document.getElementById("uploadType").value;
+    let select = document.getElementById("uploadClientSelect");
+
+    select.innerHTML = "";
+
+    let list = (type === "gst") ? gstClients : itrClients;
+
+    list.forEach((c, i) => {
+        let option = document.createElement("option");
+        option.value = i;
+        option.text = c.trade + " (" + (c.gstin || c.pan) + ")";
+        select.appendChild(option);
+    });
+}
+function loadSettingsClients(){
+    let type = document.getElementById("typeSelect").value;
+    let select = document.getElementById("clientSelect");
+
+    select.innerHTML = "";
+
+    let list = (type === "gst") ? gstClients : itrClients;
+
+    list.forEach((c, i) => {
+        let option = document.createElement("option");
+        option.value = i;
+        option.text = c.trade;
+        select.appendChild(option);
+    });
+}
 
 /* FIREBASE LOAD ITR */
 db.ref("itrClients").on("value", snapshot => {
     let data = snapshot.val();
-    if(!data) return;
-
-    itrClients = Object.values(data);
+    itrClients = data ? Object.values(data) : [];
     renderITR();
     updateAll();
+    loadUploadClients();
+    loadSettingsClients();
 });
 </script>
 
@@ -391,9 +422,8 @@ button {
 
 <script>
 
-let gstClients = [];
-let itrClients = [];
-
+<select id="uploadClientSelect"></select>
+<select id="clientSelect"></select>
 /* NAV */
 function toggleSidebar(){
     document.getElementById("sidebar").classList.toggle("hide");
