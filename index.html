@@ -24,7 +24,9 @@
 firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 const db = firebase.database();
-/* FIREBASE LOAD GST */
+
+let gstClients = [];   // ✅ ADD HERE
+let itrClients = [];   // ✅ ADD HERE/* FIREBASE LOAD GST */
 db.ref("gstClients").on("value", snapshot => {
     let data = snapshot.val();
     gstClients = data ? Object.values(data) : [];
