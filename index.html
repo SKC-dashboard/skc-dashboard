@@ -67,7 +67,22 @@ function loadSettingsClients(){
     });
       loadClientDetails();
 }
+function loadClientDetails(){
+    let type = document.getElementById("typeSelect").value;
+    let index = document.getElementById("clientSelect").value;
 
+    let client = (type === "gst" ? gstClients : itrClients)[index];
+
+    if(!client) return;
+
+    document.getElementById("edit_trade").value = client.trade || "";
+    document.getElementById("edit_legal").value = client.legal || "";
+    document.getElementById("edit_user").value = client.user || "";
+    document.getElementById("edit_pass").value = client.pass || "";
+
+    document.getElementById("edit_extra").value =
+        type === "gst" ? (client.gstin || "") : (client.pan || "");
+}
 /* FIREBASE LOAD ITR */
 db.ref("itrClients").on("value", snapshot => {
     let data = snapshot.val();
