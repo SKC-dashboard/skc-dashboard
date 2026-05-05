@@ -297,14 +297,15 @@ button {
 <div id="dashboard" class="section active">
     <h2>Dashboard</h2>
     <div class="dashboard-cards">
-        <div class="dash-card">
-            <h2>GST Clients</h2>
-            <h1 id="gstCount">0</h1>
-        </div>
-        <div class="dash-card">
-            <h2>ITR Clients</h2>
-            <h1 id="itrCount">0</h1>
-        </div>
+        <div class="dash-card" onclick="showSection('gst')" style="cursor:pointer;">
+    <h2>GST Clients</h2>
+    <h1 id="gstCount">0</h1>
+</div>
+
+<div class="dash-card" onclick="showSection('itr')" style="cursor:pointer;">
+    <h2>ITR Clients</h2>
+    <h1 id="itrCount">0</h1>
+</div>
     </div>
 </div>
 
