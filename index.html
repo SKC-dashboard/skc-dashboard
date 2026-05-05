@@ -606,14 +606,15 @@ function loadSettingsClients(){
 }
 
 /* AUTO LOAD DROPDOWN */
-document.getElementById("uploadType").addEventListener("change", loadUploadClients);
-document.getElementById("typeSelect").addEventListener("change", loadSettingsClients);
+window.addEventListener("DOMContentLoaded", function(){
 
-/* RUN ON PAGE LOAD */
-window.onload = function(){
+    document.getElementById("uploadType").addEventListener("change", loadUploadClients);
+    document.getElementById("typeSelect").addEventListener("change", loadSettingsClients);
+
     loadUploadClients();
     loadSettingsClients();
-};
+
+});
 </script>
 
 </body>
