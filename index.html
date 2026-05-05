@@ -65,6 +65,7 @@ function loadSettingsClients(){
         option.text = c.trade;
         select.appendChild(option);
     });
+      loadClientDetails();
 }
 
 /* FIREBASE LOAD ITR */
@@ -618,6 +619,7 @@ window.addEventListener("DOMContentLoaded", function(){
 
     document.getElementById("uploadType").addEventListener("change", loadUploadClients);
     document.getElementById("typeSelect").addEventListener("change", loadSettingsClients);
+    document.getElementById("clientSelect").addEventListener("change", loadClientDetails);
 
     loadUploadClients();
     loadSettingsClients();
