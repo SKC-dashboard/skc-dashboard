@@ -445,7 +445,11 @@ function addGST(){
     });
     renderGST();
     updateAll();
-db.ref("gstClients").push(gstClients[gstClients.length - 1]);
+    db.ref("gstClients").push(gstClients[gstClients.length - 1]);
+
+    // ✅ ADD THESE TWO LINES
+    loadUploadClients();
+    loadSettingsClients();
 }
 
 function addITR(){
@@ -458,7 +462,11 @@ function addITR(){
     });
     renderITR();
     updateAll();
-db.ref("itrClients").push(itrClients[itrClients.length - 1]);
+    db.ref("itrClients").push(itrClients[itrClients.length - 1]);
+
+    // ✅ ADD THESE TWO LINES
+    loadUploadClients();
+    loadSettingsClients();
 }
 
 /* RENDER FIXED */
@@ -542,7 +550,73 @@ function generateReport(){
     a.download = "report.txt";
     a.click();
 }
+/* LOAD CLIENTS IN DROPDOWN */
+function loadUploadClients(){
+    let type = document.getElementById("uploadType").value;
+    let select = document.getElementById("uploadClientSelect");
 
+    select.innerHTML = "";
+
+    let list = type === "gst" ? gstClients : itrClients;
+
+    list.forEach((c, i) => {
+        let opt = document.createElement("option");
+        opt.value = i;
+        opt.text = c.trade + " (" + (type === "gst" ? c.gstin : c.pan) + ")";
+        select.appendChild(opt);
+    });
+}
+function uploadFile(){
+    let file = document.getElementById("fileInput").files[0];
+
+    if(!file){
+        alert("Select file first");
+        return;
+    }
+
+    let type = document.getElementById("uploadType").value;
+    let index = document.getElementById("uploadClientSelect").value;
+
+    let client = (type === "gst" ? gstClients : itrClients)[index];
+
+    let filePath = type + "/" + client.trade + "/" + file.name;
+
+    let ref = storage.ref(filePath);
+
+    ref.put(file)
+    .then(() => {
+        alert("File Uploaded Successfully");
+    })
+    .catch(err => {
+        alert("Upload Error: " + err.message);
+    });
+}
+/* LOAD CLIENTS IN SETTINGS */
+function loadSettingsClients(){
+    let type = document.getElementById("typeSelect").value;
+    let select = document.getElementById("clientSelect");
+
+    select.innerHTML = "";
+
+    let list = type === "gst" ? gstClients : itrClients;
+
+    list.forEach((c, i) => {
+        let opt = document.createElement("option");
+        opt.value = i;
+        opt.text = c.trade;
+        select.appendChild(opt);
+    });
+}
+
+/* AUTO LOAD DROPDOWN */
+document.getElementById("uploadType").addEventListener("change", loadUploadClients);
+document.getElementById("typeSelect").addEventListener("change", loadSettingsClients);
+
+/* RUN ON PAGE LOAD */
+window.onload = function(){
+    loadUploadClients();
+    loadSettingsClients();
+};
 </script>
 
 </body>
