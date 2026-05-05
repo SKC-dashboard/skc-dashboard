@@ -30,7 +30,6 @@ db.ref("gstClients").on("value", snapshot => {
     gstClients = data ? Object.values(data) : [];
     renderGST();
     updateAll();
-    loadUploadClients();
     loadSettingsClients();
 });
   function loadUploadClients(){
@@ -358,7 +357,6 @@ button {
             <option value="itr">ITR Client</option>
         </select>
 
-        <select id="uploadClientSelect"></select>
         <input type="file" id="fileInput">
         <button onclick="uploadFile()">Upload</button>
     </div>
@@ -373,7 +371,6 @@ button {
             <option value="itr">ITR</option>
         </select>
 
-        <select id="clientSelect"></select>
 
         <input id="edit_trade">
         <input id="edit_legal">
