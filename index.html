@@ -30,6 +30,7 @@ db.ref("gstClients").on("value", snapshot => {
     gstClients = data ? Object.values(data) : [];
     renderGST();
     updateAll();
+    loadUploadClients();   // ✅ ADD THIS
     loadSettingsClients();
 });
   function loadUploadClients(){
