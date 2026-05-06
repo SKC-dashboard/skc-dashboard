@@ -143,13 +143,9 @@ function updateClient(){
     // 🔥 IMPORTANT: Firebase key fix
     let refPath = type === "gst" ? "gstClients" : "itrClients";
 
-    db.ref(refPath).once("value", snapshot => {
-        let data = snapshot.val();
-        let keys = Object.keys(data);
-
-        let key = keys[index];
-
-        db.ref(refPath + "/" + key).update(updatedData)
+db.ref(refPath + "/" + client.firebaseKey).update(updatedData)
+    .then(()=> alert("Updated Successfully"))
+    .catch(err => alert("Error: " + err.message));
         .then(()=> alert("Updated Successfully"));
     });
 }  
