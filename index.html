@@ -724,14 +724,15 @@ function uploadFile(){
         return;
     }
 
-    let folder = type + "/" + client.trade + "/";
-    let ref = storage.ref(folder + file.name);
+    // ✅ SAFE FOLDER NAME
+    let safeName = client.trade.replace(/[^a-zA-Z0-9]/g, "_");
+
+    let ref = storage.ref(type + "/" + safeName + "/" + file.name);
 
     ref.put(file)
     .then(() => ref.getDownloadURL())
     .then(url => {
 
-        // ✅ SAVE FILE DATA PARTY-WISE
         db.ref("files/" + type + "/" + client.firebaseKey).push({
             name: file.name,
             url: url,
