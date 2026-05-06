@@ -738,6 +738,43 @@ function uploadFile(){
     })
     .catch(err => alert("Upload Error: " + err.message));
 }
+  function deleteFile(type, clientKey, fileURL){
+
+    if(!confirm("Delete this file?")) return;
+
+    // DELETE FROM STORAGE
+    let fileRef = storage.refFromURL(fileURL);
+
+    fileRef.delete()
+    .then(() => {
+
+        // DELETE FROM DATABASE
+        db.ref("files/" + type + "/" + clientKey)
+        .once("value", snapshot => {
+
+            let data = snapshot.val();
+            if(!data) return;
+
+            let updates = {};
+
+            Object.keys(data).forEach(key => {
+                if(data[key].url === fileURL){
+                    updates[key] = null;
+                }
+            });
+
+            db.ref("files/" + type + "/" + clientKey)
+            .update(updates)
+            .then(() => {
+                alert("File Deleted");
+                loadFiles();
+            });
+
+        });
+
+    })
+    .catch(err => alert("Delete Error: " + err.message));
+}
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
 
