@@ -145,23 +145,6 @@ function updateClient(){
         .then(()=> alert("Updated Successfully"))
         .catch(err => alert("Error: " + err.message));
 }
-function deleteClient(){
-    let type = document.getElementById("typeSelect").value;
-    let index = document.getElementById("clientSelect").value;
-
-    let list = type === "gst" ? gstClients : itrClients;
-    let client = list[index];
-
-    if(!client){
-        alert("Select client first");
-        return;
-    }
-
-    // ✅ Confirmation popup with client name
-    let confirmDelete = confirm("Are you sure you want to delete: " + client.trade + " ?");
-    if(!confirmDelete) return;
-
-    let refPath = type === "gst" ? "gstClients" : "itrClients";
 
 function deleteClient(){
     let type = document.getElementById("typeSelect").value;
@@ -732,22 +715,6 @@ function uploadFile(){
     .then(() => {
         alert("Uploaded");
         loadFiles(); // ✅ refresh list
-    });
-}
-/* LOAD CLIENTS IN SETTINGS */
-function loadSettingsClients(){
-    let type = document.getElementById("typeSelect").value;
-    let select = document.getElementById("clientSelect");
-
-    select.innerHTML = "";
-
-    let list = type === "gst" ? gstClients : itrClients;
-
-    list.forEach((c, i) => {
-        let opt = document.createElement("option");
-        opt.value = i;
-        opt.text = c.trade;
-        select.appendChild(opt);
     });
 }
 
