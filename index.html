@@ -190,6 +190,10 @@ function deleteClient(){
 
     let client = (type === "gst" ? gstClients : itrClients)[index];
     if(!client) return;
+    if(!client.firebaseKey){
+    fileList.innerHTML = "Invalid client";
+    return;
+}
 
     let fileList = document.getElementById("fileList");
     fileList.innerHTML = "Loading...";
