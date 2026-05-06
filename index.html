@@ -707,17 +707,24 @@ function uploadFile(){
 
     let client = (type === "gst" ? gstClients : itrClients)[index];
 
-    let folder = type + "/" + client.trade + "/";
+    if(!client){
+        alert("Client not selected properly");
+        return;
+    }
 
+    let folder = type + "/" + client.trade + "/";
     let ref = storage.ref(folder + file.name);
 
     ref.put(file)
     .then(() => {
-        alert("Uploaded");
-        loadFiles(); // ✅ refresh list
+        alert("✅ File Uploaded Successfully");
+        loadFiles();
+    })
+    .catch(err => {
+        console.error(err);
+        alert("❌ Upload Error: " + err.message);
     });
 }
-
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
 
