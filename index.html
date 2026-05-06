@@ -201,6 +201,36 @@ function deleteClient(){
     })
     .catch(err => alert("Delete Error: " + err.message));
 }
+  function loadFiles(){
+    let type = document.getElementById("uploadType").value;
+    let index = document.getElementById("uploadClientSelect").value;
+
+    let client = (type === "gst" ? gstClients : itrClients)[index];
+    if(!client) return;
+
+    let folder = type + "/" + client.trade;
+
+    let fileList = document.getElementById("fileList");
+    if(!fileList) return;
+
+    fileList.innerHTML = "Loading...";
+
+    storage.ref(folder).listAll().then(res => {
+        fileList.innerHTML = "";
+
+        res.items.forEach(item => {
+            item.getDownloadURL().then(url => {
+                let li = document.createElement("li");
+                li.innerHTML = `<a href="${url}" target="_blank">${item.name}</a>`;
+                fileList.appendChild(li);
+            });
+        });
+
+        if(res.items.length === 0){
+            fileList.innerHTML = "No files";
+        }
+    });
+}
 </script>
 
 <style>
