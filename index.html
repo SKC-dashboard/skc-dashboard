@@ -672,6 +672,9 @@ window.addEventListener("DOMContentLoaded", function(){
     document.getElementById("uploadType").addEventListener("change", loadUploadClients);
     document.getElementById("typeSelect").addEventListener("change", loadSettingsClients);
     document.getElementById("clientSelect").addEventListener("change", loadClientDetails);
+    document.getElementById("uploadClientSelect").addEventListener("change", loadFiles);
+    document.getElementById("uploadType").addEventListener("change", loadFiles);
+         
 
     loadUploadClients();
     loadSettingsClients();
