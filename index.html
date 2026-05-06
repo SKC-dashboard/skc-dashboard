@@ -30,10 +30,21 @@ let itrClients = [];
 
 db.ref("gstClients").on("value", snapshot => {
     let data = snapshot.val();
-    gstClients = data ? Object.values(data) : [];
+
+    gstClients = [];
+
+    if(data){
+        Object.keys(data).forEach(key => {
+            gstClients.push({
+                ...data[key],
+                firebaseKey: key   // ✅ STORE KEY
+            });
+        });
+    }
+
     renderGST();
     updateAll();
-    loadUploadClients();   // ✅ ADD THIS
+    loadUploadClients();
     loadSettingsClients();
 });
   function loadUploadClients(){
@@ -86,7 +97,18 @@ function loadClientDetails(){
 /* FIREBASE LOAD ITR */
 db.ref("itrClients").on("value", snapshot => {
     let data = snapshot.val();
-    itrClients = data ? Object.values(data) : [];
+
+    itrClients = [];
+
+    if(data){
+        Object.keys(data).forEach(key => {
+            itrClients.push({
+                ...data[key],
+                firebaseKey: key   // ✅ STORE KEY
+            });
+        });
+    }
+
     renderITR();
     updateAll();
     loadUploadClients();
