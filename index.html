@@ -190,19 +190,22 @@ function deleteClient(){
                 });
 
                 Promise.all(promises).then(() => {
-                    alert("Client + Files Deleted Successfully");
+    alert("Client + Files Deleted Successfully");
 
-                    // ✅ STEP 3: Auto refresh UI
-                    loadUploadClients();
-                    loadSettingsClients();
-                });
+    loadUploadClients();
+    loadSettingsClients();
+});
             }).catch(() => {
-                // even if no files exist
-                alert("Client Deleted Successfully");
+    alert("Client Deleted Successfully");
 
-                loadUploadClients();
-                loadSettingsClients();
-            });
+    // ✅ ADD HERE ALSO
+    renderGST();
+    renderITR();
+    updateAll();
+
+    loadUploadClients();
+    loadSettingsClients();
+});
 
         })
         .catch(err => {
