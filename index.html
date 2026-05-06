@@ -711,22 +711,6 @@ function generateReport(){
     a.download = "report.txt";
     a.click();
 }
-/* LOAD CLIENTS IN DROPDOWN */
-function loadUploadClients(){
-    let type = document.getElementById("uploadType").value;
-    let select = document.getElementById("uploadClientSelect");
-
-    select.innerHTML = "";
-
-    let list = type === "gst" ? gstClients : itrClients;
-
-    list.forEach((c, i) => {
-        let opt = document.createElement("option");
-        opt.value = i;
-        opt.text = c.trade + " (" + (type === "gst" ? c.gstin : c.pan) + ")";
-        select.appendChild(opt);
-    });
-}
 function uploadFile(){
     let file = document.getElementById("fileInput").files[0];
 
