@@ -191,27 +191,35 @@ function deleteClient(){
     let client = (type === "gst" ? gstClients : itrClients)[index];
     if(!client) return;
 
-    let folder = type + "/" + client.trade;
-
     let fileList = document.getElementById("fileList");
-    if(!fileList) return;
-
     fileList.innerHTML = "Loading...";
 
-    storage.ref(folder).listAll().then(res => {
+    db.ref("files/" + type + "/" + client.firebaseKey)
+    .once("value", snapshot => {
+
         fileList.innerHTML = "";
 
-        res.items.forEach(item => {
-            item.getDownloadURL().then(url => {
-                let li = document.createElement("li");
-                li.innerHTML = `<a href="${url}" target="_blank">${item.name}</a>`;
-                fileList.appendChild(li);
-            });
-        });
+        let data = snapshot.val();
 
-        if(res.items.length === 0){
+        if(!data){
             fileList.innerHTML = "No files";
+            return;
         }
+
+        Object.values(data).forEach(file => {
+            let li = document.createElement("li");
+
+            li.innerHTML = `
+                <a href="${file.url}" target="_blank">${file.name}</a>
+                (${file.date})
+                <button onclick="deleteFile('${type}','${client.firebaseKey}','${file.url}')"
+                        style="margin-left:10px; background:red;">
+                    Delete
+                </button>
+            `;
+
+            fileList.appendChild(li);
+        });
     });
 }
 </script>
