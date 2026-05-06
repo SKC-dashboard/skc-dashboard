@@ -706,9 +706,8 @@ function uploadFile(){
     let index = document.getElementById("uploadClientSelect").value;
 
     let client = (type === "gst" ? gstClients : itrClients)[index];
-
     if(!client){
-        alert("Client not selected properly");
+        alert("Select client");
         return;
     }
 
@@ -716,14 +715,20 @@ function uploadFile(){
     let ref = storage.ref(folder + file.name);
 
     ref.put(file)
-    .then(() => {
-        alert("✅ File Uploaded Successfully");
+    .then(() => ref.getDownloadURL())
+    .then(url => {
+
+        // ✅ SAVE FILE DATA PARTY-WISE
+        db.ref("files/" + type + "/" + client.firebaseKey).push({
+            name: file.name,
+            url: url,
+            date: new Date().toLocaleString()
+        });
+
+        alert("Uploaded Successfully");
         loadFiles();
     })
-    .catch(err => {
-        console.error(err);
-        alert("❌ Upload Error: " + err.message);
-    });
+    .catch(err => alert("Upload Error: " + err.message));
 }
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
