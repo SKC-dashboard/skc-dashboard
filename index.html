@@ -92,6 +92,45 @@ db.ref("itrClients").on("value", snapshot => {
     loadUploadClients();
     loadSettingsClients();
 });
+function updateClient(){
+    let type = document.getElementById("typeSelect").value;
+    let index = document.getElementById("clientSelect").value;
+
+    let list = type === "gst" ? gstClients : itrClients;
+    let client = list[index];
+
+    if(!client){
+        alert("Select client first");
+        return;
+    }
+
+    // updated data
+    let updatedData = {
+        trade: document.getElementById("edit_trade").value,
+        legal: document.getElementById("edit_legal").value,
+        user: document.getElementById("edit_user").value,
+        pass: document.getElementById("edit_pass").value
+    };
+
+    if(type === "gst"){
+        updatedData.gstin = document.getElementById("edit_extra").value;
+    } else {
+        updatedData.pan = document.getElementById("edit_extra").value;
+    }
+
+    // 🔥 IMPORTANT: Firebase key fix
+    let refPath = type === "gst" ? "gstClients" : "itrClients";
+
+    db.ref(refPath).once("value", snapshot => {
+        let data = snapshot.val();
+        let keys = Object.keys(data);
+
+        let key = keys[index];
+
+        db.ref(refPath + "/" + key).update(updatedData)
+        .then(()=> alert("Updated Successfully"));
+    });
+}  
 </script>
 
 <style>
