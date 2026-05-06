@@ -195,7 +195,7 @@ function deleteClient(){
     fileList.innerHTML = "Loading...";
 
     db.ref("files/" + type + "/" + client.firebaseKey)
-    .once("value", snapshot => {
+.on("value", snapshot => {
 
         fileList.innerHTML = "";
 
