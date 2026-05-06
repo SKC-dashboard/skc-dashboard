@@ -126,7 +126,6 @@ function updateClient(){
         return;
     }
 
-    // updated data
     let updatedData = {
         trade: document.getElementById("edit_trade").value,
         legal: document.getElementById("edit_legal").value,
@@ -140,14 +139,11 @@ function updateClient(){
         updatedData.pan = document.getElementById("edit_extra").value;
     }
 
-    // 🔥 IMPORTANT: Firebase key fix
     let refPath = type === "gst" ? "gstClients" : "itrClients";
 
-db.ref(refPath + "/" + client.firebaseKey).update(updatedData)
-    .then(()=> alert("Updated Successfully"))
-    .catch(err => alert("Error: " + err.message));
-        .then(()=> alert("Updated Successfully"));
-    });
+    db.ref(refPath + "/" + client.firebaseKey).update(updatedData)
+        .then(()=> alert("Updated Successfully"))
+        .catch(err => alert("Error: " + err.message));
 }
 function deleteClient(){
     let type = document.getElementById("typeSelect").value;
@@ -167,51 +163,43 @@ function deleteClient(){
 
     let refPath = type === "gst" ? "gstClients" : "itrClients";
 
-    db.ref(refPath).once("value", snapshot => {
-        let data = snapshot.val();
-        let keys = Object.keys(data);
+function deleteClient(){
+    let type = document.getElementById("typeSelect").value;
+    let index = document.getElementById("clientSelect").value;
 
-        let key = keys[index];
+    let list = type === "gst" ? gstClients : itrClients;
+    let client = list[index];
 
-        // ✅ STEP 1: Delete from database
-        db.ref(refPath + "/" + key).remove()
-        .then(() => {
+    if(!client){
+        alert("Select client first");
+        return;
+    }
 
-            // ✅ STEP 2: Delete all files of that client
-            let folder = type + "/" + client.trade;
+    if(!confirm("Delete " + client.trade + " ?")) return;
 
-            let storageRef = storage.ref(folder);
+    let refPath = type === "gst" ? "gstClients" : "itrClients";
 
-            storageRef.listAll().then(res => {
-                let promises = [];
+    // ✅ STEP 1: DELETE DATABASE
+    db.ref(refPath + "/" + client.firebaseKey).remove()
+    .then(() => {
 
-                res.items.forEach(itemRef => {
-                    promises.push(itemRef.delete());
-                });
+        // ✅ STEP 2: DELETE FILES
+        let folder = type + "/" + client.trade;
 
-                Promise.all(promises).then(() => {
-    alert("Client + Files Deleted Successfully");
+        let storageRef = storage.ref(folder);
 
-    loadUploadClients();
-    loadSettingsClients();
-});
-            }).catch(() => {
-    alert("Client Deleted Successfully");
+        storageRef.listAll().then(res => {
+            let promises = res.items.map(item => item.delete());
 
-    // ✅ ADD HERE ALSO
-    renderGST();
-    renderITR();
-    updateAll();
-
-    loadUploadClients();
-    loadSettingsClients();
-});
-
-        })
-        .catch(err => {
-            alert("Delete Error: " + err.message);
+            return Promise.all(promises);
+        }).then(() => {
+            alert("Client + Files Deleted");
+        }).catch(() => {
+            alert("Client Deleted (No Files)");
         });
-    });
+
+    })
+    .catch(err => alert("Delete Error: " + err.message));
 }
 </script>
 
