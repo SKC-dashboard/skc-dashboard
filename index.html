@@ -776,6 +776,15 @@ function uploadFile(){
     })
     .catch(err => alert("Delete Error: " + err.message));
 }
+  function searchFiles(){
+    let input = document.getElementById("fileSearch").value.toLowerCase();
+    let items = document.querySelectorAll("#fileList li");
+
+    items.forEach(li => {
+        let text = li.innerText.toLowerCase();
+        li.style.display = text.includes(input) ? "" : "none";
+    });
+}
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
 
