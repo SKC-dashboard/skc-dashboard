@@ -639,16 +639,14 @@ function uploadFile(){
 
     let client = (type === "gst" ? gstClients : itrClients)[index];
 
-    let filePath = type + "/" + client.trade + "/" + file.name;
+    let folder = type + "/" + client.trade + "/";
 
-    let ref = storage.ref(filePath);
+    let ref = storage.ref(folder + file.name);
 
     ref.put(file)
     .then(() => {
-        alert("File Uploaded Successfully");
-    })
-    .catch(err => {
-        alert("Upload Error: " + err.message);
+        alert("Uploaded");
+        loadFiles(); // ✅ refresh list
     });
 }
 /* LOAD CLIENTS IN SETTINGS */
