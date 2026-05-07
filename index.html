@@ -504,22 +504,19 @@ button {
     }
 
     /* SIDEBAR */
+/* MOBILE SIDEBAR */
 .sidebar{
     width: 220px;
     left: -220px;
-        transform: translateX(-100%);
-        transition: 0.3s;
-    }
+    transition: 0.3s;
+}
 
 .sidebar.show{
     left: 0;
 }
-.sidebar.hide{
-    left: -220px;
-}
 
 .sidebar.hide{
-    transform: translateX(-100%);
+    left: -220px;
 }
 
     /* HEADER */
@@ -603,7 +600,7 @@ button {
 
 <!-- HEADER (UNCHANGED) -->
 <div class="header" onclick="showSection('dashboard')" style="cursor:pointer;">
-    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+    <div class="menu-btn" onclick="event.stopPropagation(); toggleSidebar();">☰</div>
     <div class="center-text">
         <div class="title">SK CONSULTANT</div>
         <div class="subtitle">ADVOCATE • GST & LEGAL ADVISORY</div>
