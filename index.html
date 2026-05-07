@@ -291,8 +291,8 @@ html, body {
     background: #111;
     color: white;
     min-height: 100vh;
-    height: 100%;
     padding-top: 20px;
+    flex-shrink: 0;
 }
 .sidebar.hide {
     width: 0;
@@ -310,7 +310,7 @@ html, body {
 /* MAIN */
 .main {
     flex: 1;
-    margin-left: 220px;
+    min-height: 100vh;
 }
 
 /* HEADER (UNCHANGED) */
@@ -473,17 +473,6 @@ button {
         transform: translateY(0);
         opacity: 1;
     }
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 220px;
-    height: 100vh;
-    background: #111;
-    z-index: -1;
 }
 
 </style>
