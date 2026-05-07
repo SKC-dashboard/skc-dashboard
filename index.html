@@ -290,9 +290,13 @@ html, body {
     width: 220px;
     background: #111;
     color: white;
-    min-height: 100vh;
-    height: 100%;
     padding-top: 20px;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
 }
 .sidebar.hide {
     width: 0;
@@ -308,7 +312,10 @@ html, body {
 }
 
 /* MAIN */
-.main { flex: 1; }
+.main {
+    flex: 1;
+    margin-left: 220px;
+}
 
 /* HEADER (UNCHANGED) */
 .header {
