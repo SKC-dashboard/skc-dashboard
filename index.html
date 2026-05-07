@@ -511,7 +511,7 @@ button {
 <div class="main">
 
 <!-- HEADER (UNCHANGED) -->
-<div class="header">
+<div class="header" onclick="showSection('dashboard')" style="cursor:pointer;">
     <div class="menu-btn" onclick="toggleSidebar()">☰</div>
     <div class="center-text">
         <div class="title">SK CONSULTANT</div>
@@ -700,10 +700,16 @@ function addGST(){
     updateAll();
     db.ref("gstClients").push(gstClients[gstClients.length - 1]);
 
-    // ✅ ADD THESE TWO LINES
-    loadUploadClients();
-    loadSettingsClients();
-}
+// CLEAR BOXES
+document.getElementById("gst_trade").value = "";
+document.getElementById("gst_legal").value = "";
+document.getElementById("gst_gstin").value = "";
+document.getElementById("gst_user").value = "";
+document.getElementById("gst_pass").value = "";
+
+// RELOAD
+loadUploadClients();
+loadSettingsClients();
 
 function addITR(){
     itrClients.push({
@@ -717,10 +723,16 @@ function addITR(){
     updateAll();
     db.ref("itrClients").push(itrClients[itrClients.length - 1]);
 
-    // ✅ ADD THESE TWO LINES
-    loadUploadClients();
-    loadSettingsClients();
-}
+// CLEAR BOXES
+document.getElementById("itr_trade").value = "";
+document.getElementById("itr_legal").value = "";
+document.getElementById("itr_pan").value = "";
+document.getElementById("itr_user").value = "";
+document.getElementById("itr_pass").value = "";
+
+// RELOAD
+loadUploadClients();
+loadSettingsClients();
 
 /* RENDER FIXED */
 function renderGST(){
