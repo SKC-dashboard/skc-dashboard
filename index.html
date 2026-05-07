@@ -290,13 +290,9 @@ html, body {
     width: 220px;
     background: #111;
     color: white;
-    padding-top: 20px;
     min-height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    overflow-y: auto;
+    height: 100%;
+    padding-top: 20px;
 }
 .sidebar.hide {
     width: 0;
@@ -478,6 +474,18 @@ button {
         opacity: 1;
     }
 }
+
+body::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 220px;
+    height: 100vh;
+    background: #111;
+    z-index: -1;
+}
+
 </style>
 </head>
 
