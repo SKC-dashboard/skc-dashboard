@@ -275,7 +275,10 @@ function deleteClient(){
 </script>
 
 <style>
-body {
+html, body {
+    height: 100%;
+}
+  body {
     margin: 0;
     font-family: "Bookman Old Style", Georgia;
     display: flex;
@@ -287,7 +290,8 @@ body {
     width: 220px;
     background: #111;
     color: white;
-    height: 100vh;
+    min-height: 100vh;
+    height: 100%;
     padding-top: 20px;
 }
 .sidebar.hide {
