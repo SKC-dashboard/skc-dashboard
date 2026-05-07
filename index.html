@@ -49,7 +49,8 @@ db.ref("gstClients").on("value", snapshot => {
     loadUploadClients();
     loadSettingsClients();
 });
-  function loadUploadClients(){
+function loadUploadClients(){
+
     let type = document.getElementById("uploadType").value;
     let select = document.getElementById("uploadClientSelect");
 
@@ -58,11 +59,18 @@ db.ref("gstClients").on("value", snapshot => {
     let list = (type === "gst") ? gstClients : itrClients;
 
     list.forEach((c, i) => {
+
         let option = document.createElement("option");
+
         option.value = i;
         option.text = c.trade + " (" + (c.gstin || c.pan) + ")";
+
         select.appendChild(option);
+
     });
+
+    // AUTO LOAD FILES
+    loadFiles();
 }
 function loadSettingsClients(){
     let type = document.getElementById("typeSelect").value;
@@ -231,7 +239,11 @@ function deleteClient(){
         let data = snapshot.val();
 
         if(!data){
-            fileList.innerHTML = "<li>No files uploaded</li>";
+            fileList.innerHTML = `
+            <li style="text-align:center;">
+                No files uploaded
+            </li>
+            `;
             return;
         }
 
@@ -1101,6 +1113,7 @@ function uploadFile(){
 
         document.getElementById("fileInput").value = "";
 
+        loadUploadClients();
         loadFiles();
 
     })
@@ -1140,8 +1153,13 @@ function uploadFile(){
             db.ref("files/" + type + "/" + clientKey)
             .update(updates)
             .then(() => {
-                alert("File Deleted");
-                loadFiles();
+alert("File Deleted");
+
+// REFRESH FILE LIST
+loadFiles();
+
+// REFRESH CLIENTS
+loadUploadClients();
             });
 
         });
