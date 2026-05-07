@@ -328,7 +328,7 @@ html, body {
 .main {
     flex: 1;
     margin-left: 220px;
-    min-height: 100vh;
+    transition: 0.3s;
 }
 
 /* HEADER (UNCHANGED) */
@@ -669,7 +669,17 @@ function clearSettingsFields(){
 
 /* NAV */
 function toggleSidebar(){
-    document.getElementById("sidebar").classList.toggle("hide");
+
+    let sidebar = document.getElementById("sidebar");
+    let main = document.querySelector(".main");
+
+    sidebar.classList.toggle("hide");
+
+    if(sidebar.classList.contains("hide")){
+        main.style.marginLeft = "0";
+    } else {
+        main.style.marginLeft = "220px";
+    }
 }
 
 function showSection(id){
