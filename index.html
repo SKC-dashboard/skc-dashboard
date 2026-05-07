@@ -1165,14 +1165,6 @@ function downloadFile(url, fileName){
     a.remove();
 }
 
-        window.URL.revokeObjectURL(blobUrl);
-    })
-    .catch(err => {
-        alert("Download failed");
-        console.log(err);
-    });
-}
-
 /* SHARE FILE */
 function shareFile(url, name){
 
