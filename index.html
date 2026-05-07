@@ -254,10 +254,6 @@ function deleteClient(){
                     ${file.name}
                 </a>
 
-                <small style="margin-left:10px;">
-                    ${file.date}
-                </small>
-
                 <button 
                     onclick="deleteFile('${type}','${client.firebaseKey}','${file.url}')"
                     style="
@@ -442,7 +438,30 @@ button {
     padding-top: 10px;
     font-size: 13px;
 }
+/* FILE LIST GRID */
+#fileList{
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
 
+#fileList li{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: white;
+    margin-bottom: 8px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#fileList li a{
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
 /* PASSWORD */
 .pass-wrap {
     position: relative;
@@ -495,7 +514,7 @@ button {
 /* =========================
    MOBILE RESPONSIVE
 ========================= */
-@media screen and (max-width: 768px){
+  @media screen and (max-width: 768px){
 
     .header{
         position: sticky;
@@ -616,7 +635,10 @@ button {
         white-space: nowrap;
         vertical-align: middle;
     }
-
+    #fileList li{
+    flex-direction: column;
+    align-items: flex-start;
+}
 }
 </style>
 </head>
