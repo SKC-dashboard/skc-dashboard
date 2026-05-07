@@ -16,13 +16,15 @@
     authDomain: "skc-dashboard-3eaca.firebaseapp.com",
     databaseURL: "https://skc-dashboard-3eaca-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "skc-dashboard-3eaca",
-    storageBucket: "skc-dashboard-3eaca.appspot.com",
+    storageBucket: "skc-dashboard-3eaca.firebasestorage.app",
     messagingSenderId: "229004472072",
     appId: "1:229004472072:web:ab83017636f1d41ea8c6bd"
   };
   
 firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
+storage.setMaxUploadRetryTime(60000);
+
 const db = firebase.database();
 
 let gstClients = [];
@@ -699,15 +701,8 @@ function toggleTablePass(id, icon){
 }
 
 /* REPORT */
-function generateReport(){
-    let data = `GST Clients: ${gstClients.length}\nITR Clients: ${itrClients.length}`;
-    let blob = new Blob([data], {type:"text/plain"});
-    let a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "report.txt";
-    a.click();
-}
 function uploadFile(){
+
     let file = document.getElementById("fileInput").files[0];
 
     if(!file){
@@ -719,30 +714,53 @@ function uploadFile(){
     let index = document.getElementById("uploadClientSelect").value;
 
     let client = (type === "gst" ? gstClients : itrClients)[index];
+
     if(!client){
         alert("Select client");
         return;
     }
 
-    // ✅ SAFE FOLDER NAME
+    if(!client.firebaseKey){
+        alert("Client key missing");
+        return;
+    }
+
+    // SAFE FOLDER NAME
     let safeName = client.trade.replace(/[^a-zA-Z0-9]/g, "_");
 
-    let ref = storage.ref(type + "/" + safeName + "/" + file.name);
+    let filePath = type + "/" + safeName + "/" + file.name;
 
-    ref.put(file)
-    .then(() => ref.getDownloadURL())
+    let storageRef = storage.ref().child(filePath);
+
+    storageRef.put(file)
+    .then(snapshot => {
+        return snapshot.ref.getDownloadURL();
+    })
     .then(url => {
 
-        db.ref("files/" + type + "/" + client.firebaseKey).push({
+        return db.ref("files/" + type + "/" + client.firebaseKey).push({
             name: file.name,
             url: url,
             date: new Date().toLocaleString()
         });
 
-        alert("Uploaded Successfully");
-        loadFiles();
     })
-    .catch(err => alert("Upload Error: " + err.message));
+    .then(() => {
+
+        alert("Uploaded Successfully");
+
+        document.getElementById("fileInput").value = "";
+
+        loadFiles();
+
+    })
+    .catch(err => {
+
+        console.error(err);
+
+        alert("Upload Error: " + err.message);
+
+    });
 }
   function deleteFile(type, clientKey, fileURL){
 
