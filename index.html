@@ -304,13 +304,16 @@ html, body {
     width: 220px;
     background: #111;
     color: white;
-    min-height: 100vh;
     padding-top: 20px;
-    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 1000;
 }
 .sidebar.hide {
-    width: 0;
-    overflow: hidden;
+    transform: translateX(-100%);
 }
 .sidebar a {
     display: block;
@@ -324,6 +327,7 @@ html, body {
 /* MAIN */
 .main {
     flex: 1;
+    margin-left: 220px;
     min-height: 100vh;
 }
 
