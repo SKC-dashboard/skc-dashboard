@@ -249,13 +249,40 @@ function deleteClient(){
 
             li.style.marginBottom = "10px";
 
-            li.innerHTML = `
-                <a href="${file.url}" target="_blank">
-                    ${file.name}
-                </a>
+li.innerHTML = `
 
-                <button 
-                    onclick="deleteFile('${type}','${client.firebaseKey}','${file.url}')"
+<div style="width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+
+    <a href="${file.url}" target="_blank" download>
+        ${file.name}
+    </a>
+
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+
+        <button onclick="downloadFile('${file.url}')">
+            Download
+        </button>
+
+        <button onclick="shareFile('${file.url}','${file.name}')">
+            Share
+        </button>
+
+        <button 
+            onclick="deleteFile('${type}','${client.firebaseKey}','${file.url}')"
+            style="
+                background:red;
+                color:white;
+                border:none;
+                padding:5px 10px;
+                cursor:pointer;
+            ">
+            Delete
+        </button>
+
+    </div>
+
+</div>
+`;
                     style="
                         margin-left:10px;
                         background:red;
@@ -1130,6 +1157,48 @@ function uploadFile(){
 
     })
     .catch(err => alert("Delete Error: " + err.message));
+}
+/* DOWNLOAD FILE */
+function downloadFile(url){
+
+    fetch(url)
+    .then(res => res.blob())
+    .then(blob => {
+
+        let blobUrl = window.URL.createObjectURL(blob);
+
+        let a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = "";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(blobUrl);
+    })
+    .catch(err => {
+        alert("Download failed");
+        console.log(err);
+    });
+}
+
+/* SHARE FILE */
+function shareFile(url, name){
+
+    if(navigator.share){
+
+        navigator.share({
+            title: name,
+            text: "Shared from SK Consultant",
+            url: url
+        });
+
+    } else {
+
+        navigator.clipboard.writeText(url);
+
+        alert("Link copied");
+    }
 }
   function searchFiles(){
     let input = document.getElementById("fileSearch").value.toLowerCase();
