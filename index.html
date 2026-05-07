@@ -688,7 +688,9 @@ function showSection(id){
 }
 
 /* ADD */
+/* ADD */
 function addGST(){
+
     gstClients.push({
         trade: gst_trade.value,
         legal: gst_legal.value,
@@ -696,22 +698,26 @@ function addGST(){
         user: gst_user.value,
         pass: gst_pass.value
     });
+
     renderGST();
     updateAll();
+
     db.ref("gstClients").push(gstClients[gstClients.length - 1]);
 
-// CLEAR BOXES
-document.getElementById("gst_trade").value = "";
-document.getElementById("gst_legal").value = "";
-document.getElementById("gst_gstin").value = "";
-document.getElementById("gst_user").value = "";
-document.getElementById("gst_pass").value = "";
+    // CLEAR BOXES
+    document.getElementById("gst_trade").value = "";
+    document.getElementById("gst_legal").value = "";
+    document.getElementById("gst_gstin").value = "";
+    document.getElementById("gst_user").value = "";
+    document.getElementById("gst_pass").value = "";
 
-// RELOAD
-loadUploadClients();
-loadSettingsClients();
+    // RELOAD
+    loadUploadClients();
+    loadSettingsClients();
+}
 
 function addITR(){
+
     itrClients.push({
         trade: itr_trade.value,
         legal: itr_legal.value,
@@ -719,20 +725,23 @@ function addITR(){
         user: itr_user.value,
         pass: itr_pass.value
     });
+
     renderITR();
     updateAll();
+
     db.ref("itrClients").push(itrClients[itrClients.length - 1]);
 
-// CLEAR BOXES
-document.getElementById("itr_trade").value = "";
-document.getElementById("itr_legal").value = "";
-document.getElementById("itr_pan").value = "";
-document.getElementById("itr_user").value = "";
-document.getElementById("itr_pass").value = "";
+    // CLEAR BOXES
+    document.getElementById("itr_trade").value = "";
+    document.getElementById("itr_legal").value = "";
+    document.getElementById("itr_pan").value = "";
+    document.getElementById("itr_user").value = "";
+    document.getElementById("itr_pass").value = "";
 
-// RELOAD
-loadUploadClients();
-loadSettingsClients();
+    // RELOAD
+    loadUploadClients();
+    loadSettingsClients();
+}
 
 /* RENDER FIXED */
 function renderGST(){
