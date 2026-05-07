@@ -492,7 +492,90 @@ button {
         opacity: 1;
     }
 }
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+@media screen and (max-width: 768px) {
 
+    /* MAIN */
+    .main{
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+        width: 220px;
+        transform: translateX(-100%);
+        transition: 0.3s;
+    }
+
+    .sidebar.show{
+        transform: translateX(0);
+    }
+
+    /* HEADER */
+    .header{
+        padding: 15px 10px;
+    }
+
+    .title{
+        font-size: 28px;
+    }
+
+    .subtitle{
+        font-size: 12px;
+    }
+
+    .header-logo{
+        width: 45px;
+        height: 45px;
+        right: 10px;
+    }
+
+    .menu-btn{
+        font-size: 24px;
+    }
+
+    /* DASHBOARD CARDS */
+    .dashboard-cards{
+        flex-direction: column;
+    }
+
+    .dash-card{
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* TABLE */
+    table{
+        font-size: 12px;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* INPUTS */
+    .settings-box input,
+    .settings-box select,
+    #gst input,
+    #itr input{
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    /* FOOTER */
+    .footer-container{
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-left,
+    .footer-middle,
+    .footer-right{
+        text-align: center;
+    }
+}
 </style>
 </head>
 
@@ -673,6 +756,13 @@ function toggleSidebar(){
     let sidebar = document.getElementById("sidebar");
     let main = document.querySelector(".main");
 
+    // MOBILE
+    if(window.innerWidth <= 768){
+        sidebar.classList.toggle("show");
+        return;
+    }
+
+    // DESKTOP
     sidebar.classList.toggle("hide");
 
     if(sidebar.classList.contains("hide")){
@@ -681,7 +771,6 @@ function toggleSidebar(){
         main.style.marginLeft = "220px";
     }
 }
-
 function showSection(id){
     document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
     document.getElementById(id).classList.add("active");
