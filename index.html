@@ -185,48 +185,83 @@ function deleteClient(){
 
     })
     .catch(err => alert("Delete Error: " + err.message));
-}
-  function loadFiles(){
+}function loadFiles(){
+
     let type = document.getElementById("uploadType").value;
     let index = document.getElementById("uploadClientSelect").value;
 
     let client = (type === "gst" ? gstClients : itrClients)[index];
+
     if(!client) return;
-    if(!client.firebaseKey){
-    fileList.innerHTML = "Invalid client";
-    return;
-}
 
     let fileList = document.getElementById("fileList");
-    fileList.innerHTML = "Loading...";
+
+    fileList.innerHTML = "<li>Loading...</li>";
 
     db.ref("files/" + type + "/" + client.firebaseKey)
-.on("value", snapshot => {
+    .once("value")
+    .then(snapshot => {
 
         fileList.innerHTML = "";
 
         let data = snapshot.val();
 
         if(!data){
-            fileList.innerHTML = "No files";
+            fileList.innerHTML = "<li>No files uploaded</li>";
             return;
         }
 
-        Object.values(data).forEach(file => {
+        // PARTY NAME TITLE
+        let heading = document.createElement("h3");
+        heading.innerText = "Files of : " + client.trade;
+        heading.style.marginTop = "10px";
+
+        fileList.appendChild(heading);
+
+        Object.keys(data).forEach(key => {
+
+            let file = data[key];
+
             let li = document.createElement("li");
 
+            li.style.marginBottom = "10px";
+
             li.innerHTML = `
-                <a href="${file.url}" target="_blank">${file.name}</a>
-                (${file.date})
-                <button onclick="deleteFile('${type}','${client.firebaseKey}','${file.url}')"
-                        style="margin-left:10px; background:red;">
+                <a href="${file.url}" target="_blank">
+                    ${file.name}
+                </a>
+
+                <small style="margin-left:10px;">
+                    ${file.date}
+                </small>
+
+                <button 
+                    onclick="deleteFile('${type}','${client.firebaseKey}','${file.url}')"
+                    style="
+                        margin-left:10px;
+                        background:red;
+                        color:white;
+                        border:none;
+                        padding:5px 10px;
+                        cursor:pointer;
+                    ">
                     Delete
                 </button>
             `;
 
             fileList.appendChild(li);
+
         });
+
+    })
+    .catch(err => {
+
+        console.error(err);
+
+        fileList.innerHTML = "<li>Error loading files</li>";
+
     });
+
 }
 </script>
 
