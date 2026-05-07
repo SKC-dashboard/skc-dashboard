@@ -670,13 +670,20 @@ button {
     background: white;
     margin-bottom: 8px;
     gap: 10px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow: hidden;
 }
 
 #fileList li a{
     text-decoration: none;
     color: black;
     font-weight: bold;
+
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
 }
 /* OVERLAY */
 #overlay{
@@ -1125,47 +1132,56 @@ function uploadFile(){
 
     });
 }
-  function deleteFile(type, clientKey, fileURL){
+function deleteFile(type, clientKey, fileURL){
 
     if(!confirm("Delete this file?")) return;
 
-    // DELETE FROM STORAGE
-    let fileRef = storage.refFromURL(fileURL);
+    // DELETE FROM DATABASE FIRST
+    db.ref("files/" + type + "/" + clientKey)
+    .once("value")
+    .then(snapshot => {
 
-    fileRef.delete()
-    .then(() => {
+        let data = snapshot.val();
 
-        // DELETE FROM DATABASE
-        db.ref("files/" + type + "/" + clientKey)
-        .once("value", snapshot => {
+        if(!data) return;
 
-            let data = snapshot.val();
-            if(!data) return;
+        let updates = {};
 
-            let updates = {};
+        Object.keys(data).forEach(key => {
 
-            Object.keys(data).forEach(key => {
-                if(data[key].url === fileURL){
-                    updates[key] = null;
-                }
-            });
-
-            db.ref("files/" + type + "/" + clientKey)
-            .update(updates)
-            .then(() => {
-alert("File Deleted");
-
-// REFRESH FILE LIST
-loadFiles();
-
-// REFRESH CLIENTS
-loadUploadClients();
-            });
+            if(data[key].url === fileURL){
+                updates[key] = null;
+            }
 
         });
 
+        return db.ref("files/" + type + "/" + clientKey)
+        .update(updates);
+
     })
-    .catch(err => alert("Delete Error: " + err.message));
+    .then(() => {
+
+        // TRY STORAGE DELETE
+        return storage.refFromURL(fileURL).delete()
+        .catch(() => {
+            console.log("Storage file already missing");
+        });
+
+    })
+    .then(() => {
+
+        alert("File Deleted");
+
+        loadFiles();
+
+    })
+    .catch(err => {
+
+        console.log(err);
+
+        alert("Delete completed with warning");
+
+    });
 }
 /* DOWNLOAD FILE */
 function downloadFile(url, fileName){
