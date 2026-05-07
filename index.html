@@ -208,7 +208,8 @@ function deleteClient(){
 
     })
     .catch(err => alert("Delete Error: " + err.message));
-}function loadFiles(){
+}
+  function loadFiles(){
 
     let type = document.getElementById("uploadType").value;
     let index = document.getElementById("uploadClientSelect").value;
@@ -253,13 +254,13 @@ li.innerHTML = `
 
 <div style="width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
 
-    <a href="${file.url}" target="_blank" download>
+    <a href="${file.url}" target="_blank">
         ${file.name}
     </a>
 
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
 
-        <button onclick="downloadFile('${file.url}')">
+        <button onclick="downloadFile('${file.url}','${file.name}')">
             Download
         </button>
 
@@ -282,18 +283,8 @@ li.innerHTML = `
     </div>
 
 </div>
+
 `;
-                    style="
-                        margin-left:10px;
-                        background:red;
-                        color:white;
-                        border:none;
-                        padding:5px 10px;
-                        cursor:pointer;
-                    ">
-                    Delete
-                </button>
-            `;
 
             fileList.appendChild(li);
 
@@ -1159,20 +1150,20 @@ function uploadFile(){
     .catch(err => alert("Delete Error: " + err.message));
 }
 /* DOWNLOAD FILE */
-function downloadFile(url){
+function downloadFile(url, fileName){
 
-    fetch(url)
-    .then(res => res.blob())
-    .then(blob => {
+    let a = document.createElement("a");
 
-        let blobUrl = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.target = "_blank";
 
-        let a = document.createElement("a");
-        a.href = blobUrl;
-        a.download = "";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+}
 
         window.URL.revokeObjectURL(blobUrl);
     })
