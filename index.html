@@ -144,7 +144,13 @@ function updateClient(){
     let refPath = type === "gst" ? "gstClients" : "itrClients";
 
     db.ref(refPath + "/" + client.firebaseKey).update(updatedData)
-        .then(()=> alert("Updated Successfully"))
+        .then(() => {
+
+    alert("Updated Successfully");
+
+    clearSettingsFields();
+
+})
         .catch(err => alert("Error: " + err.message));
 }
 
@@ -179,8 +185,11 @@ function deleteClient(){
             return Promise.all(promises);
         }).then(() => {
             alert("Client + Files Deleted");
+          
+            alert("Client + Files Deleted");
         }).catch(() => {
             alert("Client Deleted (No Files)");
+            clearSettingsFields();
         });
 
     })
@@ -622,6 +631,15 @@ button {
 
 <script>
 
+function clearSettingsFields(){
+
+    document.getElementById("edit_trade").value = "";
+    document.getElementById("edit_legal").value = "";
+    document.getElementById("edit_extra").value = "";
+    document.getElementById("edit_user").value = "";
+    document.getElementById("edit_pass").value = "";
+
+}
 
 /* NAV */
 function toggleSidebar(){
