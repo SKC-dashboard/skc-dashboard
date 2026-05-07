@@ -537,18 +537,28 @@ button {
     }
 
     .title{
-        font-size: 28px;
-    }
+    font-size: 22px;
+    text-align: center;
+    width: 100%;
+}
+
+.center-text{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    text-align: center;
+}
 
     .subtitle{
         font-size: 12px;
     }
 
     .header-logo{
-        width: 45px;
-        height: 45px;
-        right: 10px;
-    }
+    width: 42px;
+    height: 42px;
+    right: 8px;
+}
 
 .menu-btn{
     font-size: 28px;
@@ -801,8 +811,21 @@ function toggleSidebar(){
     }
 }
 function showSection(id){
-    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll(".section")
+    .forEach(s => s.classList.remove("active"));
+
+    document.getElementById(id)
+    .classList.add("active");
+
+    // AUTO CLOSE SIDEBAR ON MOBILE
+    if(window.innerWidth <= 768){
+
+        let sidebar = document.getElementById("sidebar");
+
+        sidebar.classList.remove("show");
+        sidebar.classList.add("hide");
+    }
 }
 
 /* ADD */
