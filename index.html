@@ -504,14 +504,18 @@ button {
     }
 
     /* SIDEBAR */
-    .sidebar{
-        width: 220px;
+.sidebar{
+    width: 220px;
+    left: -220px;
         transform: translateX(-100%);
         transition: 0.3s;
     }
 
-    .sidebar.show{
-    transform: translateX(0);
+.sidebar.show{
+    left: 0;
+}
+.sidebar.hide{
+    left: -220px;
 }
 
 .sidebar.hide{
@@ -763,14 +767,16 @@ function toggleSidebar(){
     // MOBILE
     if(window.innerWidth <= 768){
 
-        if(sidebar.classList.contains("show")){
-            sidebar.classList.remove("show");
-        } else {
-            sidebar.classList.add("show");
-        }
-
-        return;
+    if(sidebar.classList.contains("show")){
+        sidebar.classList.remove("show");
+        sidebar.classList.add("hide");
+    } else {
+        sidebar.classList.remove("hide");
+        sidebar.classList.add("show");
     }
+
+    return;
+}
 
     // DESKTOP
     sidebar.classList.toggle("hide");
