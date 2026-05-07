@@ -648,6 +648,21 @@ button {
     color: black;
     font-weight: bold;
 }
+    /* OVERLAY */
+#overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 1500;
+    display: none;
+}
+
+#overlay.show{
+    display: block;
+}
 </style>
 </head>
 
@@ -662,8 +677,10 @@ button {
     <a onclick="showSection('upload')">Upload Files</a>
     <a onclick="showSection('settings')">Settings</a>
 </div>
+  
+<div id="overlay" onclick="closeSidebar()"></div>
 
-<div class="main">
+  <div class="main">
 
 <!-- HEADER (UNCHANGED) -->
 <div class="header" onclick="showSection('dashboard')" style="cursor:pointer;">
@@ -826,21 +843,25 @@ function clearSettingsFields(){
 function toggleSidebar(){
 
     let sidebar = document.getElementById("sidebar");
+    let overlay = document.getElementById("overlay");
     let main = document.querySelector(".main");
 
     // MOBILE
     if(window.innerWidth <= 768){
 
-    if(sidebar.classList.contains("show")){
-        sidebar.classList.remove("show");
-        sidebar.classList.add("hide");
-    } else {
-        sidebar.classList.remove("hide");
-        sidebar.classList.add("show");
-    }
+        if(sidebar.classList.contains("show")){
 
-    return;
-}
+            sidebar.classList.remove("show");
+            overlay.classList.remove("show");
+
+        } else {
+
+            sidebar.classList.add("show");
+            overlay.classList.add("show");
+        }
+
+        return;
+    }
 
     // DESKTOP
     sidebar.classList.toggle("hide");
@@ -850,6 +871,14 @@ function toggleSidebar(){
     } else {
         main.style.marginLeft = "220px";
     }
+}
+function closeSidebar(){
+
+    let sidebar = document.getElementById("sidebar");
+    let overlay = document.getElementById("overlay");
+
+    sidebar.classList.remove("show");
+    overlay.classList.remove("show");
 }
 function showSection(id){
 
