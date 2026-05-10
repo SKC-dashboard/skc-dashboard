@@ -9,6 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
 <script>
 
@@ -28,7 +29,8 @@ const storage = firebase.storage();
 storage.setMaxUploadRetryTime(60000);
 
 const db = firebase.database();
-
+const auth = firebase.auth();
+    
 let gstClients = [];
 let itrClients = [];
 
@@ -366,14 +368,39 @@ li.innerHTML = `
     cursor: pointer;
 }
 .login-logo{
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    margin-bottom: 15px;
-    border: 3px solid #203a43;
-    animation: logoPop 1s ease;
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    margin-bottom:15px;
+    animation: logoFloat 2s infinite ease-in-out;
 }
 
+.login-animate{
+    animation: loginFade 0.7s ease;
+}
+
+@keyframes loginFade{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes logoFloat{
+    0%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-8px);
+    }
+    100%{
+        transform:translateY(0px);
+    }
+}
 .fade-login{
     animation: fadeInUp 0.8s ease;
 }
@@ -797,31 +824,50 @@ button {
 #overlay.show{
     display: block;
 }
+}
+    
 </style>
 </head>
 
 <body>
 <!-- LOGIN PAGE -->
 <div id="loginPage">
-<div class="login-box fade-login">
 
-    <img src="logo.png" class="login-logo">
-        <h2>SK CONSULTANT</h2>
-        <h2>LOGIN</h2>
-        
-        <input type="text" id="loginUser" placeholder="Login ID">
+    <div class="login-box login-animate">
 
-        <input type="password" id="loginPass" placeholder="Password">
+        <img src="logo.png" class="login-logo">
 
-        <button onclick="login()">Login</button>
+        <h2>SK Consultant</h2>
+
+        <input
+            type="text"
+            id="phoneNumber"
+            placeholder="Enter Mobile Number"
+        >
+
+        <div id="recaptcha-container"></div>
+
+        <button onclick="sendOTP()">
+            Send OTP
+        </button>
+
+        <input
+            type="text"
+            id="otpCode"
+            placeholder="Enter OTP"
+            style="margin-top:15px;"
+        >
+
+        <button onclick="verifyOTP()">
+            Verify & Login
+        </button>
 
         <div id="errorMsg"></div>
-    <div class="forgot-btn" onclick="forgotPassword()">
-    Forgot Password?
-</div>
 
     </div>
+
 </div>
+    
 <!-- SIDEBAR (UNCHANGED) -->
 <div class="sidebar" id="sidebar">
     <a onclick="showSection('dashboard')">Dashboard</a>
@@ -985,31 +1031,88 @@ button {
 <script>
 
 // LOGIN SYSTEM
-const USERNAME = "9173321079";
-const DEFAULT_PASSWORD = "170720";
 
-let PASSWORD = localStorage.getItem("dashboardPassword") || DEFAULT_PASSWORD;
-function login(){
+window.onload = function(){
 
-    const user = document.getElementById("loginUser").value;
-    const pass = document.getElementById("loginPass").value;
+    renderRecaptcha();
 
-    if(user === USERNAME && pass === PASSWORD){
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if(isLoggedIn === "true"){
+        document.getElementById("loginPage").style.display = "none";
+    }
+};
+
+function renderRecaptcha(){
+
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+        'recaptcha-container',
+        {
+            'size':'normal',
+            'callback': function(response){
+                console.log("Recaptcha Verified");
+            }
+        }
+    );
+
+    recaptchaVerifier.render();
+}
+
+function sendOTP(){
+
+    let number = document.getElementById("phoneNumber").value;
+
+    if(!number.startsWith("+")){
+        number = "+91" + number;
+    }
+
+    auth.signInWithPhoneNumber(number, window.recaptchaVerifier)
+    .then(function(confirmationResult){
+
+        window.confirmationResult = confirmationResult;
+
+        document.getElementById("errorMsg").innerHTML =
+        "OTP Sent Successfully";
+
+    })
+    .catch(function(error){
+
+        document.getElementById("errorMsg").innerHTML =
+        error.message;
+
+    });
+}
+
+function verifyOTP(){
+
+    let code = document.getElementById("otpCode").value;
+
+    if(!window.confirmationResult){
+        document.getElementById("errorMsg").innerHTML =
+        "Please send OTP first";
+        return;
+    }
+
+    confirmationResult.confirm(code)
+
+    .then(function(result){
 
         localStorage.setItem("isLoggedIn", "true");
 
         document.getElementById("loginPage").style.display = "none";
 
-    } else {
+        document.getElementById("errorMsg").innerHTML =
+        "Login Successful";
+
+    })
+
+    .catch(function(error){
 
         document.getElementById("errorMsg").innerHTML =
-        "Invalid Login ID or Password";
+        error.message;
 
-    }
+    });
 }
-// OTP SYSTEM
-let generatedOTP = "";
-
 function forgotPassword(){
 
     let mobile = prompt("Enter registered mobile number");
@@ -1056,19 +1159,6 @@ function logout(){
     location.reload();
 
 }
-// ENTER KEY LOGIN
-document.addEventListener("DOMContentLoaded", function(){
-
-    document.getElementById("loginPass")
-    .addEventListener("keypress", function(e){
-
-        if(e.key === "Enter"){
-            login();
-        }
-
-    });
-
-});
 
 function clearSettingsFields(){
 
