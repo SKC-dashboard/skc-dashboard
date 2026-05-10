@@ -936,16 +936,6 @@ button {
 const USERNAME = "9173321079";
 const PASSWORD = "170720";
 
-// CHECK LOGIN
-window.addEventListener("load", function(){
-
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-    if(isLoggedIn === "true"){
-        document.getElementById("loginPage").style.display = "none";
-    }
-
-});
 
 // LOGIN
 function login(){
@@ -1339,6 +1329,11 @@ function shareFile(url, name){
 }
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+if(isLoggedIn === "true"){
+    document.getElementById("loginPage").style.display = "none";
+}
 
     document.getElementById("uploadType").addEventListener("change", loadUploadClients);
     document.getElementById("typeSelect").addEventListener("change", loadSettingsClients);
