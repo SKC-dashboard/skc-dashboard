@@ -365,7 +365,49 @@ li.innerHTML = `
     font-size: 16px;
     cursor: pointer;
 }
+.login-logo{
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 3px solid #203a43;
+    animation: logoPop 1s ease;
+}
 
+.fade-login{
+    animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp{
+    from{
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes logoPop{
+    0%{
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100%{
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.forgot-btn{
+    margin-top: 12px;
+    color: #203a43;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+}
 #errorMsg{
     color: red;
     margin-top: 10px;
@@ -761,8 +803,9 @@ button {
 <body>
 <!-- LOGIN PAGE -->
 <div id="loginPage">
-    <div class="login-box">
+<div class="login-box fade-login">
 
+    <img src="logo.png" class="login-logo">
         <h2>SK CONSULTANT</h2>
         <h2>LOGIN</h2>
         
@@ -773,6 +816,9 @@ button {
         <button onclick="login()">Login</button>
 
         <div id="errorMsg"></div>
+    <div class="forgot-btn" onclick="forgotPassword()">
+    Forgot Password?
+</div>
 
     </div>
 </div>
@@ -940,8 +986,9 @@ button {
 
 // LOGIN SYSTEM
 const USERNAME = "9173321079";
-const PASSWORD = "170720";
+const DEFAULT_PASSWORD = "170720";
 
+let PASSWORD = localStorage.getItem("dashboardPassword") || DEFAULT_PASSWORD;
 function login(){
 
     const user = document.getElementById("loginUser").value;
@@ -960,7 +1007,48 @@ function login(){
 
     }
 }
+// OTP SYSTEM
+let generatedOTP = "";
 
+function forgotPassword(){
+
+    let mobile = prompt("Enter registered mobile number");
+
+    if(mobile !== "9173321079"){
+        alert("Mobile number not registered");
+        return;
+    }
+
+    // GENERATE 6 DIGIT OTP
+    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // FOR DEMO PURPOSE
+    alert("Your OTP is: " + generatedOTP);
+
+    let enteredOTP = prompt("Enter OTP");
+
+    if(enteredOTP === generatedOTP){
+
+        let newPass = prompt("Enter New Password");
+
+        if(newPass && newPass.trim() !== ""){
+
+            localStorage.setItem("dashboardPassword", newPass);
+
+            alert("Password Changed Successfully");
+
+        } else {
+
+            alert("Password cannot be empty");
+
+        }
+
+    } else {
+
+        alert("Invalid OTP");
+
+    }
+}
 function logout(){
 
     localStorage.removeItem("isLoggedIn");
