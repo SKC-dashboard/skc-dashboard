@@ -803,25 +803,7 @@ button {
     padding-top: 10px;
     font-size: 13px;
 }
-/* LOADING COUNT */
-.loading-count{
-    animation: pulseLoad 1s infinite;
-}
 
-@keyframes pulseLoad{
-
-    0%{
-        opacity: 0.3;
-    }
-
-    50%{
-        opacity: 1;
-    }
-
-    100%{
-        opacity: 0.3;
-    }
-}
 /* FILE LIST GRID */
 #fileList{
     list-style: none;
@@ -1137,12 +1119,12 @@ button {
     <div class="dashboard-cards">
         <div class="dash-card" onclick="showSection('gst')" style="cursor:pointer;">
     <h2>GST Clients</h2>
-    <h1 id="gstCount" class="loading-count">...</h1>
+    <h1 id="gstCount">...</h1>
 </div>
 
 <div class="dash-card" onclick="showSection('itr')" style="cursor:pointer;">
     <h2>ITR Clients</h2>
-    <h1 id="itrCount" class="loading-count">...</h1>
+    <h1 id="itrCount">...</h1>
 </div>
     </div>
 </div>
