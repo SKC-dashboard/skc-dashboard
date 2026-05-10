@@ -718,13 +718,34 @@ th, td {
     display: flex;
     gap: 20px;
 }
-.dash-card {
+.dash-card{
+
     flex: 1;
     background: #000;
     color: #d4af37;
     border: 2px solid #d4af37;
     padding: 25px;
     text-align: center;
+
+    animation: zoomCard 0.7s ease;
+}
+
+/* ZOOM ANIMATION */
+@keyframes zoomCard{
+
+    0%{
+        opacity: 0;
+        transform: scale(0.6);
+    }
+
+    70%{
+        transform: scale(1.05);
+    }
+
+    100%{
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* SETTINGS */
@@ -856,47 +877,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.title{
-    animation: zoomTitle 0.7s ease;
-}
 
-.subtitle{
-    animation: zoomSubtitle 1s ease;
-}
-
-@keyframes zoomTitle{
-
-    0%{
-        opacity: 0;
-        transform: scale(0.5);
-    }
-
-    70%{
-        transform: scale(1.05);
-    }
-
-    100%{
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes zoomSubtitle{
-
-    0%{
-        opacity: 0;
-        transform: scale(0.5);
-    }
-
-    70%{
-        transform: scale(1.03);
-    }
-
-    100%{
-        opacity: 1;
-        transform: scale(1);
-    }
-}
 /* =========================
    MOBILE RESPONSIVE
 ========================= */
