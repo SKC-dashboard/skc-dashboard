@@ -11,7 +11,35 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
-  const firebaseConfig = {
+const USERNAME = "9173321079";
+const PASSWORD = "170720";
+
+// Hide website first
+document.body.style.display = "none";
+
+// Check login
+function checkLogin() {
+    const enteredUser = prompt("Enter Login ID:");
+    const enteredPass = prompt("Enter Password:");
+
+    if (enteredUser === USERNAME && enteredPass === PASSWORD) {
+        document.body.style.display = "flex";
+    } else {
+        alert("Invalid Login ID or Password");
+        document.body.innerHTML = `
+            <h2 style="text-align:center; margin-top:50px;">
+                Access Denied
+            </h2>
+        `;
+    }
+}
+
+window.onload = function () {
+    checkLogin();
+};
+
+// FIREBASE CONFIG
+const firebaseConfig = {
     apiKey: "AIzaSyBtJAL_w794WNn0Z0mJ8ysuQd9SvZLuYc0",
     authDomain: "skc-dashboard-3eaca.firebaseapp.com",
     databaseURL: "https://skc-dashboard-3eaca-default-rtdb.asia-southeast1.firebasedatabase.app",
