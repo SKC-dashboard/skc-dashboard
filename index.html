@@ -10,6 +10,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
+<script>
+
 // FIREBASE CONFIG
 const firebaseConfig = {
     apiKey: "AIzaSyBtJAL_w794WNn0Z0mJ8ysuQd9SvZLuYc0",
@@ -932,12 +934,13 @@ button {
         © 2026 SK CONSULTANT
     </div>
 </div>
+
+<script>
+
 // LOGIN SYSTEM
 const USERNAME = "9173321079";
 const PASSWORD = "170720";
 
-
-// LOGIN
 function login(){
 
     const user = document.getElementById("loginUser").value;
@@ -957,7 +960,6 @@ function login(){
     }
 }
 
-// LOGOUT
 function logout(){
 
     localStorage.removeItem("isLoggedIn");
@@ -965,7 +967,6 @@ function logout(){
     location.reload();
 
 }
-<script>
 
 function clearSettingsFields(){
 
