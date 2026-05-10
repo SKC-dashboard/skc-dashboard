@@ -201,7 +201,8 @@ function deleteClient(){
     .then(() => {
 
         // ✅ STEP 2: DELETE FILES
-        let folder = type + "/" + client.trade;
+        let safeName = client.trade.replace(/[^a-zA-Z0-9]/g, "_");
+let folder = type + "/" + safeName;
 
         let storageRef = storage.ref(folder);
 
@@ -212,7 +213,6 @@ function deleteClient(){
         }).then(() => {
             alert("Client + Files Deleted");
           
-            alert("Client + Files Deleted");
         }).catch(() => {
             alert("Client Deleted (No Files)");
             clearSettingsFields();
@@ -794,7 +794,7 @@ button {
     background: white;
     margin-bottom: 8px;
     gap: 10px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     overflow: hidden;
 }
 
@@ -803,7 +803,7 @@ button {
     color: black;
     font-weight: bold;
 
-    max-width: 180px;
+    max-width: 45vw;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1034,7 +1034,7 @@ if(!localStorage.getItem("loginID")){
 }
 
 if(!localStorage.getItem("dashboardPassword")){
-    localStorage.setItem("dashboardPassword", "admin123");
+    localStorage.setItem("dashboardPassword", "170720");
 }
 
 /* AUTO LOGIN CHECK */
@@ -1185,51 +1185,7 @@ function forgotPassword(){
 }
 
 /* LOGOUT */
-function logout(){
-
-    localStorage.removeItem("isLoggedIn");
-
-    location.reload();
-}
-function forgotPassword(){
-
-    let mobile = prompt("Enter registered mobile number");
-
-    if(mobile !== "9173321079"){
-        alert("Mobile number not registered");
-        return;
-    }
-
-    // GENERATE 6 DIGIT OTP
-    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // FOR DEMO PURPOSE
-    alert("Your OTP is: " + generatedOTP);
-
-    let enteredOTP = prompt("Enter OTP");
-
-    if(enteredOTP === generatedOTP){
-
-        let newPass = prompt("Enter New Password");
-
-        if(newPass && newPass.trim() !== ""){
-
-            localStorage.setItem("dashboardPassword", newPass);
-
-            alert("Password Changed Successfully");
-
-        } else {
-
-            alert("Password cannot be empty");
-
-        }
-
-    } else {
-
-        alert("Invalid OTP");
-
-    }
-}
+    
 function logout(){
 
     localStorage.removeItem("isLoggedIn");
@@ -1589,13 +1545,28 @@ function shareFile(url, name){
         alert("Link copied");
     }
 }
-  function searchFiles(){
-    let input = document.getElementById("fileSearch").value.toLowerCase();
-    let items = document.querySelectorAll("#fileList li");
+    
+function searchFiles(){
+
+    let input =
+    document.getElementById("fileSearch")
+    .value.toLowerCase();
+
+    let items =
+    document.querySelectorAll("#fileList li");
 
     items.forEach(li => {
-        let text = li.innerText.toLowerCase();
-        li.style.display = text.includes(input) ? "" : "none";
+
+        if(li.querySelector("a") === null) return;
+
+        let text =
+        li.innerText.toLowerCase();
+
+        li.style.display =
+        text.includes(input)
+        ? ""
+        : "none";
+
     });
 }
 /* AUTO LOAD DROPDOWN */
