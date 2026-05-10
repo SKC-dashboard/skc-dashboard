@@ -319,62 +319,248 @@ li.innerHTML = `
 </script>
 
 <style>
-/* LOGIN PAGE */
+/* =========================
+   MODERN LOGIN
+========================= */
+
 #loginPage{
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    inset: 0;
+    background:
+    linear-gradient(
+        135deg,
+        #071c24,
+        #0f2d39,
+        #163d4d
+    );
+
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 99999;
-}
 
-.login-box{
-    width: 350px;
-    background: white;
-    padding: 35px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    text-align: center;
-}
-
-.login-box h2{
-    margin-bottom: 25px;
-    color: #203a43;
-}
-
-.login-box input{
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
+    padding: 20px;
     box-sizing: border-box;
 }
 
-.login-box button{
+.modern-login-box{
+
     width: 100%;
-    padding: 12px;
-    background: #203a43;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-}
-.login-logo{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    margin-bottom:15px;
-    animation: logoFloat 2s infinite ease-in-out;
+    max-width: 430px;
+
+    background: white;
+
+    border-radius: 30px;
+
+    padding: 45px 30px;
+
+    box-shadow:
+    0 20px 50px rgba(0,0,0,0.35);
+
+    text-align: center;
+
+    animation: loginFade 0.6s ease;
 }
 
+.modern-logo{
+
+    width: 120px;
+    height: 120px;
+
+    object-fit: contain;
+
+    margin-bottom: 20px;
+
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+.modern-title{
+
+    margin: 0;
+
+    font-size: 48px;
+
+    color: #17313c;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+}
+
+.modern-subtitle{
+
+    margin-top: 10px;
+    margin-bottom: 35px;
+
+    color: #17313c;
+
+    font-size: 30px;
+
+    letter-spacing: 2px;
+}
+
+.input-box{
+
+    position: relative;
+
+    margin-bottom: 22px;
+}
+
+.input-box input{
+
+    width: 100%;
+
+    padding:
+    18px 55px;
+
+    border-radius: 18px;
+
+    border: 1px solid #d6d6d6;
+
+    font-size: 18px;
+
+    box-sizing: border-box;
+
+    outline: none;
+
+    transition: 0.3s;
+}
+
+.input-box input:focus{
+
+    border-color: #17313c;
+
+    box-shadow:
+    0 0 0 4px rgba(23,49,60,0.1);
+}
+
+.input-icon{
+
+    position: absolute;
+
+    left: 18px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 20px;
+}
+
+.show-pass{
+
+    position: absolute;
+
+    right: 18px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    color: #17313c;
+
+    font-weight: bold;
+}
+
+.modern-login-btn{
+
+    width: 100%;
+
+    padding: 18px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #102a35,
+        #163d4d
+    );
+
+    color: white;
+
+    font-size: 24px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    margin-top: 10px;
+}
+
+.modern-login-btn:hover{
+
+    transform: translateY(-2px);
+
+    box-shadow:
+    0 10px 20px rgba(0,0,0,0.2);
+}
+
+.modern-forgot{
+
+    margin-top: 22px;
+
+    color: #17313c;
+
+    text-decoration: underline;
+
+    cursor: pointer;
+
+    font-size: 18px;
+}
+
+#errorMsg{
+
+    color: red;
+
+    margin-top: 15px;
+
+    font-size: 15px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .modern-login-box{
+
+        padding: 35px 22px;
+
+        border-radius: 25px;
+    }
+
+    .modern-logo{
+
+        width: 95px;
+        height: 95px;
+    }
+
+    .modern-title{
+
+        font-size: 32px;
+    }
+
+    .modern-subtitle{
+
+        font-size: 24px;
+    }
+
+    .input-box input{
+
+        padding: 16px 50px;
+
+        font-size: 16px;
+    }
+
+    .modern-login-btn{
+
+        font-size: 20px;
+    }
+}
 .login-animate{
     animation: loginFade 0.7s ease;
 }
@@ -831,31 +1017,51 @@ button {
 
 <body>
 <!-- LOGIN PAGE -->
-<!-- LOGIN PAGE -->
 <div id="loginPage">
 
-    <div class="login-box login-animate">
+    <div class="modern-login-box">
 
-        <img src="logo.png" class="login-logo">
+        <img src="logo.png" class="modern-logo">
 
-        <h2>SK Consultant</h2>
+        <h1 class="modern-title">
+            SK CONSULTANT
+        </h1>
 
-        <input
-            type="password"
-            id="loginPass"
-            placeholder="Enter Password"
-        >
+        <h2 class="modern-subtitle">
+            LOGIN
+        </h2>
 
-        <button onclick="login()">
+
+        <!-- PASSWORD -->
+        <div class="input-box">
+
+            <span class="input-icon">🔒</span>
+
+            <input
+                type="password"
+                id="loginPass"
+                placeholder="Password"
+            >
+
+            <span
+                class="show-pass"
+                onclick="togglePassword('loginPass', this)"
+            >
+                Show
+            </span>
+
+        </div>
+
+        <button class="modern-login-btn" onclick="login()">
             Login
         </button>
 
-        <div class="forgot-btn" onclick="forgotPassword()">
+        <div class="modern-forgot" onclick="forgotPassword()">
             Forgot Password?
         </div>
 
         <div id="errorMsg"></div>
-        
+
         <div id="recaptcha-container"></div>
 
     </div>
@@ -1029,9 +1235,6 @@ button {
 ========================= */
 
 // DEFAULT LOGIN ID + PASSWORD
-if(!localStorage.getItem("loginID")){
-    localStorage.setItem("loginID", "id-9173321079");
-}
 
 if(!localStorage.getItem("dashboardPassword")){
     localStorage.setItem("dashboardPassword", "170720");
@@ -1050,30 +1253,29 @@ window.onload = function(){
 /* LOGIN */
 function login(){
 
-    let loginId = prompt("Enter Login ID");
-
     let enteredPass =
-        document.getElementById("loginPass").value;
-
-    let savedID =
-        localStorage.getItem("loginID");
+    document.getElementById("loginPass").value;
 
     let savedPass =
-        localStorage.getItem("dashboardPassword");
+    localStorage.getItem("dashboardPassword");
 
-    if(
-        loginId === savedID &&
-        enteredPass === savedPass
-    ){
+    if(enteredPass === savedPass){
 
-        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem(
+            "isLoggedIn",
+            "true"
+        );
 
-        document.getElementById("loginPage").style.display = "none";
+        document.getElementById(
+            "loginPage"
+        ).style.display = "none";
 
     } else {
 
-        document.getElementById("errorMsg").innerHTML =
-        "Invalid Login ID or Password";
+        document.getElementById(
+            "errorMsg"
+        ).innerHTML =
+        "Invalid Password";
     }
 }
 
