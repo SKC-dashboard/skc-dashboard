@@ -967,6 +967,19 @@ function logout(){
     location.reload();
 
 }
+// ENTER KEY LOGIN
+document.addEventListener("DOMContentLoaded", function(){
+
+    document.getElementById("loginPass")
+    .addEventListener("keypress", function(e){
+
+        if(e.key === "Enter"){
+            login();
+        }
+
+    });
+
+});
 
 function clearSettingsFields(){
 
