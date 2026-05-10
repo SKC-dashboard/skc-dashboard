@@ -1267,6 +1267,11 @@ function login(){
 
     let enteredPass =
     document.getElementById("loginPass").value.trim();
+    
+    // REMOVE SPACES
+    enteredId = enteredId.replace(/\s/g,'');
+    enteredPass = enteredPass.replace(/\s/g,'');
+
 
     // DEFAULT PASSWORD
     let savedPass =
