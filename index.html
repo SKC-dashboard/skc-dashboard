@@ -34,7 +34,7 @@ const auth = firebase.auth();
 let gstClients = [];
 let itrClients = [];
 
-db.ref("gstClients").on("value", snapshot => {
+db.ref("gstClients").once("value", snapshot => {
     let data = snapshot.val();
 
     gstClients = [];
@@ -50,8 +50,6 @@ db.ref("gstClients").on("value", snapshot => {
 
     renderGST();
     updateAll();
-    loadUploadClients();
-    loadSettingsClients();
 });
 function loadUploadClients(){
 
@@ -123,7 +121,7 @@ function loadClientDetails(){
         : (client.pan || "");
 }
 /* FIREBASE LOAD ITR */
-db.ref("itrClients").on("value", snapshot => {
+db.ref("itrClients").once("value", snapshot => {
     let data = snapshot.val();
 
     itrClients = [];
@@ -139,8 +137,7 @@ db.ref("itrClients").on("value", snapshot => {
 
     renderITR();
     updateAll();
-    loadUploadClients();
-    loadSettingsClients();
+
 });
 function updateClient(){
     let type = document.getElementById("typeSelect").value;
