@@ -1030,8 +1030,19 @@ button {
         <h2 class="modern-subtitle">
             LOGIN
         </h2>
+        
+         <!-- LOGIN ID -->
+<div class="input-box">
 
+    <span class="input-icon">👤</span>
 
+    <input
+        type="text"
+        id="loginId"
+        placeholder="Login ID"
+    >
+
+</div>
         <!-- PASSWORD -->
         <div class="input-box">
 
@@ -1253,13 +1264,22 @@ window.onload = function(){
 /* LOGIN */
 function login(){
 
+    let enteredId =
+    document.getElementById("loginId").value;
+
     let enteredPass =
     document.getElementById("loginPass").value;
 
     let savedPass =
     localStorage.getItem("dashboardPassword");
 
-    if(enteredPass === savedPass){
+    // DEFAULT LOGIN ID
+    let savedId = "9173321079";
+
+    if(
+        enteredId === savedId &&
+        enteredPass === savedPass
+    ){
 
         localStorage.setItem(
             "isLoggedIn",
