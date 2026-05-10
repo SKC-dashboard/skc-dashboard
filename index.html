@@ -9,6 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
 <script>
 
@@ -28,6 +29,7 @@ const storage = firebase.storage();
 storage.setMaxUploadRetryTime(60000);
 
 const db = firebase.database();
+const auth = firebase.auth();
     
 let gstClients = [];
 let itrClients = [];
@@ -853,6 +855,8 @@ button {
         </div>
 
         <div id="errorMsg"></div>
+        
+        <div id="recaptcha-container"></div>
 
     </div>
 
@@ -1020,24 +1024,20 @@ button {
 
 <script>
 
-// LOGIN SYSTEM
+/* =========================
+   LOGIN SYSTEM
+========================= */
 
-window.onload = function(){
-
-    renderRecaptcha();
-
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-    if(isLoggedIn === "true"){
-        document.getElementById("loginPage").style.display = "none";
-    }
-};
-/* LOGIN SYSTEM */
+// DEFAULT LOGIN ID + PASSWORD
+if(!localStorage.getItem("loginID")){
+    localStorage.setItem("loginID", "id-9173321079");
+}
 
 if(!localStorage.getItem("dashboardPassword")){
     localStorage.setItem("dashboardPassword", "admin123");
 }
 
+/* AUTO LOGIN CHECK */
 window.onload = function(){
 
     const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -1047,13 +1047,24 @@ window.onload = function(){
     }
 };
 
+/* LOGIN */
 function login(){
 
-    let pass = document.getElementById("loginPass").value;
+    let loginId = prompt("Enter Login ID");
 
-    let savedPass = localStorage.getItem("dashboardPassword");
+    let enteredPass =
+        document.getElementById("loginPass").value;
 
-    if(pass === savedPass){
+    let savedID =
+        localStorage.getItem("loginID");
+
+    let savedPass =
+        localStorage.getItem("dashboardPassword");
+
+    if(
+        loginId === savedID &&
+        enteredPass === savedPass
+    ){
 
         localStorage.setItem("isLoggedIn", "true");
 
@@ -1062,7 +1073,7 @@ function login(){
     } else {
 
         document.getElementById("errorMsg").innerHTML =
-        "Wrong Password";
+        "Invalid Login ID or Password";
     }
 }
 
@@ -1080,46 +1091,100 @@ document.addEventListener("DOMContentLoaded", function(){
 
 });
 
-/* FORGOT PASSWORD WITH OTP */
+/* =========================
+   FIREBASE OTP RESET
+========================= */
+
+window.recaptchaVerifier = null;
+
+function renderRecaptcha(){
+
+    if(window.recaptchaVerifier) return;
+
+    window.recaptchaVerifier =
+    new firebase.auth.RecaptchaVerifier(
+        'recaptcha-container',
+        {
+            size: 'invisible'
+        }
+    );
+
+    recaptchaVerifier.render();
+}
+
+/* FORGOT PASSWORD */
 function forgotPassword(){
 
-    let mobile = prompt("Enter registered mobile number");
+    renderRecaptcha();
 
-    if(mobile !== "9173321079"){
-        alert("Mobile number not registered");
+    let phoneNumber = prompt(
+        "Enter registered mobile number with country code\nExample: +919173321079"
+    );
+
+    if(!phoneNumber){
         return;
     }
 
-    // GENERATE OTP
-    let generatedOTP =
-    Math.floor(100000 + Math.random() * 900000).toString();
+    auth.signInWithPhoneNumber(
+        phoneNumber,
+        window.recaptchaVerifier
+    )
+    .then(function(confirmationResult){
 
-    // DEMO OTP
-    alert("Your OTP is: " + generatedOTP);
+        window.confirmationResult = confirmationResult;
 
-    let enteredOTP = prompt("Enter OTP");
+        let otp = prompt("Enter OTP");
 
-    if(enteredOTP === generatedOTP){
-
-        let newPass = prompt("Enter New Password");
-
-        if(newPass && newPass.trim() !== ""){
-
-            localStorage.setItem("dashboardPassword", newPass);
-
-            alert("Password Changed Successfully");
-
-        } else {
-
-            alert("Password cannot be empty");
+        if(!otp){
+            return;
         }
 
-    } else {
+        confirmationResult.confirm(otp)
+        .then(function(){
 
-        alert("Invalid OTP");
-    }
+            let newPass = prompt("Enter New Password");
+
+            if(
+                newPass &&
+                newPass.trim() !== ""
+            ){
+
+                localStorage.setItem(
+                    "dashboardPassword",
+                    newPass
+                );
+
+                alert(
+                    "Password Changed Successfully"
+                );
+
+            } else {
+
+                alert("Password cannot be empty");
+            }
+
+        })
+        .catch(function(error){
+
+            alert("Invalid OTP");
+
+            console.log(error);
+
+        });
+
+    })
+    .catch(function(error){
+
+        console.log(error);
+
+        alert(
+            "OTP Send Failed\nCheck phone number or Firebase setup"
+        );
+
+    });
 }
 
+/* LOGOUT */
 function logout(){
 
     localStorage.removeItem("isLoggedIn");
