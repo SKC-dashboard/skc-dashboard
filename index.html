@@ -1270,10 +1270,20 @@ function login(){
 
     // DEFAULT PASSWORD
     let savedPass =
-    localStorage.getItem("dashboardPassword") || "170720";
+    localStorage.getItem("dashboardPassword");
+
+    // IF NO PASSWORD SAVED
+    if(!savedPass){
+        savedPass = "170720";
+        localStorage.setItem("dashboardPassword", "170720");
+    }
 
     // DEFAULT LOGIN ID
     let savedId = "9173321079";
+
+    console.log("Entered ID:", enteredId);
+    console.log("Entered Pass:", enteredPass);
+    console.log("Saved Pass:", savedPass);
 
     if(
         enteredId === savedId &&
@@ -1293,7 +1303,6 @@ function login(){
 
     }
 }
-
 /* ENTER KEY LOGIN */
 document.addEventListener("DOMContentLoaded", function(){
 
