@@ -837,22 +837,45 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.title {
-    animation: fadeUp 0.6s ease-out;
+.title{
+    animation: zoomTitle 0.7s ease;
 }
 
-.subtitle {
-    animation: fadeUp 0.9s ease-out;
+.subtitle{
+    animation: zoomSubtitle 1s ease;
 }
 
-@keyframes fadeUp {
-    from {
-        transform: translateY(20px);
+@keyframes zoomTitle{
+
+    0%{
         opacity: 0;
+        transform: scale(0.5);
     }
-    to {
-        transform: translateY(0);
+
+    70%{
+        transform: scale(1.05);
+    }
+
+    100%{
         opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes zoomSubtitle{
+
+    0%{
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    70%{
+        transform: scale(1.03);
+    }
+
+    100%{
+        opacity: 1;
+        transform: scale(1);
     }
 }
 /* =========================
