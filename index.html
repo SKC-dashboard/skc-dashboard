@@ -19,7 +19,7 @@ const firebaseConfig = {
     authDomain: "skc-dashboard-3eaca.firebaseapp.com",
     databaseURL: "https://skc-dashboard-3eaca-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "skc-dashboard-3eaca",
-    storageBucket: "skc-dashboard-3eaca.firebasestorage.app",
+    storageBucket: "skc-dashboard-3eaca.appspot.com",
     messagingSenderId: "229004472072",
     appId: "1:229004472072:web:ab83017636f1d41ea8c6bd"
   };
@@ -346,13 +346,13 @@ li.innerHTML = `
 .modern-login-box{
 
     width: 100%;
-    max-width: 380px;
+    max-width: 360px;
 
     background: white;
 
     border-radius: 24px;
 
-    padding: 30px 22px;
+    padding: 22px 18px;
 
     box-sizing: border-box;
 
@@ -529,40 +529,34 @@ li.innerHTML = `
 @media(max-width:768px){
 
     .modern-login-box{
-
-        max-width: 100%;
-
-        padding: 24px 18px;
-
-        border-radius: 20px;
+        width: 95%;
+        max-width: 340px;
+        padding: 20px 15px;
+        border-radius: 18px;
     }
 
     .modern-logo{
-
-        width: 95px;
-        height: 95px;
+        width: 75px;
+        height: 75px;
     }
 
     .modern-title{
-
-        font-size: 32px;
-    }
-
-    .modern-subtitle{
-
         font-size: 24px;
     }
 
+    .modern-subtitle{
+        font-size: 18px;
+        margin-bottom: 25px;
+    }
+
     .input-box input{
-
-        padding: 16px 50px;
-
-        font-size: 16px;
+        padding: 14px 45px;
+        font-size: 15px;
     }
 
     .modern-login-btn{
-
-        font-size: 20px;
+        padding: 14px;
+        font-size: 18px;
     }
 }
 .login-animate{
@@ -1269,13 +1263,14 @@ window.onload = function(){
 function login(){
 
     let enteredId =
-    document.getElementById("loginId").value;
+    document.getElementById("loginId").value.trim();
 
     let enteredPass =
-    document.getElementById("loginPass").value;
+    document.getElementById("loginPass").value.trim();
 
+    // DEFAULT PASSWORD
     let savedPass =
-    localStorage.getItem("dashboardPassword");
+    localStorage.getItem("dashboardPassword") || "170720";
 
     // DEFAULT LOGIN ID
     let savedId = "9173321079";
@@ -1285,21 +1280,17 @@ function login(){
         enteredPass === savedPass
     ){
 
-        localStorage.setItem(
-            "isLoggedIn",
-            "true"
-        );
+        localStorage.setItem("isLoggedIn", "true");
 
-        document.getElementById(
-            "loginPage"
-        ).style.display = "none";
+        document.getElementById("loginPage").style.display = "none";
+
+        document.getElementById("errorMsg").innerHTML = "";
 
     } else {
 
-        document.getElementById(
-            "errorMsg"
-        ).innerHTML =
+        document.getElementById("errorMsg").innerHTML =
         "Invalid Login ID or Password";
+
     }
 }
 
@@ -1343,9 +1334,7 @@ function forgotPassword(){
 
     renderRecaptcha();
 
-    if(!phoneNumber){
-        return;
-    }
+    let phoneNumber = "+919173321079";
 
     auth.signInWithPhoneNumber(
         phoneNumber,
