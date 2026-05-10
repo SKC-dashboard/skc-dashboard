@@ -9,7 +9,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
 <script>
 
@@ -29,7 +28,6 @@ const storage = firebase.storage();
 storage.setMaxUploadRetryTime(60000);
 
 const db = firebase.database();
-const auth = firebase.auth();
     
 let gstClients = [];
 let itrClients = [];
@@ -831,6 +829,7 @@ button {
 
 <body>
 <!-- LOGIN PAGE -->
+<!-- LOGIN PAGE -->
 <div id="loginPage">
 
     <div class="login-box login-animate">
@@ -840,27 +839,18 @@ button {
         <h2>SK Consultant</h2>
 
         <input
-            type="text"
-            id="phoneNumber"
-            placeholder="Enter Mobile Number"
+            type="password"
+            id="loginPass"
+            placeholder="Enter Password"
         >
 
-        <div id="recaptcha-container"></div>
-
-        <button onclick="sendOTP()">
-            Send OTP
+        <button onclick="login()">
+            Login
         </button>
 
-        <input
-            type="text"
-            id="otpCode"
-            placeholder="Enter OTP"
-            style="margin-top:15px;"
-        >
-
-        <button onclick="verifyOTP()">
-            Verify & Login
-        </button>
+        <div class="forgot-btn" onclick="forgotPassword()">
+            Forgot Password?
+        </div>
 
         <div id="errorMsg"></div>
 
@@ -1042,76 +1032,99 @@ window.onload = function(){
         document.getElementById("loginPage").style.display = "none";
     }
 };
+/* LOGIN SYSTEM */
 
-function renderRecaptcha(){
-
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-        'recaptcha-container',
-        {
-            'size':'normal',
-            'callback': function(response){
-                console.log("Recaptcha Verified");
-            }
-        }
-    );
-
-    recaptchaVerifier.render();
+if(!localStorage.getItem("dashboardPassword")){
+    localStorage.setItem("dashboardPassword", "admin123");
 }
 
-function sendOTP(){
+window.onload = function(){
 
-    let number = document.getElementById("phoneNumber").value;
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-    if(!number.startsWith("+")){
-        number = "+91" + number;
+    if(isLoggedIn === "true"){
+        document.getElementById("loginPage").style.display = "none";
     }
+};
 
-    auth.signInWithPhoneNumber(number, window.recaptchaVerifier)
-    .then(function(confirmationResult){
+function login(){
 
-        window.confirmationResult = confirmationResult;
+    let pass = document.getElementById("loginPass").value;
 
-        document.getElementById("errorMsg").innerHTML =
-        "OTP Sent Successfully";
+    let savedPass = localStorage.getItem("dashboardPassword");
 
-    })
-    .catch(function(error){
-
-        document.getElementById("errorMsg").innerHTML =
-        error.message;
-
-    });
-}
-
-function verifyOTP(){
-
-    let code = document.getElementById("otpCode").value;
-
-    if(!window.confirmationResult){
-        document.getElementById("errorMsg").innerHTML =
-        "Please send OTP first";
-        return;
-    }
-
-    confirmationResult.confirm(code)
-
-    .then(function(result){
+    if(pass === savedPass){
 
         localStorage.setItem("isLoggedIn", "true");
 
         document.getElementById("loginPage").style.display = "none";
 
-        document.getElementById("errorMsg").innerHTML =
-        "Login Successful";
-
-    })
-
-    .catch(function(error){
+    } else {
 
         document.getElementById("errorMsg").innerHTML =
-        error.message;
+        "Wrong Password";
+    }
+}
+
+/* ENTER KEY LOGIN */
+document.addEventListener("DOMContentLoaded", function(){
+
+    document.getElementById("loginPass")
+    .addEventListener("keypress", function(e){
+
+        if(e.key === "Enter"){
+            login();
+        }
 
     });
+
+});
+
+/* FORGOT PASSWORD WITH OTP */
+function forgotPassword(){
+
+    let mobile = prompt("Enter registered mobile number");
+
+    if(mobile !== "9173321079"){
+        alert("Mobile number not registered");
+        return;
+    }
+
+    // GENERATE OTP
+    let generatedOTP =
+    Math.floor(100000 + Math.random() * 900000).toString();
+
+    // DEMO OTP
+    alert("Your OTP is: " + generatedOTP);
+
+    let enteredOTP = prompt("Enter OTP");
+
+    if(enteredOTP === generatedOTP){
+
+        let newPass = prompt("Enter New Password");
+
+        if(newPass && newPass.trim() !== ""){
+
+            localStorage.setItem("dashboardPassword", newPass);
+
+            alert("Password Changed Successfully");
+
+        } else {
+
+            alert("Password cannot be empty");
+        }
+
+    } else {
+
+        alert("Invalid OTP");
+    }
+}
+
+function logout(){
+
+    localStorage.removeItem("isLoggedIn");
+
+    location.reload();
 }
 function forgotPassword(){
 
