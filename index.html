@@ -1330,7 +1330,9 @@ window.recaptchaVerifier = null;
 
 function renderRecaptcha(){
 
-    if(window.recaptchaVerifier) return;
+    if(window.recaptchaVerifier){
+        return;
+    }
 
     window.recaptchaVerifier =
     new firebase.auth.RecaptchaVerifier(
@@ -1340,7 +1342,7 @@ function renderRecaptcha(){
         }
     );
 
-    recaptchaVerifier.render();
+    window.recaptchaVerifier.render();
 }
 
 /* FORGOT PASSWORD */
@@ -1356,8 +1358,6 @@ function forgotPassword(){
     )
     .then(function(confirmationResult){
 
-        window.confirmationResult = confirmationResult;
-
         let otp = prompt("Enter OTP");
 
         if(!otp){
@@ -1365,23 +1365,19 @@ function forgotPassword(){
         }
 
         confirmationResult.confirm(otp)
+
         .then(function(){
 
             let newPass = prompt("Enter New Password");
 
-            if(
-                newPass &&
-                newPass.trim() !== ""
-            ){
+            if(newPass && newPass.trim() !== ""){
 
                 localStorage.setItem(
                     "dashboardPassword",
                     newPass
                 );
 
-                alert(
-                    "Password Changed Successfully"
-                );
+                alert("Password Changed Successfully");
 
             } else {
 
@@ -1389,22 +1385,22 @@ function forgotPassword(){
             }
 
         })
+
         .catch(function(error){
 
-            alert("Invalid OTP");
-
             console.log(error);
+
+            alert("Invalid OTP");
 
         });
 
     })
+
     .catch(function(error){
 
         console.log(error);
 
-        alert(
-            "OTP Send Failed\nCheck phone number or Firebase setup"
-        );
+        alert(error.message);
 
     });
 }
