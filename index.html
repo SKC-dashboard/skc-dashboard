@@ -1263,16 +1263,7 @@ if(!localStorage.getItem("dashboardPassword")){
     localStorage.setItem("dashboardPassword", "170720");
 }
 
-/* AUTO LOGIN CHECK */
-window.onload = function(){
-
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-    if(isLoggedIn === "true"){
-        document.getElementById("loginPage").style.display = "none";
-    }
-};
-
+    
 /* LOGIN */
 function login(){
 
