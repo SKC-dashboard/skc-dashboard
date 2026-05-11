@@ -50,6 +50,10 @@ db.ref("gstClients").once("value", snapshot => {
 
     renderGST();
     updateAll();
+    loadUploadClients();
+    loadSettingsClients();
+
+
 });
 function loadUploadClients(){
 
@@ -137,6 +141,8 @@ db.ref("itrClients").once("value", snapshot => {
 
     renderITR();
     updateAll();
+    loadUploadClients();
+    loadSettingsClients();
 
 });
 function updateClient(){
@@ -1512,6 +1518,8 @@ function addGST(){
 
     renderGST();
     updateAll();
+    loadUploadClients();
+    loadSettingsClients()
 
     db.ref("gstClients").push(gstClients[gstClients.length - 1]);
 
@@ -1539,6 +1547,8 @@ function addITR(){
 
     renderITR();
     updateAll();
+    loadUploadClients();
+    loadSettingsClients();
 
     db.ref("itrClients").push(itrClients[itrClients.length - 1]);
 
