@@ -238,7 +238,7 @@ let folder = type + "/" + safeName;
     fileList.innerHTML = "<li>Loading...</li>";
 
     db.ref("files/" + type + "/" + client.firebaseKey)
-    .on("value")
+    .once("value")
     .then(snapshot => {
 
         fileList.innerHTML = "";
@@ -1705,7 +1705,7 @@ function deleteFile(type, clientKey, fileURL){
 
     // DELETE FROM DATABASE FIRST
     db.ref("files/" + type + "/" + clientKey)
-    .on("value")
+    .once("value")
     .then(snapshot => {
 
         let data = snapshot.val();
