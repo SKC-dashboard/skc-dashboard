@@ -60,22 +60,40 @@ function loadUploadClients(){
     let type = document.getElementById("uploadType").value;
     let select = document.getElementById("uploadClientSelect");
 
+    // SAVE CURRENT VALUE
+    let oldValue = select.value;
+
     select.innerHTML = "";
 
     let list = (type === "gst") ? gstClients : itrClients;
 
-    list.forEach((c, i) => {
+    list.forEach((c) => {
 
         let option = document.createElement("option");
 
-        option.value = i;
-        option.text = c.trade + " (" + (c.gstin || c.pan) + ")";
+        // USE FIREBASE KEY
+        option.value = c.firebaseKey;
+
+        option.text =
+        c.trade + " (" + (c.gstin || c.pan) + ")";
 
         select.appendChild(option);
 
     });
 
-    // AUTO LOAD FILES
+    // LOAD SAVED CLIENT
+    let savedClient =
+    localStorage.getItem("selectedUploadClient");
+
+    if(savedClient){
+        select.value = savedClient;
+    }
+
+    // FALLBACK
+    if(select.value === "" && list.length > 0){
+        select.value = list[0].firebaseKey;
+    }
+
     loadFiles();
 }
 function loadSettingsClients(){
@@ -90,7 +108,7 @@ function loadSettingsClients(){
 
     list.forEach((c, i) => {
         let option = document.createElement("option");
-        option.value = i;
+        option.value = c.firebaseKey;
         option.text = c.trade;
         select.appendChild(option);
     });
@@ -1356,6 +1374,16 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
 });
+    // SAVE SELECTED CLIENT
+document.getElementById("uploadClientSelect")
+.addEventListener("change", function(){
+
+    localStorage.setItem(
+        "selectedUploadClient",
+        this.value
+    );
+
+});
 
 /* =========================
    FIREBASE OTP RESET
@@ -1770,9 +1798,14 @@ function uploadFile(){
     }
 
     let type = document.getElementById("uploadType").value;
-    let index = document.getElementById("uploadClientSelect").value;
+    let selectedKey =
+    document.getElementById("uploadClientSelect").value;
 
-    let client = (type === "gst" ? gstClients : itrClients)[index];
+    let list =
+    (type === "gst") ? gstClients : itrClients;
+
+    let client =
+    list.find(c => c.firebaseKey === selectedKey);
 
     if(!client){
         alert("Select client");
