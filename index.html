@@ -1302,6 +1302,11 @@ function login(){
 
         localStorage.setItem("isLoggedIn", "true");
 
+        // SAVE LOGIN TIME
+        localStorage.setItem(
+            "loginExpiry",
+            Date.now() + (24 * 60 * 60 * 1000)
+        );
         document.getElementById("loginPage").style.display = "none";
 
         document.getElementById("errorMsg").innerHTML = "";
@@ -1804,27 +1809,57 @@ function searchFiles(){
 }
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-if(isLoggedIn === "true"){
-    document.getElementById("loginPage").style.display = "none";
-}
+    const isLoggedIn =
+    localStorage.getItem("isLoggedIn");
 
-    document.getElementById("uploadType").addEventListener("change", loadUploadClients);
-    document.getElementById("typeSelect").addEventListener("change", loadSettingsClients);
-    document.getElementById("clientSelect").addEventListener("change", loadClientDetails);
-    document.getElementById("uploadClientSelect").addEventListener("change", loadFiles);
-    document.getElementById("uploadType").addEventListener("change", loadFiles);
-         
+    const loginExpiry =
+    localStorage.getItem("loginExpiry");
+
+    // AUTO LOGOUT AFTER 24 HOURS
+    if(
+        isLoggedIn === "true" &&
+        loginExpiry &&
+        Date.now() < Number(loginExpiry)
+    ){
+
+        document.getElementById("loginPage")
+        .style.display = "none";
+
+    } else {
+
+        // SESSION EXPIRED
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("loginExpiry");
+
+        document.getElementById("loginPage")
+        .style.display = "flex";
+    }
+
+    document.getElementById("uploadType")
+    .addEventListener("change", loadUploadClients);
+
+    document.getElementById("typeSelect")
+    .addEventListener("change", loadSettingsClients);
+
+    document.getElementById("clientSelect")
+    .addEventListener("change", loadClientDetails);
+
+    document.getElementById("uploadClientSelect")
+    .addEventListener("change", loadFiles);
+
+    document.getElementById("uploadType")
+    .addEventListener("change", loadFiles);
 
     loadUploadClients();
     loadSettingsClients();
 
     // RESTORE LAST OPENED SECTION
-let savedSection =
-localStorage.getItem("activeSection") || "dashboard";
+    let savedSection =
+    localStorage.getItem("activeSection")
+    || "dashboard";
 
-showSection(savedSection);
+    showSection(savedSection);
 });
 </script>
 
