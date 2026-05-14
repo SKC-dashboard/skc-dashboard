@@ -34,7 +34,7 @@ const auth = firebase.auth();
 let gstClients = [];
 let itrClients = [];
 
-db.ref("gstClients").once("value", snapshot => {
+db.ref("gstClients").on("value", snapshot => {
     let data = snapshot.val();
 
     gstClients = [];
@@ -161,7 +161,7 @@ function loadClientDetails(){
     client.group || "";
 }
 /* FIREBASE LOAD ITR */
-db.ref("itrClients").once("value", snapshot => {
+db.ref("itrClients").on("value", snapshot => {
     let data = snapshot.val();
 
     itrClients = [];
