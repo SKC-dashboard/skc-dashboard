@@ -35,16 +35,19 @@ let gstClients = [];
 let itrClients = [];
 
 db.ref("gstClients").on("value", snapshot => {
+
     let data = snapshot.val();
 
     gstClients = [];
 
     if(data){
         Object.keys(data).forEach(key => {
+
             gstClients.push({
                 ...data[key],
-                firebaseKey: key   // ✅ STORE KEY
+                firebaseKey: key
             });
+
         });
     }
 
@@ -162,16 +165,19 @@ function loadClientDetails(){
 }
 /* FIREBASE LOAD ITR */
 db.ref("itrClients").on("value", snapshot => {
+
     let data = snapshot.val();
 
     itrClients = [];
 
     if(data){
         Object.keys(data).forEach(key => {
+
             itrClients.push({
                 ...data[key],
-                firebaseKey: key   // ✅ STORE KEY
+                firebaseKey: key
             });
+
         });
     }
 
