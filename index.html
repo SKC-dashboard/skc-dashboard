@@ -1146,7 +1146,16 @@ button {
     </div>
 
     <button onclick="addGST()">Add</button>
-    <table><tbody id="gstTable"></tbody></table>
+
+    <input
+    type="text"
+    id="gstSearch"
+    placeholder="Search GST Client..."
+    onkeyup="searchGST()"
+>
+    <table>
+        <tbody id="gstTable"></tbody>
+    </table>
 </div>
 
 <!-- ITR -->
@@ -1163,7 +1172,18 @@ button {
     </div>
 
     <button onclick="addITR()">Add</button>
-    <table><tbody id="itrTable"></tbody></table>
+    <button onclick="addITR()">Add</button>
+
+<input
+    type="text"
+    id="itrSearch"
+    placeholder="Search ITR Client..."
+    onkeyup="searchITR()"
+>
+
+    <table>
+        <tbody id="itrTable"></tbody>
+    </table>
 </div>
 
 <!-- REPORTS -->
@@ -1599,7 +1619,47 @@ function renderITR(){
         </tr>
     `).join("");
 }
+function searchGST(){
 
+    let input =
+    document.getElementById("gstSearch")
+    .value.toLowerCase();
+
+    let rows =
+    document.querySelectorAll("#gstTable tr");
+
+    rows.forEach(row => {
+
+        let text =
+        row.innerText.toLowerCase();
+
+        row.style.display =
+        text.includes(input)
+        ? ""
+        : "none";
+    });
+}
+
+function searchITR(){
+
+    let input =
+    document.getElementById("itrSearch")
+    .value.toLowerCase();
+
+    let rows =
+    document.querySelectorAll("#itrTable tr");
+
+    rows.forEach(row => {
+
+        let text =
+        row.innerText.toLowerCase();
+
+        row.style.display =
+        text.includes(input)
+        ? ""
+        : "none";
+    });
+}
 /* UPDATE ALL */
 function updateAll(){
     document.getElementById("gstCount").innerText = gstClients.length;
