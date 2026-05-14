@@ -54,6 +54,21 @@ db.ref("gstClients").once("value", snapshot => {
     loadSettingsClients();
 
 });
+    auth.onAuthStateChanged(user => {
+
+    if(user){
+
+        document.getElementById("loginPage")
+        .style.display = "none";
+
+    } else {
+
+        document.getElementById("loginPage")
+        .style.display = "flex";
+
+    }
+
+});
 function loadUploadClients(){
 
     let type = document.getElementById("uploadType").value;
@@ -225,8 +240,8 @@ function deleteClient(){
     .then(() => {
 
         // ✅ STEP 2: DELETE FILES
-        let safeName = client.trade.replace(/[^a-zA-Z0-9]/g, "_");
-let folder = type + "/" + safeName;
+        let folder =
+        type + "/" + client.firebaseKey;
 
         let storageRef = storage.ref(folder);
 
@@ -261,7 +276,7 @@ let folder = type + "/" + safeName;
     fileList.innerHTML = "<li>Loading...</li>";
 
     db.ref("files/" + type + "/" + client.firebaseKey)
-    .once("value")
+    .on("value")
     .then(snapshot => {
 
         fileList.innerHTML = "";
@@ -1301,67 +1316,35 @@ button {
 /* =========================
    LOGIN SYSTEM
 ========================= */
-
-// DEFAULT LOGIN ID + PASSWORD
-
-if(!localStorage.getItem("dashboardPassword")){
-    localStorage.setItem("dashboardPassword", "170720");
-}
-
     
 /* LOGIN */
 function login(){
 
-    let enteredId =
+    let email =
     document.getElementById("loginId").value.trim();
 
-    let enteredPass =
+    let password =
     document.getElementById("loginPass").value.trim();
-    
-    // REMOVE SPACES
-    enteredId = enteredId.replace(/\s/g,'');
-    enteredPass = enteredPass.replace(/\s/g,'');
 
+    auth.signInWithEmailAndPassword(email, password)
 
-    // DEFAULT PASSWORD
-    let savedPass =
-    localStorage.getItem("dashboardPassword");
+    .then(() => {
 
-    // IF NO PASSWORD SAVED
-    if(!savedPass){
-        savedPass = "170720";
-        localStorage.setItem("dashboardPassword", "170720");
-    }
+        document.getElementById("loginPage")
+        .style.display = "none";
 
-    // DEFAULT LOGIN ID
-    let savedId = "9173321079";
+        document.getElementById("errorMsg")
+        .innerHTML = "";
 
-    console.log("Entered ID:", enteredId);
-    console.log("Entered Pass:", enteredPass);
-    console.log("Saved Pass:", savedPass);
+    })
 
-    if(
-        enteredId === savedId &&
-        enteredPass === savedPass
-    ){
+    .catch((error) => {
 
-        localStorage.setItem("isLoggedIn", "true");
+        document.getElementById("errorMsg")
+        .innerHTML = error.message;
 
-        // SAVE LOGIN TIME
-        localStorage.setItem(
-            "loginExpiry",
-            Date.now() + (24 * 60 * 60 * 1000)
-        );
-        document.getElementById("loginPage").style.display = "none";
+    });
 
-        document.getElementById("errorMsg").innerHTML = "";
-
-    } else {
-
-        document.getElementById("errorMsg").innerHTML =
-        "Invalid Login ID or Password";
-
-    }
 }
 /* ENTER KEY LOGIN */
 document.addEventListener("DOMContentLoaded", function(){
@@ -1413,73 +1396,31 @@ function renderRecaptcha(){
 /* FORGOT PASSWORD */
 function forgotPassword(){
 
-    renderRecaptcha();
+    let email = prompt("Enter your login email");
 
-    let phoneNumber = "+919173321079";
+    if(!email) return;
 
-    auth.signInWithPhoneNumber(
-        phoneNumber,
-        window.recaptchaVerifier
-    )
-    .then(function(confirmationResult){
+    auth.sendPasswordResetEmail(email)
 
-        let otp = prompt("Enter OTP");
-
-        if(!otp){
-            return;
-        }
-
-        confirmationResult.confirm(otp)
-
-        .then(function(){
-
-            let newPass = prompt("Enter New Password");
-
-            if(newPass && newPass.trim() !== ""){
-
-                localStorage.setItem(
-                    "dashboardPassword",
-                    newPass
-                );
-
-                alert("Password Changed Successfully");
-
-            } else {
-
-                alert("Password cannot be empty");
-            }
-
-        })
-
-        .catch(function(error){
-
-            console.log(error);
-
-            alert("Invalid OTP");
-
-        });
-
+    .then(() => {
+        alert("Password reset email sent");
     })
 
-    .catch(function(error){
-
-        console.log(error);
-
+    .catch((error) => {
         alert(error.message);
-
     });
 }
-
 /* LOGOUT */
     
 function logout(){
 
-    localStorage.removeItem("isLoggedIn");
+    auth.signOut().then(() => {
 
-    location.reload();
+        location.reload();
+
+    });
 
 }
-
 function clearSettingsFields(){
 
     document.getElementById("edit_trade").value = "";
@@ -1563,6 +1504,14 @@ function showSection(id){
 /* ADD */
 function addGST(){
 
+    if(
+    !gst_trade.value.trim() ||
+    !gst_gstin.value.trim()
+){
+    alert("Trade Name and GSTIN required");
+    return;
+}
+
     gstClients.push({
         trade: gst_trade.value,
         legal: gst_legal.value,
@@ -1594,6 +1543,13 @@ function addGST(){
 
 function addITR(){
 
+    if(
+    !itr_trade.value.trim() ||
+    !itr_pan.value.trim()
+){
+    alert("Trade Name and PAN required");
+    return;
+}
     itrClients.push({
         trade: itr_trade.value,
         legal: itr_legal.value,
@@ -1625,11 +1581,12 @@ function addITR(){
     /* GST AUTO LOGIN */
 function openGSTPortal(user, pass){
 
-    // SAVE DATA TEMPORARILY
-    localStorage.setItem("gstPortalUser", user);
-    localStorage.setItem("gstPortalPass", pass);
+    navigator.clipboard.writeText(
+        "Username: " + user + "\nPassword: " + pass
+    );
 
-    // OPEN GST PORTAL
+    alert("Username & Password copied");
+
     window.open(
         "https://services.gst.gov.in/services/login",
         "_blank"
@@ -1660,28 +1617,18 @@ function renderGST(){
             <!-- GST LOGIN BUTTON -->
             <td style="text-align:center;">
 
-                <a
-                    <span
-onclick='openGSTPortal(${JSON.stringify(c.user)}, ${JSON.stringify(c.pass)})'
-style="
-    cursor:pointer;
-    font-size:22px;
-"
-title="Open GST Portal"
->
-🏛️
-</span>
-                    target="_blank"
-                    style="
-                        text-decoration:none;
-                        font-size:22px;
-                    "
-                    title="Open GST Portal"
-                >
-                    🏛️
-                </a>
+    <span
+        onclick='openGSTPortal(${JSON.stringify(c.user)}, ${JSON.stringify(c.pass)})'
+        style="
+            cursor:pointer;
+            font-size:22px;
+        "
+        title="Open GST Portal"
+    >
+        🏛️
+    </span>
 
-            </td>
+</td>
 
             <td>${c.trade}</td>
             <td>${c.legal}</td>
@@ -1867,9 +1814,10 @@ function uploadFile(){
     }
 
     // SAFE FOLDER NAME
-    let safeName = client.trade.replace(/[^a-zA-Z0-9]/g, "_");
-
-    let filePath = type + "/" + safeName + "/" + file.name;
+    let filePath =
+    type + "/" +
+    client.firebaseKey + "/" +
+    file.name;
 
     let storageRef = storage.ref().child(filePath);
 
@@ -1910,7 +1858,7 @@ function deleteFile(type, clientKey, fileURL){
 
     // DELETE FROM DATABASE FIRST
     db.ref("files/" + type + "/" + clientKey)
-    .once("value")
+    .on("value")
     .then(snapshot => {
 
         let data = snapshot.val();
@@ -2015,32 +1963,6 @@ function searchFiles(){
 }
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
-
-    const isLoggedIn =
-    localStorage.getItem("isLoggedIn");
-
-    const loginExpiry =
-    localStorage.getItem("loginExpiry");
-
-    // AUTO LOGOUT AFTER 24 HOURS
-    if(
-        isLoggedIn === "true" &&
-        loginExpiry &&
-        Date.now() < Number(loginExpiry)
-    ){
-
-        document.getElementById("loginPage")
-        .style.display = "none";
-
-    } else {
-
-        // SESSION EXPIRED
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("loginExpiry");
-
-        document.getElementById("loginPage")
-        .style.display = "flex";
-    }
 
     document.getElementById("uploadType")
     .addEventListener("change", loadUploadClients);
