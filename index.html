@@ -124,7 +124,9 @@ function loadClientDetails(){
         return;
     }
 
-    let client = (type === "gst" ? gstClients : itrClients)[index];
+    let list = (type === "gst") ? gstClients : itrClients;
+
+    let client = list.find(c => c.firebaseKey === index);
 
     if(!client){
         clearSettingsFields();
@@ -169,8 +171,7 @@ function updateClient(){
     let index = document.getElementById("clientSelect").value;
 
     let list = type === "gst" ? gstClients : itrClients;
-    let client = list[index];
-
+    let client = list.find(c => c.firebaseKey === index);
     if(!client){
         alert("Select client first");
         return;
@@ -208,7 +209,7 @@ function deleteClient(){
     let index = document.getElementById("clientSelect").value;
 
     let list = type === "gst" ? gstClients : itrClients;
-    let client = list[index];
+    let client = list.find(c => c.firebaseKey === index);
 
     if(!client){
         alert("Select client first");
@@ -249,7 +250,9 @@ let folder = type + "/" + safeName;
     let type = document.getElementById("uploadType").value;
     let index = document.getElementById("uploadClientSelect").value;
 
-    let client = (type === "gst" ? gstClients : itrClients)[index];
+    let list = (type === "gst") ? gstClients : itrClients;
+
+    let client = list.find(c => c.firebaseKey === index);
 
     if(!client) return;
 
@@ -1619,6 +1622,19 @@ function addITR(){
     loadUploadClients();
     loadSettingsClients();
 }
+    /* GST AUTO LOGIN */
+function openGSTPortal(user, pass){
+
+    // SAVE DATA TEMPORARILY
+    localStorage.setItem("gstPortalUser", user);
+    localStorage.setItem("gstPortalPass", pass);
+
+    // OPEN GST PORTAL
+    window.open(
+        "https://services.gst.gov.in/services/login",
+        "_blank"
+    );
+}
 
 /* RENDER FIXED */
 function renderGST(){
@@ -1626,6 +1642,7 @@ function renderGST(){
     document.getElementById("gstTable").innerHTML = `
 
     <tr>
+        <th>GST</th>
         <th>Trade Name</th>
         <th>Legal Name</th>
         <th>GSTIN</th>
@@ -1639,6 +1656,33 @@ function renderGST(){
     gstClients.map((c,i)=>`
 
         <tr>
+
+            <!-- GST LOGIN BUTTON -->
+            <td style="text-align:center;">
+
+                <a
+                    <span
+onclick='openGSTPortal(${JSON.stringify(c.user)}, ${JSON.stringify(c.pass)})'
+style="
+    cursor:pointer;
+    font-size:22px;
+"
+title="Open GST Portal"
+>
+🏛️
+</span>
+                    target="_blank"
+                    style="
+                        text-decoration:none;
+                        font-size:22px;
+                    "
+                    title="Open GST Portal"
+                >
+                    🏛️
+                </a>
+
+            </td>
+
             <td>${c.trade}</td>
             <td>${c.legal}</td>
             <td>${c.gstin}</td>
@@ -1647,6 +1691,7 @@ function renderGST(){
 
             <td>
                 <div class="pass-cell">
+
                     <span
                         id="gst_pass_${i}"
                         class="pass-text"
@@ -1656,11 +1701,16 @@ function renderGST(){
                         ••••••
                     </span>
 
-                    <span onclick="toggleTablePass('gst_pass_${i}', this)">
+                    <span
+                        onclick="toggleTablePass('gst_pass_${i}', this)"
+                        style="cursor:pointer;"
+                    >
                         👁️
                     </span>
+
                 </div>
             </td>
+
         </tr>
 
     `).join("");
@@ -1717,7 +1767,7 @@ function searchGST(){
     .value.toLowerCase();
 
     let rows =
-    document.querySelectorAll("#gstTable tr");
+    document.querySelectorAll("#gstTable tr:not(:first-child)");
 
     rows.forEach(row => {
 
@@ -1738,7 +1788,7 @@ function searchITR(){
     .value.toLowerCase();
 
     let rows =
-    document.querySelectorAll("#itrTable tr");
+    document.querySelectorAll("#itrTable tr:not(:first-child)");
 
     rows.forEach(row => {
 
