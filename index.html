@@ -19,7 +19,7 @@ const firebaseConfig = {
     authDomain: "skc-dashboard-3eaca.firebaseapp.com",
     databaseURL: "https://skc-dashboard-3eaca-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "skc-dashboard-3eaca",
-    storageBucket: "skc-dashboard-3eaca.appspot.com",
+    storageBucket: "skc-dashboard-3eaca.firebasestorage.app",
     messagingSenderId: "229004472072",
     appId: "1:229004472072:web:ab83017636f1d41ea8c6bd"
   };
@@ -123,6 +123,8 @@ function loadClientDetails(){
         type === "gst"
         ? (client.gstin || "")
         : (client.pan || "");
+    document.getElementById("edit_group").value =
+    client.group || "";
 }
 /* FIREBASE LOAD ITR */
 db.ref("itrClients").once("value", snapshot => {
@@ -160,6 +162,7 @@ function updateClient(){
     let updatedData = {
         trade: document.getElementById("edit_trade").value,
         legal: document.getElementById("edit_legal").value,
+        group: document.getElementById("edit_group").value,
         user: document.getElementById("edit_user").value,
         pass: document.getElementById("edit_pass").value
     };
@@ -1174,7 +1177,6 @@ button {
     </div>
 
     <button onclick="addITR()">Add</button>
-    <button onclick="addITR()">Add</button>
 
 <input
     type="text"
@@ -1231,6 +1233,7 @@ button {
         <input id="edit_trade" placeholder="Trade Name">
         <input id="edit_legal" placeholder="Legal Name">
         <input id="edit_extra" placeholder="GSTIN / PAN">
+        <input id="edit_group" placeholder="Group">
         <input id="edit_user" placeholder="Username">
 
         <div class="pass-wrap">
@@ -1452,6 +1455,7 @@ function clearSettingsFields(){
     document.getElementById("edit_trade").value = "";
     document.getElementById("edit_legal").value = "";
     document.getElementById("edit_extra").value = "";
+    document.getElementById("edit_group").value = "";
     document.getElementById("edit_user").value = "";
     document.getElementById("edit_pass").value = "";
 
