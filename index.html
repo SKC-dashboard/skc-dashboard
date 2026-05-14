@@ -1138,6 +1138,7 @@ button {
     <input id="gst_trade" placeholder="Trade Name">
     <input id="gst_legal" placeholder="Legal Name">
     <input id="gst_gstin" placeholder="GSTIN">
+    <input id="gst_group" placeholder="Group">
     <input id="gst_user" placeholder="Username">
 
     <div class="pass-wrap">
@@ -1164,6 +1165,7 @@ button {
     <input id="itr_trade" placeholder="Trade Name">
     <input id="itr_legal" placeholder="Legal Name">
     <input id="itr_pan" placeholder="PAN">
+    <input id="itr_group" placeholder="Group">
     <input id="itr_user" placeholder="Username">
 
     <div class="pass-wrap">
@@ -1531,6 +1533,7 @@ function addGST(){
         trade: gst_trade.value,
         legal: gst_legal.value,
         gstin: gst_gstin.value,
+        group: gst_group.value,
         user: gst_user.value,
         pass: gst_pass.value
     });
@@ -1546,6 +1549,7 @@ function addGST(){
     document.getElementById("gst_trade").value = "";
     document.getElementById("gst_legal").value = "";
     document.getElementById("gst_gstin").value = "";
+    document.getElementById("gst_group").value = "";
     document.getElementById("gst_user").value = "";
     document.getElementById("gst_pass").value = "";
 
@@ -1560,6 +1564,7 @@ function addITR(){
         trade: itr_trade.value,
         legal: itr_legal.value,
         pan: itr_pan.value,
+        group: itr_group.value,
         user: itr_user.value,
         pass: itr_pass.value
     });
@@ -1575,6 +1580,7 @@ function addITR(){
     document.getElementById("itr_trade").value = "";
     document.getElementById("itr_legal").value = "";
     document.getElementById("itr_pan").value = "";
+    document.getElementById("itr_group").value = "";
     document.getElementById("itr_user").value = "";
     document.getElementById("itr_pass").value = "";
 
@@ -1585,38 +1591,92 @@ function addITR(){
 
 /* RENDER FIXED */
 function renderGST(){
-    document.getElementById("gstTable").innerHTML =
+
+    document.getElementById("gstTable").innerHTML = `
+
+    <tr>
+        <th>Trade Name</th>
+        <th>Legal Name</th>
+        <th>GSTIN</th>
+        <th>Group</th>
+        <th>Username</th>
+        <th>Password</th>
+    </tr>
+
+    ` +
+
     gstClients.map((c,i)=>`
+
         <tr>
             <td>${c.trade}</td>
             <td>${c.legal}</td>
             <td>${c.gstin}</td>
+            <td>${c.group || ""}</td>
             <td>${c.user}</td>
+
             <td>
                 <div class="pass-cell">
-                    <span id="gst_pass_${i}" class="pass-text" data-pass="${c.pass}" data-visible="0">••••••</span>
-                    <span onclick="toggleTablePass('gst_pass_${i}', this)">👁️</span>
+                    <span
+                        id="gst_pass_${i}"
+                        class="pass-text"
+                        data-pass="${c.pass}"
+                        data-visible="0"
+                    >
+                        ••••••
+                    </span>
+
+                    <span onclick="toggleTablePass('gst_pass_${i}', this)">
+                        👁️
+                    </span>
                 </div>
             </td>
         </tr>
+
     `).join("");
 }
 
 function renderITR(){
-    document.getElementById("itrTable").innerHTML =
+
+    document.getElementById("itrTable").innerHTML = `
+
+    <tr>
+        <th>Trade Name</th>
+        <th>Legal Name</th>
+        <th>PAN</th>
+        <th>Group</th>
+        <th>Username</th>
+        <th>Password</th>
+    </tr>
+
+    ` +
+
     itrClients.map((c,i)=>`
+
         <tr>
             <td>${c.trade}</td>
             <td>${c.legal}</td>
             <td>${c.pan}</td>
+            <td>${c.group || ""}</td>
             <td>${c.user}</td>
+
             <td>
                 <div class="pass-cell">
-                    <span id="itr_pass_${i}" class="pass-text" data-pass="${c.pass}" data-visible="0">••••••</span>
-                    <span onclick="toggleTablePass('itr_pass_${i}', this)">👁️</span>
+                    <span
+                        id="itr_pass_${i}"
+                        class="pass-text"
+                        data-pass="${c.pass}"
+                        data-visible="0"
+                    >
+                        ••••••
+                    </span>
+
+                    <span onclick="toggleTablePass('itr_pass_${i}', this)">
+                        👁️
+                    </span>
                 </div>
             </td>
         </tr>
+
     `).join("");
 }
 function searchGST(){
