@@ -19,7 +19,7 @@ const firebaseConfig = {
     authDomain: "skc-dashboard-3eaca.firebaseapp.com",
     databaseURL: "https://skc-dashboard-3eaca-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "skc-dashboard-3eaca",
-    storageBucket: "skc-dashboard-3eaca.firebasestorage.app",
+    storageBucket: "skc-dashboard-3eaca.appspot.com",
     messagingSenderId: "229004472072",
     appId: "1:229004472072:web:ab83017636f1d41ea8c6bd"
   };
@@ -1799,7 +1799,9 @@ function uploadFile(){
         return;
     }
 
-    let type = document.getElementById("uploadType").value;
+    let type =
+    document.getElementById("uploadType").value;
+
     let selectedKey =
     document.getElementById("uploadClientSelect").value;
 
@@ -1814,49 +1816,54 @@ function uploadFile(){
         return;
     }
 
-    if(!client.firebaseKey){
-        alert("Client key missing");
-        return;
-    }
-
-    // SAFE FOLDER NAME
     let filePath =
     type + "/" +
     client.firebaseKey + "/" +
     file.name;
 
-    let storageRef = storage.ref().child(filePath);
+    let storageRef =
+    storage.ref().child(filePath);
 
     storageRef.put(file)
+
     .then(snapshot => {
         return snapshot.ref.getDownloadURL();
     })
+
     .then(url => {
 
-        return db.ref("files/" + type + "/" + client.firebaseKey).push({
+        return db.ref(
+            "files/" +
+            type + "/" +
+            client.firebaseKey
+        ).push({
+
             name: file.name,
             url: url,
             date: new Date().toLocaleString()
+
         });
 
     })
+
     .then(() => {
 
         alert("Uploaded Successfully");
 
         document.getElementById("fileInput").value = "";
 
-        loadUploadClients();
         loadFiles();
 
     })
+
     .catch(err => {
 
-        console.error(err);
+        console.log(err);
 
         alert("Upload Error: " + err.message);
 
     });
+
 }
 function deleteFile(type, clientKey, fileURL){
 
