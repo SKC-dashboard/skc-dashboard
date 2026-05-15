@@ -26,7 +26,7 @@ const firebaseConfig = {
   
 firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
-storage.setMaxUploadRetryTime(60000);
+storage.setMaxUploadRetryTime(15000);
 
 const db = firebase.database();
 const auth = firebase.auth();
@@ -1798,6 +1798,12 @@ function uploadFile(){
         return;
     }
 
+    // FILE SIZE LIMIT (20 MB)
+    if(file.size > 20 * 1024 * 1024){
+        alert("File too large. Max 20 MB allowed");
+        return;
+    }
+
     let type =
     document.getElementById("uploadType").value;
 
@@ -1815,54 +1821,92 @@ function uploadFile(){
         return;
     }
 
+    let uploadBtn =
+    event.target;
+
+    uploadBtn.disabled = true;
+    uploadBtn.innerText = "Uploading...";
+
     let filePath =
     type + "/" +
     client.firebaseKey + "/" +
     Date.now() + "_" + file.name;
 
     let storageRef =
-    storage.ref(filePath);
+    storage.ref().child(filePath);
 
-    storageRef.put(file)
-
-    .then(snapshot => snapshot.ref.getDownloadURL())
-
-    .then(url => {
-
-        return db.ref(
-            "files/" +
-            type + "/" +
-            client.firebaseKey
-        ).push({
-
-            name: file.name,
-            url: url,
-            date: new Date().toLocaleString()
-
-        });
-
-    })
-
-    .then(() => {
-
-        alert("Uploaded Successfully");
-
-        document.getElementById("fileInput").value = "";
-
-        loadFiles();
-
-    })
-
-    .catch(err => {
-
-        console.error(err);
-
-        alert(
-            "Upload Error: " +
-            err.message
-        );
-
+    // RESUMABLE FAST UPLOAD
+    let uploadTask =
+    storageRef.put(file, {
+        cacheControl: "public,max-age=31536000"
     });
+
+    uploadTask.on(
+
+        "state_changed",
+
+        (snapshot) => {
+
+            let progress =
+            Math.round(
+                (snapshot.bytesTransferred /
+                snapshot.totalBytes) * 100
+            );
+
+            uploadBtn.innerText =
+            "Uploading " + progress + "%";
+
+        },
+
+        (error) => {
+
+            console.log(error);
+
+            alert("Upload Error");
+
+            uploadBtn.disabled = false;
+            uploadBtn.innerText = "Upload";
+
+        },
+
+        () => {
+
+            uploadTask.snapshot.ref
+            .getDownloadURL()
+
+            .then(url => {
+
+                return db.ref(
+                    "files/" +
+                    type + "/" +
+                    client.firebaseKey
+                ).push({
+
+                    name: file.name,
+                    url: url,
+                    date: new Date().toLocaleString()
+
+                });
+
+            })
+
+            .then(() => {
+
+                alert("Uploaded Successfully");
+
+                document.getElementById("fileInput").value = "";
+
+                loadFiles();
+
+                uploadBtn.disabled = false;
+                uploadBtn.innerText = "Upload";
+
+            });
+
+        }
+
+    );
+
 }
 function deleteFile(type, clientKey, fileURL){
 
