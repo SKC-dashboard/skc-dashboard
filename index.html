@@ -1601,16 +1601,26 @@ function showSection(id){
     /* GST AUTO LOGIN */
 function openGSTPortal(user, pass){
 
+    // COPY CREDENTIALS
     navigator.clipboard.writeText(
         "Username: " + user + "\nPassword: " + pass
     );
 
-    alert("Username & Password copied");
-
+    // OPEN GST PORTAL
     window.open(
         "https://services.gst.gov.in/services/login",
         "_blank"
     );
+
+    // MODERN MESSAGE
+    setTimeout(() => {
+
+        alert(
+            "GST Login opened\n\nUsername & Password copied automatically.\n\nPaste using CTRL + V"
+        );
+
+    }, 500);
+
 }
 
 /* RENDER FIXED */
@@ -1619,7 +1629,7 @@ function renderGST(){
     document.getElementById("gstTable").innerHTML = `
 
     <tr>
-        <th style="width:55px;">🏛️</th>
+        <th>GST</th>
         <th>Trade Name</th>
         <th>Legal Name</th>
         <th>GSTIN</th>
