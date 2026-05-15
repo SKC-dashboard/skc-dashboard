@@ -19,10 +19,10 @@ const firebaseConfig = {
     authDomain: "skc-dashboard-3eaca.firebaseapp.com",
     databaseURL: "https://skc-dashboard-3eaca-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "skc-dashboard-3eaca",
-    storageBucket: "skc-dashboard-3eaca.appspot.com",
+    storageBucket: "skc-dashboard-3eaca.firebasestorage.app",
     messagingSenderId: "229004472072",
     appId: "1:229004472072:web:ab83017636f1d41ea8c6bd"
-  };
+};
   
 firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
@@ -1790,7 +1790,8 @@ function toggleTablePass(id, icon){
 /* REPORT */
 function uploadFile(){
 
-    let file = document.getElementById("fileInput").files[0];
+    let file =
+    document.getElementById("fileInput").files[0];
 
     if(!file){
         alert("Select file first");
@@ -1817,16 +1818,14 @@ function uploadFile(){
     let filePath =
     type + "/" +
     client.firebaseKey + "/" +
-    file.name;
+    Date.now() + "_" + file.name;
 
     let storageRef =
-    storage.ref().child(filePath);
+    storage.ref(filePath);
 
     storageRef.put(file)
 
-    .then(snapshot => {
-        return snapshot.ref.getDownloadURL();
-    })
+    .then(snapshot => snapshot.ref.getDownloadURL())
 
     .then(url => {
 
@@ -1856,12 +1855,14 @@ function uploadFile(){
 
     .catch(err => {
 
-        console.log(err);
+        console.error(err);
 
-        alert("Upload Error: " + err.message);
+        alert(
+            "Upload Error: " +
+            err.message
+        );
 
     });
-
 }
 function deleteFile(type, clientKey, fileURL){
 
