@@ -821,8 +821,6 @@ table {
     table-layout: auto;
 }
 /* GST LOGIN COLUMN SMALL */
-#gSTTable th:first-child,
-#gSTTable td:first-child,
 #gstTable th:first-child,
 #gstTable td:first-child{
     width: 55px;
@@ -1291,9 +1289,7 @@ button {
         onkeyup="searchGST()"
     >
 
-    <table>
-        <tbody id="gstTable"></tbody>
-    </table>
+<table id="gstTable"></table>
 
 </div>
 
@@ -1317,9 +1313,7 @@ button {
         onkeyup="searchITR()"
     >
 
-    <table>
-        <tbody id="itrTable"></tbody>
-    </table>
+<table id="itrTable"></table>
 
 </div>
       
@@ -1598,7 +1592,7 @@ function showSection(id){
     }
 }
 
-    /* GST AUTO LOGIN */
+/* GST AUTO LOGIN */
 function openGSTPortal(user, pass){
 
     // COPY CREDENTIALS
@@ -1611,6 +1605,8 @@ function openGSTPortal(user, pass){
         "https://services.gst.gov.in/services/login",
         "_blank"
     );
+
+}
 
 /* RENDER FIXED */
 function renderGST(){
