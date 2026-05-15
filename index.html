@@ -1183,18 +1183,15 @@ button {
 <!-- GST -->
 <div id="gst" class="section">
     <h2>GST Client</h2>
-    <input id="gst_trade" placeholder="Trade Name">
-    <input id="gst_legal" placeholder="Legal Name">
-    <input id="gst_gstin" placeholder="GSTIN">
-    <input id="gst_group" placeholder="Group">
-    <input id="gst_user" placeholder="Username">
-
-    <div class="pass-wrap">
-        <input id="gst_pass" type="password" placeholder="Password">
-        <span class="toggle-pass" onclick="togglePassword('gst_pass', this)">Show</span>
-    </div>
-
-    <button onclick="addGST()">Add</button>
+    <button style="
+background:#111;
+color:#d4af37;
+border:2px solid #d4af37;
+border-radius:10px;
+font-weight:bold;
+">
++ NEW CLIENT
+</button>
 
     <input
     type="text"
@@ -1210,18 +1207,9 @@ button {
 <!-- ITR -->
 <div id="itr" class="section">
     <h2>ITR Client</h2>
-    <input id="itr_trade" placeholder="Trade Name">
-    <input id="itr_legal" placeholder="Legal Name">
-    <input id="itr_pan" placeholder="PAN">
-    <input id="itr_group" placeholder="Group">
-    <input id="itr_user" placeholder="Username">
-
-    <div class="pass-wrap">
-        <input id="itr_pass" type="password" placeholder="Password">
-        <span class="toggle-pass" onclick="togglePassword('itr_pass', this)">Show</span>
-    </div>
-
-    <button onclick="addITR()">Add</button>
+    <button onclick="openClientPopup()">
+    + NEW CLIENT
+</button>
 
 <input
     type="text"
@@ -1510,84 +1498,6 @@ function showSection(id){
     }
 }
 
-/* ADD */
-/* ADD */
-function addGST(){
-
-    if(
-    !gst_trade.value.trim() ||
-    !gst_gstin.value.trim()
-){
-    alert("Trade Name and GSTIN required");
-    return;
-}
-
-    gstClients.push({
-        trade: gst_trade.value,
-        legal: gst_legal.value,
-        gstin: gst_gstin.value,
-        group: gst_group.value,
-        user: gst_user.value,
-        pass: gst_pass.value
-    });
-
-    renderGST();
-    updateAll();
-    loadUploadClients();
-    loadSettingsClients()
-
-    db.ref("gstClients").push(gstClients[gstClients.length - 1]);
-
-    // CLEAR BOXES
-    document.getElementById("gst_trade").value = "";
-    document.getElementById("gst_legal").value = "";
-    document.getElementById("gst_gstin").value = "";
-    document.getElementById("gst_group").value = "";
-    document.getElementById("gst_user").value = "";
-    document.getElementById("gst_pass").value = "";
-
-    // RELOAD
-    loadUploadClients();
-    loadSettingsClients();
-}
-
-function addITR(){
-
-    if(
-    !itr_trade.value.trim() ||
-    !itr_pan.value.trim()
-){
-    alert("Trade Name and PAN required");
-    return;
-}
-    itrClients.push({
-        trade: itr_trade.value,
-        legal: itr_legal.value,
-        pan: itr_pan.value,
-        group: itr_group.value,
-        user: itr_user.value,
-        pass: itr_pass.value
-    });
-
-    renderITR();
-    updateAll();
-    loadUploadClients();
-    loadSettingsClients();
-
-    db.ref("itrClients").push(itrClients[itrClients.length - 1]);
-
-    // CLEAR BOXES
-    document.getElementById("itr_trade").value = "";
-    document.getElementById("itr_legal").value = "";
-    document.getElementById("itr_pan").value = "";
-    document.getElementById("itr_group").value = "";
-    document.getElementById("itr_user").value = "";
-    document.getElementById("itr_pass").value = "";
-
-    // RELOAD
-    loadUploadClients();
-    loadSettingsClients();
-}
     /* GST AUTO LOGIN */
 function openGSTPortal(user, pass){
 
@@ -1978,6 +1888,92 @@ function searchFiles(){
 
     });
 }
+function openClientPopup(){
+
+    document.getElementById("clientPopup")
+    .style.display = "flex";
+}
+
+function closeClientPopup(){
+
+    document.getElementById("clientPopup")
+    .style.display = "none";
+}
+function updatePopupPlaceholder(){
+
+    let type =
+    document.getElementById("popupType").value;
+
+    document.getElementById("popup_extra")
+    .placeholder =
+    type === "gst"
+    ? "GSTIN"
+    : "PAN";
+}
+
+function savePopupClient(){
+
+    let type =
+    document.getElementById("popupType").value;
+
+    let data = {
+
+        trade:
+        document.getElementById("popup_trade").value,
+
+        legal:
+        document.getElementById("popup_legal").value,
+
+        group:
+        document.getElementById("popup_group").value,
+
+        user:
+        document.getElementById("popup_user").value,
+
+        pass:
+        document.getElementById("popup_pass").value
+    };
+
+    let extra =
+    document.getElementById("popup_extra").value;
+    if(
+!data.trade.trim() ||
+!extra.trim()
+){
+    alert(
+        type === "gst"
+        ? "Trade Name and GSTIN required"
+        : "Trade Name and PAN required"
+    );
+    return;
+}
+
+    if(type === "gst"){
+
+        data.gstin = extra;
+
+        db.ref("gstClients")
+        .push(data);
+
+    } else {
+
+        data.pan = extra;
+
+        db.ref("itrClients")
+        .push(data);
+    }
+
+    alert("Client Added");
+
+    closeClientPopup();
+
+    document.getElementById("popup_trade").value = "";
+    document.getElementById("popup_legal").value = "";
+    document.getElementById("popup_extra").value = "";
+    document.getElementById("popup_group").value = "";
+    document.getElementById("popup_user").value = "";
+    document.getElementById("popup_pass").value = "";
+}
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
 
@@ -2005,8 +2001,104 @@ window.addEventListener("DOMContentLoaded", function(){
     || "dashboard";
 
     showSection(savedSection);
+    
+    updatePopupPlaceholder();
+    
 });
 </script>
+<!-- CLIENT POPUP -->
 
+<div id="clientPopup" style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.6);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:999999;
+padding:20px;
+box-sizing:border-box;
+">
+
+<div style="
+background:white;
+width:100%;
+max-width:500px;
+padding:25px;
+border-radius:18px;
+box-sizing:border-box;
+">
+
+<h2 style="margin-top:0;">
+New Client
+</h2>
+
+<select id="popupType" onchange="updatePopupPlaceholder()">
+
+<option value="gst">
+GST Client
+</option>
+
+<option value="itr">
+ITR Client
+</option>
+
+</select>
+
+<input id="popup_trade" placeholder="Trade Name">
+
+<input id="popup_legal" placeholder="Legal Name">
+
+<input id="popup_extra" placeholder="GSTIN / PAN">
+
+<input id="popup_group" placeholder="Group">
+
+<input id="popup_user" placeholder="Username">
+
+<div class="pass-wrap">
+
+<input
+id="popup_pass"
+type="password"
+placeholder="Password"
+>
+
+<span
+class="toggle-pass"
+onclick="togglePassword('popup_pass', this)"
+>
+Show
+</span>
+
+</div>
+
+<div style="
+display:flex;
+gap:10px;
+margin-top:15px;
+">
+
+<button
+style="flex:1;"
+onclick="savePopupClient()"
+>
+Save
+</button>
+
+<button
+style="
+flex:1;
+background:red;
+"
+onclick="closeClientPopup()"
+>
+Cancel
+</button>
+
+</div>
+
+</div>
+
+</div>
 </body>
 </html>
