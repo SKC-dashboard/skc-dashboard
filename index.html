@@ -574,6 +574,49 @@ li.innerHTML = `
 
     font-size: 15px;
 }
+.new-client-btn{
+
+    background:#111;
+    color:#d4af37;
+
+    border:3px solid #d4af37;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+    font-size:28px;
+
+    padding:28px 45px;
+
+    margin:20px 0;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    display:inline-block;
+}
+
+.new-client-btn:hover{
+
+    transform:scale(1.03);
+
+    background:#000;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+    .new-client-btn{
+
+        width:100%;
+
+        font-size:22px;
+
+        padding:22px;
+    }
+}
 
 /* MOBILE */
 
@@ -1181,50 +1224,49 @@ button {
 </div>
 
 <!-- GST -->
-<button style="
-background:#111;
-color:#d4af37;
-border:2px solid #d4af37;
-border-radius:10px;
-font-weight:bold;
-">
-+ NEW CLIENT
-</button>
+<div id="gst" class="section">
+
+    <h2>GST Client</h2>
+
+    <button class="new-client-btn" onclick="openClientPopup()">
+        + NEW CLIENT
+    </button>
 
     <input
-    type="text"
-    id="gstSearch"
-    placeholder="Search GST Client..."
-    onkeyup="searchGST()"
->
+        type="text"
+        id="gstSearch"
+        placeholder="Search GST Client..."
+        onkeyup="searchGST()"
+    >
+
     <table>
         <tbody id="gstTable"></tbody>
     </table>
+
 </div>
 
 <!-- ITR -->
-<button style="
-background:#111;
-color:#d4af37;
-border:2px solid #d4af37;
-border-radius:10px;
-font-weight:bold;
-">
-+ NEW CLIENT
-</button>
+<div id="itr" class="section">
 
-<input
-    type="text"
-    id="itrSearch"
-    placeholder="Search ITR Client..."
-    onkeyup="searchITR()"
->
+    <h2>ITR Client</h2>
+
+    <button class="new-client-btn" onclick="openClientPopup()">
+        + NEW CLIENT
+    </button>
+
+    <input
+        type="text"
+        id="itrSearch"
+        placeholder="Search ITR Client..."
+        onkeyup="searchITR()"
+    >
 
     <table>
         <tbody id="itrTable"></tbody>
     </table>
-</div>
 
+</div>
+      
 <!-- REPORTS -->
 <div id="reports" class="section">
     <h2>Reports</h2>
