@@ -1228,18 +1228,31 @@ button {
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="section">
-    <h2>Dashboard</h2>
-    <div class="dashboard-cards">
-        <div class="dash-card" onclick="showSection('gst')" style="cursor:pointer;">
-    <h2>GST Clients</h2>
-    <h1 id="gstCount">...</h1>
-</div>
 
-<div class="dash-card" onclick="showSection('itr')" style="cursor:pointer;">
-    <h2>ITR Clients</h2>
-    <h1 id="itrCount">...</h1>
-</div>
+    <div class="section-top">
+
+        <h2>Dashboard</h2>
+
+        <button class="new-client-btn" onclick="openClientPopup()">
+            + NEW CLIENT
+        </button>
+
     </div>
+
+    <div class="dashboard-cards">
+
+        <div class="dash-card" onclick="showSection('gst')" style="cursor:pointer;">
+            <h2>GST Clients</h2>
+            <h1 id="gstCount">...</h1>
+        </div>
+
+        <div class="dash-card" onclick="showSection('itr')" style="cursor:pointer;">
+            <h2>ITR Clients</h2>
+            <h1 id="itrCount">...</h1>
+        </div>
+
+    </div>
+
 </div>
 
 <!-- GST -->
