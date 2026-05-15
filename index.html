@@ -57,19 +57,23 @@ db.ref("gstClients").on("value", snapshot => {
     loadSettingsClients();
 
 });
+window.addEventListener("load", () => {
+
     auth.onAuthStateChanged(user => {
 
-    if(user){
+        if(user){
 
-        document.getElementById("loginPage")
-        .style.display = "none";
+            document.getElementById("loginPage")
+            .style.display = "none";
 
-    } else {
+        } else {
 
-        document.getElementById("loginPage")
-        .style.display = "flex";
+            document.getElementById("loginPage")
+            .style.display = "flex";
 
-    }
+        }
+
+    });
 
 });
 function loadUploadClients(){
@@ -381,7 +385,7 @@ li.innerHTML = `
         #163d4d
     );
 
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 99999;
