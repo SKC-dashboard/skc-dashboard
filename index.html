@@ -818,7 +818,23 @@ table {
     margin-top: 15px;
     border-collapse: collapse;
     background: white;
-    table-layout: fixed;
+    table-layout: auto;
+}
+/* GST LOGIN COLUMN SMALL */
+#gSTTable th:first-child,
+#gSTTable td:first-child,
+#gstTable th:first-child,
+#gstTable td:first-child{
+    width: 55px;
+    min-width: 55px;
+    max-width: 55px;
+    text-align: center;
+}
+
+/* OTHER COLUMNS SLIGHTLY BIG */
+#gstTable th,
+#gstTable td{
+    padding: 14px 16px;
 }
 th, td {
     border: 1px solid #ccc;
@@ -1603,7 +1619,7 @@ function renderGST(){
     document.getElementById("gstTable").innerHTML = `
 
     <tr>
-        <th>GST</th>
+        <th style="width:55px;">🏛️</th>
         <th>Trade Name</th>
         <th>Legal Name</th>
         <th>GSTIN</th>
