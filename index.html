@@ -1207,8 +1207,16 @@ font-weight:bold;
 <!-- ITR -->
 <div id="itr" class="section">
     <h2>ITR Client</h2>
-    <button onclick="openClientPopup()">
-    + NEW CLIENT
+<button
+type="button"
+onclick="openClientPopup()"
+style="
+padding:14px 26px;
+font-size:18px;
+font-weight:bold;
+"
+>
++ NEW CLIENT
 </button>
 
 <input
@@ -2023,9 +2031,9 @@ box-sizing:border-box;
 <div style="
 background:white;
 width:100%;
-max-width:500px;
-padding:25px;
-border-radius:18px;
+max-width:600px;
+padding:35px;
+border-radius:22px;
 box-sizing:border-box;
 ">
 
@@ -2033,7 +2041,16 @@ box-sizing:border-box;
 New Client
 </h2>
 
-<select id="popupType" onchange="updatePopupPlaceholder()">
+<select
+id="popupType"
+onchange="updatePopupPlaceholder()"
+style="
+width:100%;
+padding:14px;
+font-size:16px;
+margin-top:10px;
+box-sizing:border-box;
+">
 
 <option value="gst">
 GST Client
@@ -2045,23 +2062,73 @@ ITR Client
 
 </select>
 
-<input id="popup_trade" placeholder="Trade Name">
+<input
+id="popup_trade"
+placeholder="Trade Name"
+style="
+width:100%;
+padding:14px;
+margin-top:12px;
+box-sizing:border-box;
+font-size:16px;
+">
 
-<input id="popup_legal" placeholder="Legal Name">
+<input
+id="popup_legal"
+placeholder="Legal Name"
+style="
+width:100%;
+padding:14px;
+margin-top:12px;
+box-sizing:border-box;
+font-size:16px;
+">
 
-<input id="popup_extra" placeholder="GSTIN / PAN">
+<input
+id="popup_extra"
+placeholder="GSTIN / PAN"
+style="
+width:100%;
+padding:14px;
+margin-top:12px;
+box-sizing:border-box;
+font-size:16px;
+">
 
-<input id="popup_group" placeholder="Group">
+<input
+id="popup_group"
+placeholder="Group"
+style="
+width:100%;
+padding:14px;
+margin-top:12px;
+box-sizing:border-box;
+font-size:16px;
+">
 
-<input id="popup_user" placeholder="Username">
+<input
+id="popup_user"
+placeholder="Username"
+style="
+width:100%;
+padding:14px;
+margin-top:12px;
+box-sizing:border-box;
+font-size:16px;
+">
 
-<div class="pass-wrap">
+<div class="pass-wrap" style="margin-top:12px;">
 
 <input
 id="popup_pass"
 type="password"
 placeholder="Password"
->
+style="
+width:100%;
+padding:14px;
+font-size:16px;
+box-sizing:border-box;
+">
 
 <span
 class="toggle-pass"
