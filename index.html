@@ -1593,12 +1593,10 @@ function showSection(id){
 }
 
 /* GST AUTO LOGIN */
-function openGSTPortal(user, pass){
+function openGSTPortal(user){
 
-    // COPY CREDENTIALS
-    navigator.clipboard.writeText(
-        "Username: " + user + "\nPassword: " + pass
-    );
+    // COPY ONLY USERNAME
+    navigator.clipboard.writeText(user);
 
     // OPEN GST PORTAL
     window.open(
@@ -1633,7 +1631,7 @@ function renderGST(){
             <td style="text-align:center;">
 
     <span
-        onclick='openGSTPortal(${JSON.stringify(c.user)}, ${JSON.stringify(c.pass)})'
+        onclick='openGSTPortal(${JSON.stringify(c.user)})'
         style="
             cursor:pointer;
             font-size:22px;
