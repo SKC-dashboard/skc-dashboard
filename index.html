@@ -1337,7 +1337,7 @@ button {
 }
 
 .active-box{
-    margin-right:auto;
+    margin-left:auto;
     display:flex;
     align-items:center;
     gap:8px;
@@ -1610,11 +1610,6 @@ button {
 
         <div class="settings-btn-row">
 
-    <label class="active-box">
-        <input type="checkbox" id="edit_active" checked>
-        Active
-    </label>
-
     <button onclick="updateClient()">Save</button>
 
     <button
@@ -1623,6 +1618,11 @@ button {
     >
         Delete
     </button>
+
+    <label class="active-box">
+        <span>Inactive</span>
+        <input type="checkbox" id="edit_active" checked>
+    </label>
 
 </div>
 </div>
