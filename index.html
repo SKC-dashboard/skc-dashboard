@@ -47,16 +47,18 @@ db.ref("gstClients").on("value", snapshot => {
     gstClients = [];
 
     if(data){
-        Object.keys(data).forEach(key => {
+Object.keys(data).forEach(key => {
 
-            gstClients.push({
-                ...data[key],
-                firebaseKey: key
-            });
-
-        });
+    if(data[key].active === false){
+        return;
     }
 
+    gstClients.push({
+        ...data[key],
+        firebaseKey: key
+    });
+
+});
     renderGST();
     updateAll();
     loadUploadClients();
@@ -172,6 +174,8 @@ function loadClientDetails(){
         : (client.pan || "");
     document.getElementById("edit_group").value =
     client.group || "";
+    document.getElementById("edit_active").checked =
+    client.active !== false;
 }
 /* FIREBASE LOAD ITR */
 db.ref("itrClients").on("value", snapshot => {
@@ -181,15 +185,18 @@ db.ref("itrClients").on("value", snapshot => {
     itrClients = [];
 
     if(data){
-        Object.keys(data).forEach(key => {
+Object.keys(data).forEach(key => {
 
-            itrClients.push({
-                ...data[key],
-                firebaseKey: key
-            });
-
-        });
+    if(data[key].active === false){
+        return;
     }
+
+    itrClients.push({
+        ...data[key],
+        firebaseKey: key
+    });
+
+});
 
     renderITR();
     updateAll();
@@ -208,13 +215,26 @@ function updateClient(){
         return;
     }
 
-    let updatedData = {
-        trade: document.getElementById("edit_trade").value,
-        legal: document.getElementById("edit_legal").value,
-        group: document.getElementById("edit_group").value,
-        user: document.getElementById("edit_user").value,
-        pass: document.getElementById("edit_pass").value
-    };
+let updatedData = {
+
+    trade:
+    document.getElementById("edit_trade").value,
+
+    legal:
+    document.getElementById("edit_legal").value,
+
+    group:
+    document.getElementById("edit_group").value,
+
+    user:
+    document.getElementById("edit_user").value,
+
+    pass:
+    document.getElementById("edit_pass").value,
+
+    active:
+    document.getElementById("edit_active").checked
+};
 
     if(type === "gst"){
         updatedData.gstin = document.getElementById("edit_extra").value;
@@ -1298,7 +1318,27 @@ button {
     display: block;
 }
 }
-    
+.settings-btn-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+.active-box{
+    margin-right:auto;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:bold;
+}
+
+.active-box input{
+    width:18px;
+    height:18px;
+    cursor:pointer;
+}
 </style>
 </head>
 
@@ -1558,9 +1598,22 @@ button {
             <span class="toggle-pass" onclick="togglePassword('edit_pass', this)">Show</span>
         </div>
 
-        <button onclick="updateClient()">Save</button>
-        <button style="background:red;" onclick="deleteClient()">Delete</button>
-    </div>
+        <div class="settings-btn-row">
+
+    <label class="active-box">
+        <input type="checkbox" id="edit_active" checked>
+        Active
+    </label>
+
+    <button onclick="updateClient()">Save</button>
+
+    <button
+        style="background:red;"
+        onclick="deleteClient()"
+    >
+        Delete
+    </button>
+
 </div>
 
 <!-- FOOTER -->
