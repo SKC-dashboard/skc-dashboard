@@ -204,7 +204,7 @@ function loadClientDetails(){
     document.getElementById("edit_group").value =
     client.group || "";
     document.getElementById("edit_active").checked =
-    client.active !== false;
+    client.active === false;
 }
 
 function updateClient(){
@@ -236,7 +236,7 @@ let updatedData = {
     document.getElementById("edit_pass").value,
 
     active:
-    document.getElementById("edit_active").checked
+    !document.getElementById("edit_active").checked
 };
 
     if(type === "gst"){
@@ -1328,12 +1328,15 @@ button {
     display: block;
 }
 
+}
+
 .settings-btn-row{
     display:flex;
     justify-content:flex-end;
     align-items:center;
-    gap:10px;
-    margin-top:15px;
+    gap:12px;
+    margin-top:18px;
+    width:100%;
 }
 
 .active-box{
@@ -1341,11 +1344,13 @@ button {
     align-items:center;
     gap:8px;
     font-weight:bold;
+    margin-right:10px;
 }
 
 .active-box input{
-    width:18px;
-    height:18px;
+    width:18px !important;
+    height:18px !important;
+    margin:0;
     cursor:pointer;
 }
 #clientPopup{
@@ -1622,9 +1627,9 @@ button {
 <div class="settings-btn-row">
 
     <label class="active-box">
-        <input type="checkbox" id="edit_active" checked>
-        Inactive
-    </label>
+    <input type="checkbox" id="edit_active">
+    Inactive
+</label>
 
     <button onclick="updateClient()">Save</button>
 
