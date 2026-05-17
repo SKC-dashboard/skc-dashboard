@@ -30,6 +30,11 @@ firebase.initializeApp(firebaseConfig);
 window.addEventListener("error", function(e){
     console.log("JS ERROR:", e.message);
 });
+window.onerror = function(message, source, lineno, colno, error){
+    console.log("ERROR:", message);
+    console.log("LINE:", lineno);
+    console.log("COLUMN:", colno);
+};
 
 const storage = firebase.storage();
 storage.setMaxUploadRetryTime(15000);
@@ -49,16 +54,14 @@ db.ref("gstClients").on("value", snapshot => {
     if(data){
 Object.keys(data).forEach(key => {
 
-    if(data[key].active === false){
-        return;
-    }
-
     gstClients.push({
         ...data[key],
         firebaseKey: key
     });
 
 });
+}
+
     renderGST();
     updateAll();
     loadUploadClients();
@@ -187,17 +190,13 @@ db.ref("itrClients").on("value", snapshot => {
     if(data){
 Object.keys(data).forEach(key => {
 
-    if(data[key].active === false){
-        return;
-    }
-
     itrClients.push({
         ...data[key],
         firebaseKey: key
     });
 
 });
-
+    }
     renderITR();
     updateAll();
     loadUploadClients();
@@ -328,12 +327,17 @@ function deleteClient(){
             return;
         }
 
-        // PARTY NAME TITLE
-        let heading = document.createElement("h3");
-        heading.innerText = "Files of : " + client.trade;
-        heading.style.marginTop = "10px";
+// PARTY NAME TITLE
+let heading = document.createElement("li");
 
-        fileList.appendChild(heading);
+heading.innerText = "Files of : " + client.trade;
+
+heading.style.marginTop = "10px";
+heading.style.listStyle = "none";
+heading.style.fontWeight = "bold";
+heading.style.fontSize = "18px";
+
+fileList.appendChild(heading);
 
         Object.keys(data).forEach(key => {
 
@@ -1315,9 +1319,10 @@ button {
 }
 
 #overlay.show{
-    display: block;
+    display:block;
 }
 }
+
 .settings-btn-row{
     display:flex;
     align-items:center;
@@ -1570,7 +1575,7 @@ button {
 <select id="uploadClientSelect"></select> <!-- ✅ ADD HERE -->
 
 <input type="file" id="fileInput">
-        <button onclick="uploadFile()">Upload</button>
+        <button id="uploadBtn" onclick="uploadFile()">Upload</button>
       <input type="text" id="fileSearch" placeholder="Search file..." onkeyup="searchFiles()">
 <ul id="fileList"></ul>
     </div>
@@ -1614,6 +1619,7 @@ button {
         Delete
     </button>
 
+</div>
 </div>
 
 <!-- FOOTER -->
@@ -1764,6 +1770,7 @@ function clearSettingsFields(){
     document.getElementById("edit_group").value = "";
     document.getElementById("edit_user").value = "";
     document.getElementById("edit_pass").value = "";
+    document.getElementById("edit_active").checked = true;
 
 }
 
@@ -1866,7 +1873,9 @@ function renderGST(){
 
     ` +
 
-    gstClients.map((c,i)=>`
+    gstClients
+.filter(c => c.active !== false)
+.map((c,i)=`
 
         <tr>
 
@@ -1934,7 +1943,9 @@ function renderITR(){
 
     ` +
 
-    itrClients.map((c,i)=>`
+    itrClients
+    .filter(c => c.active !== false)
+    .map((c,i)=>`
 
         <tr>
             <td>${c.trade}</td>
@@ -2040,8 +2051,8 @@ function toggleTablePass(id, icon){
 }
 
 /* REPORT */
-function uploadFile(){
-
+function uploadFile(uploadBtn){
+    
     let file =
     document.getElementById("fileInput").files[0];
 
@@ -2074,7 +2085,7 @@ function uploadFile(){
     }
 
     let uploadBtn =
-    event.target;
+    document.getElementById("uploadBtn");
 
     uploadBtn.disabled = true;
     uploadBtn.innerText = "Uploading...";
