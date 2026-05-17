@@ -27,9 +27,6 @@ const firebaseConfig = {
   
 firebase.initializeApp(firebaseConfig);
 
-window.addEventListener("error", function(e){
-    console.log("JS ERROR:", e.message);
-});
 window.onerror = function(message, source, lineno, colno, error){
     console.log("ERROR:", message);
     console.log("LINE:", lineno);
@@ -45,7 +42,7 @@ const auth = firebase.auth();
 let gstClients = [];
 let itrClients = [];
 
-db.ref("gstClients").on("value", snapshot => {
+db.ref("gstClients").once("value", snapshot => {
 
     let data = snapshot.val();
 
@@ -64,9 +61,7 @@ Object.keys(data).forEach(key => {
 
     renderGST();
     updateAll();
-    loadUploadClients();
-    loadSettingsClients();
-
+    
 });
 window.addEventListener("load", () => {
 
@@ -126,7 +121,6 @@ function loadUploadClients(){
         select.value = list[0].firebaseKey;
     }
 
-    loadFiles();
 }
 function loadSettingsClients(){
     let type = document.getElementById("typeSelect").value;
@@ -181,7 +175,7 @@ function loadClientDetails(){
     client.active !== false;
 }
 /* FIREBASE LOAD ITR */
-db.ref("itrClients").on("value", snapshot => {
+db.ref("itrClients").once("value", snapshot => {
 
     let data = snapshot.val();
 
@@ -197,10 +191,8 @@ Object.keys(data).forEach(key => {
 
 });
     }
-    renderITR();
+    renderGST();
     updateAll();
-    loadUploadClients();
-    loadSettingsClients();
 
 });
 function updateClient(){
@@ -336,7 +328,9 @@ heading.style.marginTop = "10px";
 heading.style.listStyle = "none";
 heading.style.fontWeight = "bold";
 heading.style.fontSize = "18px";
-
+heading.style.border = "none";
+heading.style.background = "transparent";
+heading.style.padding = "0";
 fileList.appendChild(heading);
 
         Object.keys(data).forEach(key => {
@@ -989,6 +983,8 @@ html, body {
 
 /* TABLE */
 table {
+    contain: content;
+}
     width: 100%;
     margin-top: 15px;
     border-collapse: collapse;
@@ -1482,7 +1478,7 @@ button {
         type="text"
         id="gstSearch"
         placeholder="Search GST Client..."
-        onkeyup="searchGST()"
+        onkeyup="debounceSearch(searchGST)"
     >
 
 <table id="gstTable"></table>
@@ -1506,7 +1502,7 @@ button {
         type="text"
         id="itrSearch"
         placeholder="Search ITR Client..."
-        onkeyup="searchITR()"
+        onkeyup="debounceSearch(searchITR)""
     >
 
 <table id="itrTable"></table>
@@ -1875,7 +1871,7 @@ function renderGST(){
 
     gstClients
 .filter(c => c.active !== false)
-.map((c,i)=`
+..map((c,i)=>`
 
         <tr>
 
@@ -1973,6 +1969,23 @@ function renderITR(){
         </tr>
 
     `).join("");
+}
+
+let searchTimer;
+
+function debounceSearch(fn){
+
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(fn, 300);
+}
+let searchTimer;
+
+function debounceSearch(fn){
+
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(fn, 300);
 }
 function searchGST(){
 
@@ -2101,7 +2114,7 @@ function uploadFile(uploadBtn){
     // RESUMABLE FAST UPLOAD
     let uploadTask =
     storageRef.put(file, {
-        cacheControl: "public,max-age=31536000"
+        cacheControl: "public,max-age=86400"
     });
 
     uploadTask.on(
@@ -2386,6 +2399,7 @@ window.addEventListener("DOMContentLoaded", function(){
 
     loadUploadClients();
     loadSettingsClients();
+    loadFiles();
 
     // RESTORE LAST OPENED SECTION
     let savedSection =
