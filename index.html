@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SK Consultant Dashboard</title>
 
+<link rel="icon" type="image/png" href="logo.png">
+
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
@@ -91,27 +93,7 @@ db.ref("itrClients").on("value", snapshot => {
     updateAll();
     loadUploadClients();
     loadSettingsClients();
-});
-    
 
-    let data = snapshot.val();
-
-    gstClients = [];
-
-    if(data){
-Object.keys(data).forEach(key => {
-
-    gstClients.push({
-        ...data[key],
-        firebaseKey: key
-    });
-
-});
-}
-
-    renderITR();
-    updateAll();
-    
 });
 window.addEventListener("load", () => {
 
@@ -224,26 +206,7 @@ function loadClientDetails(){
     document.getElementById("edit_active").checked =
     client.active !== false;
 }
-/* FIREBASE LOAD ITR */
 
-    let data = snapshot.val();
-
-    itrClients = [];
-
-    if(data){
-Object.keys(data).forEach(key => {
-
-    itrClients.push({
-        ...data[key],
-        firebaseKey: key
-    });
-
-});
-    }
-    renderGST();
-    updateAll();
-
-});
 function updateClient(){
     let type = document.getElementById("typeSelect").value;
     let index = document.getElementById("clientSelect").value;
