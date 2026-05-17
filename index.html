@@ -1095,22 +1095,35 @@ button {
 .footer-container {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .footer-left, .footer-middle, .footer-right {
     flex: 1;
     min-width: 250px;
 }
-.footer-middle { text-align: center; }
-.footer-right { text-align: right; }
-.footer h2, .footer h3 { color: white; }
+.footer-middle {
+    text-align: center;
+}
+
+.footer-right {
+    text-align: right;
+}
+
 .footer-bottom {
     text-align: center;
     margin-top: 25px;
     border-top: 1px solid #d4af37;
     padding-top: 10px;
     font-size: 13px;
+}
+
+.footer h2,
+.footer h3 {
+    color: white;
 }
 
 /* FILE LIST GRID */
@@ -1294,7 +1307,8 @@ button {
     .footer-middle,
     .footer-right{
         text-align: center;
-    }
+    width: 100%;
+}
 
     /* FILE NAME MOBILE FIX */
     #fileList{
@@ -1642,6 +1656,8 @@ button {
 
 </div>
 </div>
+</div>
+
 
 <!-- FOOTER -->
 <div class="footer">
