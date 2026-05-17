@@ -10,6 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <script>
 
@@ -365,6 +366,71 @@ li.innerHTML = `
         fileList.innerHTML = "<li>Error loading files</li>";
 
     });
+
+}
+/* =========================
+   EXPORT GST EXCEL
+========================= */
+
+function exportGSTExcel(){
+
+    let data = gstClients.map(c => ({
+
+        "Trade Name": c.trade || "",
+        "Legal Name": c.legal || "",
+        "GSTIN": c.gstin || "",
+        "Group": c.group || "",
+        "Username": c.user || "",
+        "Password": c.pass || ""
+
+    }));
+
+    let ws = XLSX.utils.json_to_sheet(data);
+
+    let wb = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb, ws, "GST Clients");
+
+    XLSX.writeFile(wb, "GST_Clients.xlsx");
+}
+
+/* =========================
+   EXPORT ITR EXCEL
+========================= */
+
+function exportITRExcel(){
+
+    let data = itrClients.map(c => ({
+
+        "Trade Name": c.trade || "",
+        "Legal Name": c.legal || "",
+        "PAN": c.pan || "",
+        "Group": c.group || "",
+        "Username": c.user || "",
+        "Password": c.pass || ""
+
+    }));
+
+    let ws = XLSX.utils.json_to_sheet(data);
+
+    let wb = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb, ws, "ITR Clients");
+
+    XLSX.writeFile(wb, "ITR_Clients.xlsx");
+}
+
+/* =========================
+   IMPORT GST EXCEL
+========================= */
+
+function importGSTExcel(file){
+
+    if(!file) return;
+
+    let reader = new FileReader();
+
+    reader.onload = function(e){
 
 }
 </script>
@@ -1319,12 +1385,52 @@ button {
       
 <!-- REPORTS -->
 <div id="reports" class="section">
+
     <h2>Reports</h2>
+
     <div class="settings-box">
+
         <p>GST Clients: <span id="rep_gst">0</span></p>
         <p>ITR Clients: <span id="rep_itr">0</span></p>
-        <button onclick="generateReport()">Download Report</button>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:15px;">
+
+            <button onclick="exportGSTExcel()">
+                Export GST Excel
+            </button>
+
+            <button onclick="exportITRExcel()">
+                Export ITR Excel
+            </button>
+
+            <button onclick="document.getElementById('importGSTExcel').click()">
+                Import GST Excel
+            </button>
+
+            <button onclick="document.getElementById('importITRExcel').click()">
+                Import ITR Excel
+            </button>
+
+        </div>
+
+        <input
+            type="file"
+            id="importGSTExcel"
+            accept=".xlsx,.xls"
+            style="display:none"
+            onchange="importGSTExcel(this.files[0])"
+        >
+
+        <input
+            type="file"
+            id="importITRExcel"
+            accept=".xlsx,.xls"
+            style="display:none"
+            onchange="importITRExcel(this.files[0])"
+        >
+
     </div>
+
 </div>
 
 <!-- UPLOAD (UNCHANGED STRUCTURE) -->
