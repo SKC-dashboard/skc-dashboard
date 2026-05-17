@@ -1100,11 +1100,22 @@ button {
     gap: 30px;
 }
 
-.footer-left,
-.footer-middle,
-.footer-right {
+.footer-left{
+    flex: 1.2;
+    min-width: 250px;
+}
+
+.footer-middle{
+    flex: 0.7;
+    min-width: 180px;
+    text-align: right;
+    padding-right: 40px;
+}
+
+.footer-right{
     flex: 1;
     min-width: 250px;
+    text-align: right;
 }
 
 /* LEFT */
@@ -1113,9 +1124,6 @@ button {
 }
 
 /* CENTER */
-.footer-middle {
-    text-align: center;
-}
 
 /* RIGHT */
 .footer-right {
