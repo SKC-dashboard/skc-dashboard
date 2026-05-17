@@ -41,8 +41,58 @@ const auth = firebase.auth();
     
 let gstClients = [];
 let itrClients = [];
+    /* LIVE GST CLIENTS */
+db.ref("gstClients").on("value", snapshot => {
 
-db.ref("gstClients").once("value", snapshot => {
+    let data = snapshot.val();
+
+    gstClients = [];
+
+    if(data){
+
+        Object.keys(data).forEach(key => {
+
+            gstClients.push({
+                ...data[key],
+                firebaseKey: key
+            });
+
+        });
+
+    }
+
+    renderGST();
+    updateAll();
+    loadUploadClients();
+    loadSettingsClients();
+});
+
+/* LIVE ITR CLIENTS */
+db.ref("itrClients").on("value", snapshot => {
+
+    let data = snapshot.val();
+
+    itrClients = [];
+
+    if(data){
+
+        Object.keys(data).forEach(key => {
+
+            itrClients.push({
+                ...data[key],
+                firebaseKey: key
+            });
+
+        });
+
+    }
+
+    renderITR();
+    updateAll();
+    loadUploadClients();
+    loadSettingsClients();
+});
+    
 
     let data = snapshot.val();
 
@@ -59,7 +109,7 @@ Object.keys(data).forEach(key => {
 });
 }
 
-    renderGST();
+    renderITR();
     updateAll();
     
 });
@@ -175,7 +225,6 @@ function loadClientDetails(){
     client.active !== false;
 }
 /* FIREBASE LOAD ITR */
-db.ref("itrClients").once("value", snapshot => {
 
     let data = snapshot.val();
 
@@ -1171,6 +1220,20 @@ button {
     .sidebar{
         z-index: 1999;
     }
+    #overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    z-index: 1500;
+}
+
+#overlay.show{
+    display:block;
+}
 
     /* MAIN */
     .main{
@@ -1300,22 +1363,6 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     display: block;
-}
-/* OVERLAY */
-#overlay{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    z-index: 1500;
-}
-
-#overlay.show{
-    display:block;
-}
 }
 
 .settings-btn-row{
@@ -1978,14 +2025,6 @@ function debounceSearch(fn){
 
     searchTimer = setTimeout(fn, 300);
 }
-let searchTimer;
-
-function debounceSearch(fn){
-
-    clearTimeout(searchTimer);
-
-    searchTimer = setTimeout(fn, 300);
-}
 function searchGST(){
 
     let input =
@@ -2063,7 +2102,7 @@ function toggleTablePass(id, icon){
 }
 
 /* REPORT */
-function uploadFile(uploadBtn){
+function uploadFile(){
     
     let file =
     document.getElementById("fileInput").files[0];
