@@ -1348,6 +1348,18 @@ button {
     height:18px;
     cursor:pointer;
 }
+#clientPopup{
+    position: fixed !important;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+
+    display: none;
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 999999 !important;
+}
 </style>
 </head>
 
@@ -2295,8 +2307,14 @@ function searchFiles(){
 }
 function openClientPopup(){
 
-    document.getElementById("clientPopup")
-    .style.display = "flex";
+    let popup =
+    document.getElementById("clientPopup");
+
+    popup.style.display = "flex";
+
+    popup.style.visibility = "visible";
+
+    popup.style.opacity = "1";
 }
 
 function closeClientPopup(){
@@ -2414,17 +2432,7 @@ window.addEventListener("DOMContentLoaded", function(){
 </script>
 <!-- CLIENT POPUP -->
 
-<div id="clientPopup" style="
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.6);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:999999;
-padding:20px;
-box-sizing:border-box;
-">
+<div id="clientPopup">
 
 <div style="
 background:white;
