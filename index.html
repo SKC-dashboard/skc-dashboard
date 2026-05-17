@@ -1330,6 +1330,7 @@ button {
 
 .settings-btn-row{
     display:flex;
+    justify-content:flex-end;
     align-items:center;
     gap:10px;
     margin-top:15px;
@@ -1337,11 +1338,11 @@ button {
 }
 
 .active-box{
-    margin-left:auto;
     display:flex;
     align-items:center;
     gap:8px;
     font-weight:bold;
+    order:-1;
 }
 
 .active-box input{
@@ -1608,7 +1609,12 @@ button {
             <span class="toggle-pass" onclick="togglePassword('edit_pass', this)">Show</span>
         </div>
 
-        <div class="settings-btn-row">
+<div class="settings-btn-row">
+
+    <label class="active-box">
+        <input type="checkbox" id="edit_active" checked>
+        Inactive
+    </label>
 
     <button onclick="updateClient()">Save</button>
 
@@ -1618,11 +1624,6 @@ button {
     >
         Delete
     </button>
-
-    <label class="active-box">
-        <span>Inactive</span>
-        <input type="checkbox" id="edit_active" checked>
-    </label>
 
 </div>
 </div>
