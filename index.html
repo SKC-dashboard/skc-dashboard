@@ -26,6 +26,11 @@ const firebaseConfig = {
 };
   
 firebase.initializeApp(firebaseConfig);
+
+window.addEventListener("error", function(e){
+    console.log("JS ERROR:", e.message);
+});
+
 const storage = firebase.storage();
 storage.setMaxUploadRetryTime(15000);
 
@@ -431,6 +436,86 @@ function importGSTExcel(file){
     let reader = new FileReader();
 
     reader.onload = function(e){
+
+        let data = new Uint8Array(e.target.result);
+
+        let workbook = XLSX.read(data, { type: 'array' });
+
+        let sheetName = workbook.SheetNames[0];
+
+        let worksheet = workbook.Sheets[sheetName];
+
+        let json = XLSX.utils.sheet_to_json(worksheet);
+
+        json.forEach(row => {
+
+            let clientData = {
+
+                trade: row["Trade Name"] || "",
+                legal: row["Legal Name"] || "",
+                gstin: row["GSTIN"] || "",
+                group: row["Group"] || "",
+                user: row["Username"] || "",
+                pass: row["Password"] || ""
+
+            };
+
+            db.ref("gstClients").push(clientData);
+
+        });
+
+        alert("GST Excel Imported Successfully");
+
+    };
+
+    reader.readAsArrayBuffer(file);
+
+}
+
+/* =========================
+   IMPORT ITR EXCEL
+========================= */
+
+function importITRExcel(file){
+
+    if(!file) return;
+
+    let reader = new FileReader();
+
+    reader.onload = function(e){
+
+        let data = new Uint8Array(e.target.result);
+
+        let workbook = XLSX.read(data, { type: 'array' });
+
+        let sheetName = workbook.SheetNames[0];
+
+        let worksheet = workbook.Sheets[sheetName];
+
+        let json = XLSX.utils.sheet_to_json(worksheet);
+
+        json.forEach(row => {
+
+            let clientData = {
+
+                trade: row["Trade Name"] || "",
+                legal: row["Legal Name"] || "",
+                pan: row["PAN"] || "",
+                group: row["Group"] || "",
+                user: row["Username"] || "",
+                pass: row["Password"] || ""
+
+            };
+
+            db.ref("itrClients").push(clientData);
+
+        });
+
+        alert("ITR Excel Imported Successfully");
+
+    };
+
+    reader.readAsArrayBuffer(file);
 
 }
 </script>
@@ -1455,12 +1540,11 @@ button {
 <div id="settings" class="section">
     <h2>Settings</h2>
     <div class="settings-box">
-<select id="typeSelect">
-<option value="gst">GST</option>
+<select id="typeSelect" onchange="loadSettingsClients()"><option value="gst">GST</option>
 <option value="itr">ITR</option>
 </select>
 
-<select id="clientSelect"></select> <!-- ✅ ADD HERE -->
+<select id="clientSelect" onchange="loadClientDetails()"></select> <!-- ✅ ADD HERE -->
 
 
         <input id="edit_trade" placeholder="Trade Name">
