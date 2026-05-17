@@ -984,7 +984,6 @@ html, body {
 /* TABLE */
 table {
     contain: content;
-}
     width: 100%;
     margin-top: 15px;
     border-collapse: collapse;
@@ -1502,7 +1501,7 @@ button {
         type="text"
         id="itrSearch"
         placeholder="Search ITR Client..."
-        onkeyup="debounceSearch(searchITR)""
+        onkeyup="debounceSearch(searchITR)"
     >
 
 <table id="itrTable"></table>
@@ -1871,7 +1870,7 @@ function renderGST(){
 
     gstClients
 .filter(c => c.active !== false)
-..map((c,i)=>`
+.map((c,i)=>`
 
         <tr>
 
