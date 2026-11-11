@@ -1436,17 +1436,6 @@ body{background:var(--sk-bg);color:var(--sk-ink);font-family:"Bookman Old Style"
 @media(max-width:900px){.dashboard-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-panels{grid-template-columns:1fr}}
 @media(max-width:600px){.section{padding:15px!important}.dashboard-cards{grid-template-columns:1fr 1fr!important;gap:9px!important}.dash-card{padding:14px!important;min-height:120px}.dash-card h1{font-size:24px!important}.dash-card h2{font-size:11px!important}.welcome-strip{padding:18px;align-items:flex-start}.welcome-strip h2{font-size:18px}.today-chip{display:none}.section-top{align-items:flex-start;flex-direction:column}.section-top button{width:100%}.form-grid{grid-template-columns:1fr}.full-field{grid-column:auto}.billing-summary{grid-template-columns:1fr}.filter-row>*{width:100%;min-width:0!important}.form-actions button{flex:1}.header{padding-left:10px;padding-right:10px}}
 
-
-/* Dashboard three-card alignment */
-.dashboard-main-cards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:stretch}
-.dashboard-main-cards>.dash-card{min-width:0;min-height:160px;display:flex;flex-direction:column;justify-content:center}
-.dashboard-main-cards .recent-work-card{cursor:default;text-align:left;align-items:stretch;justify-content:flex-start;padding:20px!important}
-.recent-work-card .panel-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.recent-work-card .panel-heading h2{margin:0;font-size:16px!important}
-.recent-work-card .mini-row{display:flex;flex-wrap:wrap;gap:7px;justify-content:space-between;padding:7px 0;border-bottom:1px solid #edf0f0;font-size:12px}
-.recent-work-card .mini-row strong{color:#18282d}.recent-work-card .mini-row small{color:#9a6b22}
-@media(max-width:900px){.dashboard-main-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-@media(max-width:600px){.dashboard-main-cards{grid-template-columns:1fr 1fr!important}.dashboard-main-cards>.dash-card{min-height:130px}.dashboard-main-cards .recent-work-card{grid-column:1/-1}}
 </style>
 <style id="sk-readable-font-upgrade">
 html{font-size:16px}body{font-size:15px;line-height:1.55}
@@ -1456,6 +1445,25 @@ html{font-size:16px}body{font-size:15px;line-height:1.55}
 button,.new-client-btn{font-size:13px!important}
 @media(max-width:600px){body{font-size:15px}.modern-table{font-size:13px!important}}
 </style>
+
+/* DESKTOP READABILITY: larger dashboard text without changing mobile layout */
+@media (min-width:769px){
+ body{font-size:17px!important;line-height:1.65}
+ .section{font-size:17px!important}
+ .sidebar a{font-size:17px!important;padding:15px 20px!important}
+ .section h2,.section-top h2{font-size:29px!important}
+ .section-subtitle{font-size:16px!important}
+ .modern-table{font-size:15.5px!important}
+ .modern-table th{font-size:15px!important}
+ .modern-table td{font-size:15.5px!important}
+ .section input:not([type=checkbox]),.section select,.section textarea{font-size:16px!important}
+ button,.new-client-btn{font-size:15px!important}
+ .dash-card h2{font-size:15px!important}
+ .dash-card h1{font-size:34px!important}
+ .dash-card small{font-size:13px!important}
+ .invoice-download-btn{font-size:22px!important;min-width:42px;line-height:1}
+}
+
 </head>
 
 <body>
@@ -1568,11 +1576,11 @@ button,.new-client-btn{font-size:13px!important}
     </div>
 
     <div class="welcome-strip"><div><span class="eyebrow">PRACTICE OVERVIEW</span><h2>Welcome to your workspace</h2><p>Manage clients, compliance, documents and professional fees in one place.</p></div><div class="today-chip" id="dashboardToday">SK CONSULTANT</div></div>
-    <div class="dashboard-cards dashboard-main-cards">
+    <div class="dashboard-cards">
         <div class="dash-card" onclick="showSection('gst')"><span class="card-icon">GST</span><h2>GST Clients</h2><h1 id="gstCount">...</h1><small>Client register</small></div>
         <div class="dash-card" onclick="showSection('itr')"><span class="card-icon">ITR</span><h2>ITR Clients</h2><h1 id="itrCount">...</h1><small>Client register</small></div>
-        <div class="dash-card recent-work-card"><div class="panel-heading"><h2>Recent Work</h2><button class="small-action" onclick="showSection('work')">View work</button></div><div id="dashRecentWork" class="empty-state">No work items added yet.</div></div>
     </div>
+    <div class="dashboard-panels"><div class="panel-card"><div class="panel-heading"><h3>Recent Work</h3><button class="small-action" onclick="showSection('work')">View work</button></div><div id="dashRecentWork" class="empty-state">No work items added yet.</div></div></div>
 
 </div>
 
@@ -1751,7 +1759,7 @@ button,.new-client-btn{font-size:13px!important}
 <div id="tasks" class="section"><div class="section-top"><div><h2>Task Management</h2><p class="section-subtitle">Assign internal follow-ups, set priorities and track completion.</p></div><button class="new-client-btn" onclick="openTaskForm()">+ ADD TASK</button></div><div class="filter-row"><input id="taskSearch" placeholder="Search tasks..." oninput="renderTasks()"><select id="taskStatusFilter" onchange="renderTasks()"><option value="">All statuses</option><option>Pending</option><option>In Progress</option><option>Completed</option><option>On Hold</option></select></div><div class="table-wrap"><table id="tasksTable" class="modern-table"></table></div><div class="panel-card form-panel" id="taskFormPanel" hidden><h3>Add Task</h3><div class="form-grid"><label>Task title<input id="taskTitle" placeholder="e.g. Follow up for GSTR-3B data"></label><label>Related client<select id="taskClient"></select></label><label>Priority<select id="taskPriority"><option>Normal</option><option>High</option><option>Urgent</option><option>Low</option></select></label><label>Due date<input id="taskDue" type="date"></label><label>Status<select id="taskStatus"><option>Pending</option><option>In Progress</option><option>Completed</option><option>On Hold</option></select></label><label class="full-field">Notes<textarea id="taskNotes" rows="3"></textarea></label></div><div class="form-actions"><button onclick="saveTask()">Save Task</button><button class="secondary-btn" onclick="closeTaskForm()">Cancel</button></div></div></div>
 
 <!-- FEES & BILLING -->
-<div id="billing" class="section"><div class="section-top"><div><h2>Fees & Billing</h2><p class="section-subtitle">Record professional fees, receipts and outstanding balances.</p></div><button class="new-client-btn" onclick="openFeeForm()">+ RECORD FEE</button></div><div class="billing-summary"><div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div><div class="summary-tile"><span>Received</span><strong id="feeReceived">₹0</strong></div><div class="summary-tile"><span>Outstanding</span><strong id="feePending">₹0</strong></div></div><div class="table-wrap"><table id="billingTable" class="modern-table"></table></div><div class="panel-card form-panel" id="feeFormPanel" hidden><h3 id="feeFormTitle">Record Professional Fee</h3><div class="form-grid"><label>Client<select id="feeClient"></select></label><label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label><label>Service / Details<input id="feeService" placeholder="GST return / appeal / ITR..." ></label><label>Financial Year<input id="feeFY" placeholder="2026-27"></label><label>Invoice date<input id="feeDate" type="date"></label><label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01"></label><label>Amount received (₹)<input id="feePaid" type="number" min="0" step="0.01" value="0"></label><label>Payment date<input id="feePaymentDate" type="date"></label><label>Payment mode<select id="feeMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label></div><div class="form-actions"><button onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div></div></div>
+<div id="billing" class="section"><div class="section-top"><div><h2>Fees & Billing</h2><p class="section-subtitle">Record professional fees, receipts and outstanding balances.</p></div><button class="new-client-btn" onclick="openFeeForm()">+ RECORD FEE</button></div><div class="billing-summary"><div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div><div class="summary-tile"><span>Received</span><strong id="feeReceived">₹0</strong></div><div class="summary-tile"><span>Outstanding</span><strong id="feePending">₹0</strong></div></div><div class="table-wrap"><table id="billingTable" class="modern-table"></table></div><div class="panel-card form-panel" id="feeFormPanel" hidden><h3>Record Professional Fee</h3><div class="form-grid"><label>Client<select id="feeClient"></select></label><label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label><label>Service / Details<input id="feeService" placeholder="GST return / appeal / ITR..." ></label><label>Financial Year<input id="feeFY" placeholder="2026-27"></label><label>Invoice date<input id="feeDate" type="date"></label><label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01"></label><label>Amount received (₹)<input id="feePaid" type="number" min="0" step="0.01" value="0"></label><label>Payment date<input id="feePaymentDate" type="date"></label><label>Payment mode<select id="feeMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label></div><div class="form-actions"><button onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div></div></div>
 
 <!-- FOOTER -->
 <div class="footer">
@@ -1952,9 +1960,6 @@ function closeSidebar(){
 }
 function showSection(id){
 
-    // Hide any passwords revealed in client tables whenever the user changes section.
-    resetVisiblePasswords();
-
     // SAVE CURRENT SECTION
     localStorage.setItem("activeSection", id);
 
@@ -1999,9 +2004,9 @@ function renderGST(){
         <th>GST</th>
         <th>Trade Name</th>
         <th>Legal Name</th>
-        <th>Frequency</th>
         <th>GSTIN</th>
         <th>Group</th>
+        <th>Frequency</th>
         <th>Username</th>
         <th>Password</th>
     </tr>
@@ -2033,9 +2038,9 @@ function renderGST(){
 
             <td>${c.trade}</td>
             <td>${c.legal}</td>
-            <td><select class="frequency-select" aria-label="GST filing frequency" onchange="updateGSTFrequency('${c.firebaseKey}',this.value)"><option value="Monthly" ${(c.frequency||'Monthly')==='Monthly'?'selected':''}>Monthly</option><option value="Quarterly" ${c.frequency==='Quarterly'?'selected':''}>Quarterly</option><option value="Composition" ${c.frequency==='Composition'?'selected':''}>Composition</option></select></td>
             <td>${c.gstin}</td>
             <td>${c.group || ""}</td>
+            <td><select class="frequency-select" aria-label="GST filing frequency" onchange="updateGSTFrequency('${c.firebaseKey}',this.value)"><option value="Monthly" ${(c.frequency||'Monthly')==='Monthly'?'selected':''}>Monthly</option><option value="Quarterly" ${c.frequency==='Quarterly'?'selected':''}>Quarterly</option></select></td>
             <td>${c.user}</td>
 
             <td>
@@ -2051,7 +2056,6 @@ function renderGST(){
                     </span>
 
                     <span
-                        class="pass-toggle"
                         onclick="toggleTablePass('gst_pass_${i}', this)"
                         style="cursor:pointer;"
                     >
@@ -2182,14 +2186,6 @@ function togglePassword(id, el){
         input.type = "password";
         el.innerText = "Show";
     }
-}
-
-function resetVisiblePasswords(){
-    document.querySelectorAll('.pass-text[data-visible="1"]').forEach(el=>{
-        el.innerText='••••••';
-        el.dataset.visible='0';
-    });
-    document.querySelectorAll('.pass-toggle').forEach(icon=>icon.innerText='👁️');
 }
 
 function toggleTablePass(id, icon){
@@ -2596,18 +2592,13 @@ function closeTaskForm(){document.getElementById('taskFormPanel').hidden=true;}
 function saveTask(){const d={title:document.getElementById('taskTitle').value.trim(),client:document.getElementById('taskClient').value,priority:document.getElementById('taskPriority').value,dueDate:document.getElementById('taskDue').value,status:document.getElementById('taskStatus').value,notes:document.getElementById('taskNotes').value.trim(),createdAt:Date.now()};if(!d.title){alert('Enter a task title.');return;}moduleRefs.tasks.push(d).then(()=>{closeTaskForm();['taskTitle','taskDue','taskNotes'].forEach(id=>document.getElementById(id).value='');alert('Task saved.');}).catch(e=>alert(e.message));}
 function renderTasks(){const t=document.getElementById('tasksTable');if(!t)return;const q=(document.getElementById('taskSearch')?.value||'').toLowerCase(),st=document.getElementById('taskStatusFilter')?.value||'';const rows=taskItems.filter(x=>(!st||x.status===st)&&JSON.stringify(x).toLowerCase().includes(q)).sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));t.innerHTML='<thead><tr><th>Task</th><th>Client</th><th>Priority</th><th>Due date</th><th>Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>'+(rows.length?rows.map(x=>`<tr><td>${escapeHTML(x.title)}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.priority)}</td><td>${escapeHTML(x.dueDate||'—')}</td><td><select onchange="updateTaskStatus('${x.firebaseKey}',this.value)">${['Pending','In Progress','Completed','On Hold'].map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></td><td>${escapeHTML(x.notes||'—')}</td><td><button onclick="removeModuleRecord('tasks','${x.firebaseKey}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="7">No tasks found.</td></tr>')+'</tbody>';}
 function updateTaskStatus(key,status){moduleRefs.tasks.child(key).update({status,updatedAt:Date.now()});}
-function openFeeForm(){populateModuleSelects();ensureBillingFields();editingFeeKey=null;document.getElementById('feeFormTitle').textContent='Record Professional Fee';document.getElementById('feeDate').value=new Date().toISOString().slice(0,10);document.getElementById('feeReference').value=autoReference();document.getElementById('feeReference').readOnly=false;document.getElementById('feeClient').value='';document.getElementById('feePaid').value='0';document.getElementById('feePaymentDate').value='';document.getElementById('feeMode').value='Bank Transfer';document.getElementById('feeNotes').value='';document.getElementById('feeDiscount').value='0';setInvoiceServiceRows([{details:'',financialYear:'',amount:''}]);updateNetBilled();document.getElementById('feeFormPanel').hidden=false;}
-function closeFeeForm(){document.getElementById('feeFormPanel').hidden=true;editingFeeKey=null;}
-function setInvoiceServiceRows(items){const host=document.getElementById('feeServiceRows');if(!host)return;host.innerHTML='';(items&&items.length?items:[{details:'',financialYear:'',amount:''}]).forEach(item=>addInvoiceServiceRow(item));updateServiceTotal();}
-function addInvoiceServiceRow(item={}){const host=document.getElementById('feeServiceRows');if(!host)return;const row=document.createElement('div');row.className='invoice-service-row';row.innerHTML=`<label>Service / Details<input class="service-detail" placeholder="GST return / appeal / ITR..." value="${escapeHTML(item.details||'')}"></label><label>F.Y.<input class="service-fy" placeholder="2026-27" value="${escapeHTML(item.financialYear||'')}"></label><label>Amount (₹)<input class="service-amount" type="number" min="0" step="0.01" placeholder="0.00" value="${item.amount??''}"></label><button type="button" class="secondary-btn service-remove" title="Remove service" onclick="this.closest('.invoice-service-row').remove();updateServiceTotal();">Remove</button>`;host.appendChild(row);row.querySelector('.service-amount').addEventListener('input',updateServiceTotal);}
-function readInvoiceServiceRows(){return [...document.querySelectorAll('#feeServiceRows .invoice-service-row')].map(row=>({details:row.querySelector('.service-detail').value.trim(),financialYear:row.querySelector('.service-fy').value.trim(),amount:Number(row.querySelector('.service-amount').value||0)})).filter(x=>x.details||x.financialYear||x.amount);}
-function updateServiceTotal(){const rows=readInvoiceServiceRows();const total=rows.reduce((sum,x)=>sum+x.amount,0);const amount=document.getElementById('feeAmount');if(amount){amount.value=total.toFixed(2);amount.readOnly=true;}updateNetBilled();}
-function editFee(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return;populateModuleSelects();ensureBillingFields();editingFeeKey=key;document.getElementById('feeFormTitle').textContent='Edit Fee Record / Invoice';document.getElementById('feeClient').value=x.client||'';document.getElementById('feeReference').value=x.reference||'';document.getElementById('feeReference').readOnly=false;document.getElementById('feeDate').value=x.invoiceDate||'';document.getElementById('feePaid').value=Number(x.paid||0);document.getElementById('feePaymentDate').value=x.paymentDate||'';document.getElementById('feeMode').value=x.mode||'Bank Transfer';document.getElementById('feeNotes').value=x.notes||'';document.getElementById('feeDiscount').value=Number(x.discount||0);const rows=x.serviceItems&&x.serviceItems.length?x.serviceItems:[{details:x.service||'Professional Fees',financialYear:x.financialYear||'',amount:Number(x.amount||0)}];setInvoiceServiceRows(rows);document.getElementById('feeFormPanel').hidden=false;}
-function saveFee(){const serviceItems=readInvoiceServiceRows();if(!serviceItems.length||serviceItems.some(x=>!x.details||x.amount<0)){alert('Add at least one service with details and a valid amount.');return;}const amount=serviceItems.reduce((sum,x)=>sum+x.amount,0),discount=Number(document.getElementById('feeDiscount')?.value||0),net=Math.max(0,amount-discount),paid=Number(document.getElementById('feePaid').value||0),reference=document.getElementById('feeReference').value.trim()||autoReference();if(!amount||discount<0||discount>amount||paid<0||paid>net){alert('Check service amounts, discount and receipt. Discount cannot exceed gross amount and receipt cannot exceed net billed amount.');return;}if(feeItems.some(x=>x.reference===reference&&x.firebaseKey!==editingFeeKey)){alert('This invoice reference already exists. Please enter a unique invoice number.');return;}const d={client:document.getElementById('feeClient').value,reference,serviceItems,service:serviceItems.map(x=>x.details).join('\n'),financialYear:serviceItems.map(x=>x.financialYear).filter(Boolean).join(', '),invoiceDate:document.getElementById('feeDate').value,amount,discount,netAmount:net,paid,paymentDate:document.getElementById('feePaymentDate').value,mode:document.getElementById('feeMode').value,notes:document.getElementById('feeNotes').value.trim(),updatedAt:Date.now()};const wasEditing=Boolean(editingFeeKey);const ref=wasEditing?moduleRefs.fees.child(editingFeeKey):moduleRefs.fees.push();if(!wasEditing)d.createdAt=Date.now();ref.set(d).then(()=>{closeFeeForm();alert(wasEditing?'Fee record updated.':'Fee record saved.');}).catch(e=>alert(e.message));}
+function openFeeForm(){populateModuleSelects();ensureBillingFields();document.getElementById('feeDate').value=new Date().toISOString().slice(0,10);document.getElementById('feeReference').value=autoReference();document.getElementById('feeReference').readOnly=false;document.getElementById('feeFY').value='';document.getElementById('feeDiscount').value='0';updateNetBilled();document.getElementById('feeFormPanel').hidden=false;}
+function closeFeeForm(){document.getElementById('feeFormPanel').hidden=true;}
+function saveFee(){const amount=Number(document.getElementById('feeAmount').value||0),discount=Number(document.getElementById('feeDiscount')?.value||0),net=Math.max(0,amount-discount),paid=Number(document.getElementById('feePaid').value||0),reference=document.getElementById('feeReference').value.trim()||autoReference();if(!amount||amount<0||discount<0||discount>amount||paid<0||paid>net){alert('Check fee, discount and receipt. Discount cannot exceed fee and receipt cannot exceed net billed amount.');return;}if(feeItems.some(x=>x.reference===reference)){alert('This invoice reference already exists. Please enter a unique invoice number.');return;}const d={client:document.getElementById('feeClient').value,reference,service:document.getElementById('feeService').value.trim(),financialYear:document.getElementById('feeFY')?.value.trim()||'',invoiceDate:document.getElementById('feeDate').value,amount,discount,netAmount:net,paid,paymentDate:document.getElementById('feePaymentDate').value,mode:document.getElementById('feeMode').value,notes:document.getElementById('feeNotes').value.trim(),createdAt:Date.now()};moduleRefs.fees.push(d).then(()=>{closeFeeForm();alert('Fee record saved.');}).catch(e=>alert(e.message));}
 function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});}
-function renderBilling(){const t=document.getElementById('billingTable');if(!t)return;let billed=0,received=0;feeItems.forEach(x=>{billed+=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));received+=Number(x.paid||0);});document.getElementById('feeBilled').textContent=money(billed);document.getElementById('feeReceived').textContent=money(received);document.getElementById('feePending').textContent=money(billed-received);t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>Gross</th><th>Discount</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Share</th><th>Action</th></tr></thead><tbody>'+(feeItems.length?[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).map(x=>{const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));return `<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client).replace(/ \((GST|ITR)\)$/,''))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML((x.serviceItems||[]).map(s=>s.details).join(', ')||x.service||'—')}</td><td>${money(x.amount)}</td><td>${money(x.discount||0)}</td><td><b>${money(net)}</b></td><td>${money(x.paid)}</td><td>${money(net-Number(x.paid||0))}</td><td><button onclick="shareInvoice('${x.firebaseKey}')">Share</button></td><td><button onclick="editFee('${x.firebaseKey}')">Edit</button><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`}).join(''):'<tr><td colspan="11">No fee records added.</td></tr>')+'</tbody>';}
+function renderBilling(){const t=document.getElementById('billingTable');if(!t)return;let billed=0,received=0;feeItems.forEach(x=>{billed+=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));received+=Number(x.paid||0);});document.getElementById('feeBilled').textContent=money(billed);document.getElementById('feeReceived').textContent=money(received);document.getElementById('feePending').textContent=money(billed-received);t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>Gross</th><th>Discount</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Invoice</th><th>Action</th></tr></thead><tbody>'+(feeItems.length?[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).map(x=>{const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));return `<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client).replace(/ \((GST|ITR)\)$/,''))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—')}</td><td>${money(x.amount)}</td><td>${money(x.discount||0)}</td><td><b>${money(net)}</b></td><td>${money(x.paid)}</td><td>${money(net-Number(x.paid||0))}</td><td><button class="invoice-download-btn" title="Download PDF" aria-label="Download PDF" onclick="invoicePDF('${x.firebaseKey}')">⤓</button><button onclick="shareInvoice('${x.firebaseKey}')">Share</button></td><td><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`}).join(''):'<tr><td colspan="11">No fee records added.</td></tr>')+'</tbody>';}
 function removeModuleRecord(type,key){if(!confirm('Delete this record? This action cannot be undone.'))return;moduleRefs[type].child(key).remove().catch(e=>alert(e.message));}
-function updatePracticeDashboard(){const el=id=>document.getElementById(id);const recent=[...workItems].sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0)).slice(0,4);const recentEl=el('dashRecentWork');if(recentEl)recentEl.innerHTML=recent.length?recent.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.category)}</strong><span>${escapeHTML(selectedClientName(x.client))}</span><small>${escapeHTML(x.status||'Pending')}</small></div>`).join(''):'No work items added yet.';}
+function updatePracticeDashboard(){const el=id=>document.getElementById(id);if(!el('dashWorkCount'))return;el('dashWorkCount').textContent=workItems.filter(x=>!['Completed','Filed'].includes(x.status)).length;el('dashTaskCount').textContent=taskItems.filter(x=>x.status!=='Completed').length;const outstanding=feeItems.reduce((a,x)=>a+Math.max(0,Number(x.amount||0)-Number(x.discount||0)-Number(x.paid||0)),0);const outstandingEl=el('dashOutstanding');if(outstandingEl)outstandingEl.textContent=money(outstanding);const recent=[...workItems].sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0)).slice(0,4);const recentEl=el('dashRecentWork');if(recentEl)recentEl.innerHTML=recent.length?recent.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.category)}</strong><span>${escapeHTML(selectedClientName(x.client))}</span><small>${escapeHTML(x.status||'Pending')}</small></div>`).join(''):'No work items added yet.';}
 function openSelectedDocuments(){const type=document.getElementById('docType').value,client=document.getElementById('docClient').value;if(!client){alert('Select a client.');return;}document.getElementById('uploadType').value=type.toLowerCase();loadUploadClients();setTimeout(()=>{document.getElementById('uploadClientSelect').value=client.split('|')[1];showSection('upload');if(typeof loadFiles==='function')loadFiles();},150);}
 function exportPracticeReport(){const rows=[['Module','Client','Description','Date','Status / Amount']];workItems.forEach(x=>rows.push(['Work',selectedClientName(x.client),x.category+' '+(x.description||''),x.dueDate||'',x.status||'']));taskItems.forEach(x=>rows.push(['Task',selectedClientName(x.client),x.title,x.dueDate||'',x.status||'']));feeItems.forEach(x=>rows.push(['Fee',selectedClientName(x.client),x.service,x.invoiceDate||'',`${x.amount||0} billed / ${x.paid||0} received`]));const ws=XLSX.utils.aoa_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Practice Report');XLSX.writeFile(wb,'SK_Consultant_Practice_Report.xlsx');}
 db.ref('gstClients').on('value',()=>populateModuleSelects());
@@ -2618,28 +2609,105 @@ function toggleSidebar(){const side=document.getElementById('sidebar'),overlay=d
 function setupSidebarHover(){if(window.innerWidth<=768)return;const side=document.getElementById('sidebar'),menu=document.querySelector('.menu-btn');if(!side||!menu)return;const open=()=>side.classList.add('peek-open');const close=()=>side.classList.remove('peek-open');menu.addEventListener('mouseenter',open);side.addEventListener('mouseenter',open);side.addEventListener('mouseleave',close);menu.addEventListener('mouseleave',()=>setTimeout(()=>{if(!side.matches(':hover'))close()},250));}
 function autoReference(){const date=new Date().toISOString().slice(0,10).replaceAll('-','');let n=feeItems.filter(x=>(x.reference||'').startsWith('SKC/'+date+'/')).length+1;let ref='SKC/'+date+'/'+String(n).padStart(3,'0');while(feeItems.some(x=>x.reference===ref)){n++;ref='SKC/'+date+'/'+String(n).padStart(3,'0');}return ref;}
 function updateNetBilled(){const gross=Number(document.getElementById('feeAmount')?.value||0),discount=Number(document.getElementById('feeDiscount')?.value||0),net=Math.max(0,gross-discount);const out=document.getElementById('feeNetAmount');if(out)out.textContent=money(net);}
-function ensureBillingFields(){const panel=document.getElementById('feeFormPanel');if(!panel)return;const ref=document.getElementById('feeReference');if(ref){ref.readOnly=false;ref.placeholder='Auto-generated; you may edit manually';}if(!document.getElementById('feeServiceRows')){const legacyService=document.getElementById('feeService')?.closest('label');const legacyFY=document.getElementById('feeFY')?.closest('label');if(legacyService)legacyService.style.display='none';if(legacyFY)legacyFY.style.display='none';const amount=document.getElementById('feeAmount');const host=document.createElement('div');host.className='full-field';host.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 12px"><strong>Invoice Services</strong><button type="button" class="secondary-btn" onclick="addInvoiceServiceRow()">+ Add Service</button></div><div id="feeServiceRows"></div>';amount.closest('label').insertAdjacentElement('beforebegin',host);const css=document.createElement('style');css.textContent='.invoice-service-row{display:grid;grid-template-columns:minmax(180px,2fr) minmax(110px,1fr) minmax(120px,1fr) auto;gap:9px;align-items:end;padding:10px;margin:8px 0;background:#f7f8f8;border:1px solid #e2e6e6;border-radius:9px}.invoice-service-row label{display:flex;flex-direction:column;gap:5px;font-size:12px}.invoice-service-row input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8dddd;border-radius:7px}@media(max-width:650px){.invoice-service-row{grid-template-columns:1fr 1fr}.invoice-service-row label:first-child{grid-column:1/-1}}';document.head.appendChild(css);}if(!document.getElementById('feeDiscount')){const amountLabel=document.getElementById('feeAmount').closest('label');const discount=document.createElement('label');discount.innerHTML='Discount (₹)<input id="feeDiscount" type="number" min="0" step="0.01" value="0" oninput="updateNetBilled()">';amountLabel.insertAdjacentElement('afterend',discount);const net=document.createElement('div');net.className='summary-tile full-field';net.innerHTML='<span>Net billed amount</span><strong id="feeNetAmount">₹0</strong>';discount.insertAdjacentElement('afterend',net);}}
+function ensureBillingFields(){const panel=document.getElementById('feeFormPanel');if(!panel||document.getElementById('feeDiscount'))return;const ref=document.getElementById('feeReference');if(ref){ref.readOnly=false;ref.placeholder='Auto-generated; you may edit manually';}const amount=document.getElementById('feeAmount');if(amount){const label=amount.closest('label');const discount=document.createElement('label');discount.innerHTML='Discount (₹)<input id=\"feeDiscount\" type=\"number\" min=\"0\" step=\"0.01\" value=\"0\" oninput=\"updateNetBilled()\">';label.insertAdjacentElement('afterend',discount);const net=document.createElement('div');net.className='summary-tile full-field';net.innerHTML='<span>Net billed amount</span><strong id=\"feeNetAmount\">₹0</strong>';discount.insertAdjacentElement('afterend',net);amount.addEventListener('input',updateNetBilled);}}
 function invoiceClientData(value){if(!value)return {};const [type,key]=value.split('|');const c=(type==='GST'?gstClients:itrClients).find(z=>z.firebaseKey===key)||{};const gstin=c.gstin||'',pan=c.pan||(gstin.length>=12?gstin.substring(2,12):'');return {trade:c.trade||c.tradeName||c.name||'',legal:c.legal||c.legalName||c.name||'',pan,gstin};}
-function invoiceImageData(url){return new Promise(resolve=>{const img=new Image();img.onload=()=>{try{const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;cv.getContext('2d').drawImage(img,0,0);const isPNG=/\.png(?:$|[?#])/i.test(url);resolve({data:cv.toDataURL(isPNG?'image/png':'image/jpeg'),format:isPNG?'PNG':'JPEG'});}catch(e){console.warn('Invoice image could not be embedded:',url,e);resolve(null);}};img.onerror=()=>{console.warn('Invoice image could not be loaded:',url);resolve(null);};img.src=url;});}
-async function buildInvoicePDF(x){if(!window.jspdf?.jsPDF){alert('PDF library could not load. Check internet connection and try again.');return null;}const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'mm',format:'a4'}),net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0))),paid=Number(x.paid||0),client=invoiceClientData(x.client);const signatureURL=new URL('FAIZAN%20SIGNATURE.jpeg',document.baseURI).href,qrURL=new URL('PAYMENT%20QR.PNG',document.baseURI).href;
-// Letterhead
- doc.setTextColor(15,15,15);doc.setFont('helvetica','bold');doc.setFontSize(22);doc.text('SK CONSULTANT',105,18,{align:'center'});doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('ADV. MOHAMAD FAIZAN SHAIKH',105,25,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('228, Times World, Opp. Atlanta Shopping Center, Althan Canal Road - 395017',105,31,{align:'center'});doc.text('Mo.No. +91 9173321079 | Email: skconsultancy0720@gmail.com',105,36,{align:'center'});doc.setDrawColor(25,25,25);doc.setLineWidth(.5);doc.line(14,41,196,41);
-// Invoice heading and identifiers
- doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('INVOICE',105,51,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Inv no: '+(x.reference||''),14,61);doc.text('Date: '+(x.invoiceDate||''),140,61);
-// Customer details
- let y=72;doc.setFont('helvetica','bold');doc.text('Trade Name:',14,y);doc.setFont('helvetica','normal');doc.text(String(client.trade||'—').slice(0,75),43,y);y+=7;doc.setFont('helvetica','bold');doc.text('Legal Name:',14,y);doc.setFont('helvetica','normal');doc.text(String(client.legal||'—').slice(0,75),43,y);y+=7;doc.setFont('helvetica','bold');doc.text('PAN:',14,y);doc.setFont('helvetica','normal');doc.text(String(client.pan||'—'),43,y);y+=7;doc.setFont('helvetica','bold');doc.text('GSTIN:',14,y);doc.setFont('helvetica','normal');doc.text(String(client.gstin||'—'),43,y);
-// Particulars table
- y+=12;const left=14,right=196;doc.setFillColor(238,238,235);doc.rect(left,y-6,right-left,10,'F');doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('No.',17,y);doc.text('DETAILS',31,y);doc.text('F.Y.',145,y);doc.text('Amount (₹)',192,y,{align:'right'});doc.setDrawColor(120,120,120);doc.line(left,y+5,right,y+5);y+=13;
- const items=x.serviceItems&&x.serviceItems.length?x.serviceItems:[{details:x.service||'Professional Fees',financialYear:x.financialYear||'',amount:Number(x.amount||0)}];const lines=Math.max(3,items.length);doc.setFont('helvetica','normal');doc.setFontSize(9);for(let i=0;i<lines;i++){const item=items[i]||{details:'',financialYear:'',amount:0};const wrapped=doc.splitTextToSize(String(item.details||''),105);doc.text(String(i+1),17,y);doc.text(wrapped,31,y);doc.text(String(item.financialYear||''),145,y);if(item.amount)doc.text(Number(item.amount).toFixed(2),192,y,{align:'right'});y+=Math.max(10,wrapped.length*4.5);doc.setDrawColor(220,220,220);doc.line(left,y-4,right,y-4);}
+function invoiceImageData(url){return new Promise(resolve=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{try{const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;cv.getContext('2d').drawImage(img,0,0);resolve({data:cv.toDataURL(url.toLowerCase().includes('.png')?'image/png':'image/jpeg'),format:url.toLowerCase().includes('.png')?'PNG':'JPEG'});}catch(e){resolve(null);}};img.onerror=()=>resolve(null);img.src=url;});}
+async function buildInvoicePDF(x){
+ if(!window.jspdf?.jsPDF){alert('PDF library could not load. Check internet connection and try again.');return null;}
+ const {jsPDF}=window.jspdf;
+ const doc=new jsPDF({unit:'mm',format:'a4'});
+ const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));
+ const paid=Number(x.paid||0);
+ const client=invoiceClientData(x.client);
+ const qrURL='https://raw.githubusercontent.com/FAIZAN/skc-dashboard/main/PAYMENT%20QR.PNG';
+
+ // Letterhead
+ doc.setTextColor(15,15,15);
+ doc.setFont('helvetica','bold');doc.setFontSize(22);
+ doc.text('SK CONSULTANT',105,18,{align:'center'});
+ doc.setFontSize(11);doc.text('ADV. MOHAMAD FAIZAN SHAIKH',105,25,{align:'center'});
+ doc.setFont('helvetica','normal');doc.setFontSize(9);
+ doc.text('228, Times World, Opp. Atlanta Shopping Center, Althan Canal Road - 395017',105,31,{align:'center'});
+ doc.text('Mo.No. +91 9173321079 | Email: skconsultancy0720@gmail.com',105,36,{align:'center'});
+ doc.setDrawColor(25,25,25);doc.setLineWidth(.5);doc.line(14,41,196,41);
+
+ // Invoice heading and identifiers
+ doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('INVOICE',105,51,{align:'center'});
+ doc.setFont('helvetica','normal');doc.setFontSize(10);
+ doc.text('Inv no: '+(x.reference||''),14,61);
+ doc.text('Date: '+(x.invoiceDate||''),140,61);
+
+ // Customer details
+ let y=72;
+ doc.setFont('helvetica','bold');doc.text('Trade Name:',14,y);
+ doc.setFont('helvetica','normal');doc.text(String(client.trade||'—').slice(0,75),43,y);y+=7;
+ doc.setFont('helvetica','bold');doc.text('Legal Name:',14,y);
+ doc.setFont('helvetica','normal');doc.text(String(client.legal||'—').slice(0,75),43,y);y+=7;
+ doc.setFont('helvetica','bold');doc.text('PAN:',14,y);
+ doc.setFont('helvetica','normal');doc.text(String(client.pan||'—'),43,y);y+=7;
+ doc.setFont('helvetica','bold');doc.text('GSTIN:',14,y);
+ doc.setFont('helvetica','normal');doc.text(String(client.gstin||'—'),43,y);
+
+ // Properly aligned particulars table
+ y+=12;
+ const left=14,right=196;
+ const colNo=29,colDetails=34,colFY=145,colAmount=192;
+ doc.setFillColor(238,238,235);doc.rect(left,y-6,right-left,10,'F');
+ doc.setFont('helvetica','bold');doc.setFontSize(9);
+ doc.text('Sr. No.',left+2,y);
+ doc.text('DETAILS',colDetails,y);
+ doc.text('F.Y.',colFY,y,{align:'center'});
+ doc.text('Amount (₹)',colAmount,y,{align:'right'});
+ doc.setDrawColor(120,120,120);doc.line(left,y+5,right,y+5);
+ y+=13;
+
+ const details=String(x.service||'Professional Fees').split(/\n/).filter(Boolean);
+ const lines=Math.max(3,Math.min(8,details.length));
+ doc.setFont('helvetica','normal');doc.setFontSize(9);
+ for(let i=0;i<lines;i++){
+   const detail=details[i]||'';
+   const fy=i===0?(x.financialYear||''):'';
+   const amt=i===0?Number(x.amount||0):0;
+   const wrapped=doc.splitTextToSize(detail,105);
+   doc.text(String(i+1),colNo,y,{align:'center'});
+   doc.text(wrapped,colDetails,y);
+   doc.text(String(fy),colFY,y,{align:'center'});
+   if(i===0)doc.text(amt.toFixed(2),colAmount,y,{align:'right'});
+   y+=Math.max(10,wrapped.length*4.5);
+   doc.setDrawColor(220,220,220);doc.line(left,y-4,right,y-4);
+ }
+
  // Discount and total rows
- y+=2;doc.setFont('helvetica','normal');doc.text('Less: Discount',31,y);doc.text(Number(x.discount||0).toFixed(2),192,y,{align:'right'});y+=8;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.line(120,y-5,196,y-5);doc.text('TOTAL',145,y);doc.text(net.toFixed(2),192,y,{align:'right'});y+=8;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('Amount Received: '+paid.toFixed(2),14,y);doc.text('Balance Due: '+(net-paid).toFixed(2),110,y);
- // Bank details
- y+=15;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('Bank Details:',14,y);y+=7;doc.setFont('helvetica','normal');doc.setFontSize(8.5);[['Bank Name','IDFC FIRST BANK'],['Account Name','SHAIKH MOHAMMAD FAIZAN MOHAMMAD ZAKIR'],['Account Number','10265164677'],['IFSC','IDFB0042261'],['MICR','395751002']].forEach(([a,b])=>{doc.text(a+':',14,y);doc.text(b,48,y);y+=5;});
- // QR image and signature from repository; image failures do not stop invoice creation
- const [qr,signature]=await Promise.all([invoiceImageData(qrURL),invoiceImageData(signatureURL)]);if(qr){doc.addImage(qr.data,qr.format,150,Math.min(y-26,235),32,32);doc.setFontSize(7);doc.text('Scan to Pay',166,Math.min(y+8,269),{align:'center'});}else{console.warn('Payment QR image not found. Confirm PAYMENT QR.PNG is in the published repository root.');}
- const sigY=Math.min(y+8,260);if(signature)doc.addImage(signature.data,signature.format,143,sigY,38,17);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('For SK CONSULTANT',192,Math.min(sigY+23,280),{align:'right'});doc.setFont('helvetica','normal');doc.text('Authorised Signature',192,Math.min(sigY+28,285),{align:'right'});
- return doc;}
-async function shareInvoice(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(!doc)return;const blob=doc.output('blob'),file=new File([blob],(x.reference||'SKC_Invoice')+'.pdf',{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){try{await navigator.share({title:'SK CONSULTANT Invoice '+(x.reference||''),text:'Please find the invoice attached.',files:[file]});}catch(e){if(e.name!=='AbortError')alert('Sharing was not completed.');}}else{const url=URL.createObjectURL(blob);const win=window.open(url,'_blank');if(!win)alert('Your browser blocked the invoice preview. Allow pop-ups for this website and try Share again.');else alert('Invoice preview opened. Use your browser share option to share the PDF.');setTimeout(()=>URL.revokeObjectURL(url),60000);}}
+ y+=2;doc.setFont('helvetica','normal');
+ doc.text('Less: Discount',colDetails,y);
+ doc.text(Number(x.discount||0).toFixed(2),colAmount,y,{align:'right'});
+ y+=8;doc.setFont('helvetica','bold');doc.setFontSize(10);
+ doc.line(120,y-5,196,y-5);doc.text('TOTAL',145,y);
+ doc.text(net.toFixed(2),colAmount,y,{align:'right'});
+ y+=8;doc.setFont('helvetica','normal');doc.setFontSize(9);
+ doc.text('Amount Received: '+paid.toFixed(2),14,y);
+ doc.text('Balance Due: '+(net-paid).toFixed(2),110,y);
+
+ // Bank details and payment QR. No signature photo is loaded or embedded.
+ y+=15;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('Bank Details:',14,y);
+ y+=7;doc.setFont('helvetica','normal');doc.setFontSize(8.5);
+ [['Bank Name','IDFC FIRST BANK'],['Account Name','SHAIKH MOHAMMAD FAIZAN MOHAMMAD ZAKIR'],['Account Number','10265164677'],['IFSC','IDFB0042261'],['MICR','395751002']].forEach(([a,b])=>{doc.text(a+':',14,y);doc.text(b,48,y);y+=5;});
+ const qr=await invoiceImageData(qrURL);
+ if(qr){
+   const qrY=Math.min(y-26,235);
+   doc.addImage(qr.data,qr.format,150,qrY,32,32);
+   doc.setFontSize(7);doc.text('Scan to Pay',166,Math.min(qrY+35,269),{align:'center'});
+ }else{
+   doc.setFontSize(7);doc.text('Payment QR image unavailable',150,Math.min(y,265));
+ }
+ doc.setFont('helvetica','bold');doc.setFontSize(9);
+ doc.text('For SK CONSULTANT',192,Math.min(y+16,280),{align:'right'});
+ doc.setFont('helvetica','normal');
+ doc.text('Authorised Signature',192,Math.min(y+21,285),{align:'right'});
+ return doc;
+}
+async function invoicePDF(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(doc)doc.save((x.reference||'SKC_Invoice')+'.pdf');}
+async function shareInvoice(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(!doc)return;const blob=doc.output('blob'),file=new File([blob],(x.reference||'SKC_Invoice')+'.pdf',{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){try{await navigator.share({title:'SK CONSULTANT Invoice '+(x.reference||''),text:'Please find the invoice attached.',files:[file]});}catch(e){if(e.name!=='AbortError')alert('Sharing was not completed. Please download the PDF instead.');}}else{doc.save((x.reference||'SKC_Invoice')+'.pdf');alert('PDF downloaded. You can now attach it to WhatsApp or email.');}}
 document.addEventListener('DOMContentLoaded',()=>{setupFrequencyField();setupSidebarHover();ensureBillingFields();const today=document.getElementById('dashboardToday');if(today)today.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});['workClient','taskClient','feeClient','docClient'].forEach(id=>fillClientSelect(id));const docType=document.getElementById('docType');if(docType)docType.addEventListener('change',()=>fillClientSelect('docClient',true,docType.value.toUpperCase()));});
 
 </script>
