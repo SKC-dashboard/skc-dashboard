@@ -16,6 +16,7 @@
 
 <script>
 
+// SECURITY NOTE: Client-side checks are not an authorization boundary. Configure Firebase RTDB and Storage rules to allow only the designated admin UID.
 // FIREBASE CONFIG
 const firebaseConfig = {
     apiKey: "AIzaSyBtJAL_w794WNn0Z0mJ8ysuQd9SvZLuYc0",
@@ -43,77 +44,56 @@ const auth = firebase.auth();
     
 let gstClients = [];
 let itrClients = [];
-    /* LIVE GST CLIENTS */
-db.ref("gstClients").on("value", snapshot => {
+let dataListenersAttached = false;
+let gstClientsRef = db.ref("gstClients");
+let itrClientsRef = db.ref("itrClients");
 
-    let data = snapshot.val();
+function attachClientDataListeners(){
+    if(dataListenersAttached) return;
+    dataListenersAttached = true;
 
-    gstClients = [];
+    gstClientsRef.on("value", snapshot => {
+        const data = snapshot.val() || {};
+        gstClients = Object.keys(data).map(key => ({ ...data[key], firebaseKey: key }));
+        renderGST(); updateAll(); loadUploadClients(); loadSettingsClients();
+        if(document.getElementById("uploadClientSelect").value) loadFiles();
+    }, handleFirebaseReadError);
 
-    if(data){
+    itrClientsRef.on("value", snapshot => {
+        const data = snapshot.val() || {};
+        itrClients = Object.keys(data).map(key => ({ ...data[key], firebaseKey: key }));
+        renderITR(); updateAll(); loadUploadClients(); loadSettingsClients();
+        if(document.getElementById("uploadClientSelect").value) loadFiles();
+    }, handleFirebaseReadError);
+}
 
-        Object.keys(data).forEach(key => {
+function detachClientDataListeners(){
+    if(!dataListenersAttached) return;
+    gstClientsRef.off("value");
+    itrClientsRef.off("value");
+    dataListenersAttached = false;
+    gstClients = []; itrClients = [];
+    renderGST(); renderITR(); updateAll();
+}
 
-            gstClients.push({
-                ...data[key],
-                firebaseKey: key
-            });
+function handleFirebaseReadError(error){
+    console.error("Firebase read error:", error);
+    alert("Unable to load dashboard data. Please check your account permissions.");
+}
 
-        });
-
-    }
-
-    renderGST();
-    updateAll();
-    loadUploadClients();
-    loadSettingsClients();
-});
-
-/* LIVE ITR CLIENTS */
-db.ref("itrClients").on("value", snapshot => {
-
-    let data = snapshot.val();
-
-    itrClients = [];
-
-    if(data){
-
-        Object.keys(data).forEach(key => {
-
-            itrClients.push({
-                ...data[key],
-                firebaseKey: key
-            });
-
-        });
-
-    }
-
-    renderITR();
-    updateAll();
-    loadUploadClients();
-    loadSettingsClients();
-
-});
 window.addEventListener("load", () => {
-
     auth.onAuthStateChanged(user => {
-
+        const loginPage = document.getElementById("loginPage");
         if(user){
-
-            document.getElementById("loginPage")
-            .style.display = "none";
-
+            loginPage.style.display = "none";
+            attachClientDataListeners();
         } else {
-
-            document.getElementById("loginPage")
-            .style.display = "flex";
-
+            loginPage.style.display = "flex";
+            detachClientDataListeners();
         }
-
     });
-
 });
+
 function loadUploadClients(){
 
     let type = document.getElementById("uploadType").value;
@@ -144,7 +124,7 @@ function loadUploadClients(){
     let savedClient =
     localStorage.getItem("selectedUploadClient");
 
-    if(savedClient){
+    if(savedClient && list.some(c => c.firebaseKey === savedClient)){
         select.value = savedClient;
     }
 
@@ -195,7 +175,6 @@ function loadClientDetails(){
     document.getElementById("edit_trade").value = client.trade || "";
     document.getElementById("edit_legal").value = client.legal || "";
     document.getElementById("edit_user").value = client.user || "";
-    document.getElementById("edit_pass").value = client.pass || "";
 
     document.getElementById("edit_extra").value =
         type === "gst"
@@ -208,6 +187,7 @@ function loadClientDetails(){
 }
 
 function updateClient(){
+    if(!auth.currentUser) return alert("Please log in first");
     let type = document.getElementById("typeSelect").value;
     let index = document.getElementById("clientSelect").value;
 
@@ -231,9 +211,6 @@ let updatedData = {
 
     user:
     document.getElementById("edit_user").value,
-
-    pass:
-    document.getElementById("edit_pass").value,
 
     active:
     !document.getElementById("edit_active").checked
@@ -259,6 +236,7 @@ let updatedData = {
 }
 
 function deleteClient(){
+    if(!auth.currentUser) return alert("Please log in first");
     let type = document.getElementById("typeSelect").value;
     let index = document.getElementById("clientSelect").value;
 
@@ -301,6 +279,7 @@ function deleteClient(){
 }
   function loadFiles(){
 
+    if(!auth.currentUser || !dataListenersAttached) return;
     let type = document.getElementById("uploadType").value;
     let index = document.getElementById("uploadClientSelect").value;
 
@@ -353,42 +332,30 @@ fileList.appendChild(heading);
 
             li.style.marginBottom = "10px";
 
-li.innerHTML = `
+            const row = document.createElement("div");
+            row.style.cssText = "width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;";
+            const link = document.createElement("a");
+            link.textContent = file.name || "Unnamed file";
+            link.href = file.url || "#";
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            row.appendChild(link);
 
-<div style="width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-
-    <a href="${file.url}" target="_blank">
-        ${file.name}
-    </a>
-
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-
-        <button onclick="downloadFile('${file.url}','${file.name}')">
-            Download
-        </button>
-
-        <button onclick="shareFile('${file.url}','${file.name}')">
-            Share
-        </button>
-
-        <button 
-            onclick="deleteFile('${type}','${client.firebaseKey}','${file.url}')"
-            style="
-                background:red;
-                color:white;
-                border:none;
-                padding:5px 10px;
-                cursor:pointer;
-            ">
-            Delete
-        </button>
-
-    </div>
-
-</div>
-
-`;
-
+            const actions = document.createElement("div");
+            actions.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;";
+            const download = document.createElement("button");
+            download.type = "button"; download.textContent = "Download";
+            download.addEventListener("click", () => downloadFile(file.url, file.name));
+            const share = document.createElement("button");
+            share.type = "button"; share.textContent = "Share";
+            share.addEventListener("click", () => shareFile(file.url, file.name));
+            const remove = document.createElement("button");
+            remove.type = "button"; remove.textContent = "Delete";
+            remove.style.cssText = "background:red;color:white;border:0;padding:5px 10px;cursor:pointer;";
+            remove.addEventListener("click", () => deleteFile(type, client.firebaseKey, file.url));
+            actions.append(download, share, remove);
+            row.appendChild(actions);
+            li.replaceChildren(row);
             fileList.appendChild(li);
 
         });
@@ -415,8 +382,7 @@ function exportGSTExcel(){
         "Legal Name": c.legal || "",
         "GSTIN": c.gstin || "",
         "Group": c.group || "",
-        "Username": c.user || "",
-        "Password": c.pass || ""
+        "Username": c.user || ""
 
     }));
 
@@ -441,8 +407,7 @@ function exportITRExcel(){
         "Legal Name": c.legal || "",
         "PAN": c.pan || "",
         "Group": c.group || "",
-        "Username": c.user || "",
-        "Password": c.pass || ""
+        "Username": c.user || ""
 
     }));
 
@@ -461,6 +426,7 @@ function exportITRExcel(){
 
 function importGSTExcel(file){
 
+    if(!auth.currentUser) return alert("Please log in first");
     if(!file) return;
 
     let reader = new FileReader();
@@ -485,8 +451,7 @@ function importGSTExcel(file){
                 legal: row["Legal Name"] || "",
                 gstin: row["GSTIN"] || "",
                 group: row["Group"] || "",
-                user: row["Username"] || "",
-                pass: row["Password"] || ""
+                user: row["Username"] || ""
 
             };
 
@@ -508,6 +473,7 @@ function importGSTExcel(file){
 
 function importITRExcel(file){
 
+    if(!auth.currentUser) return alert("Please log in first");
     if(!file) return;
 
     let reader = new FileReader();
@@ -532,8 +498,7 @@ function importITRExcel(file){
                 legal: row["Legal Name"] || "",
                 pan: row["PAN"] || "",
                 group: row["Group"] || "",
-                user: row["Username"] || "",
-                pass: row["Password"] || ""
+                user: row["Username"] || ""
 
             };
 
@@ -566,7 +531,7 @@ function importITRExcel(file){
         #163d4d
     );
 
-    display: none;
+    display: flex;
     justify-content: center;
     align-items: center;
     z-index: 99999;
@@ -1398,6 +1363,7 @@ button {
 
     z-index: 999999 !important;
 }
+.security-note{color:#725b16;background:#fff8df;border-left:3px solid #d4af37;padding:10px 12px;font-size:13px;line-height:1.5;}
 </style>
 </head>
 
@@ -1652,10 +1618,7 @@ button {
         <input id="edit_group" placeholder="Group">
         <input id="edit_user" placeholder="Username">
 
-        <div class="pass-wrap">
-            <input id="edit_pass" type="password" placeholder="Password">
-            <span class="toggle-pass" onclick="togglePassword('edit_pass', this)">Show</span>
-        </div>
+        <p class="security-note">Portal passwords are not managed or exported by this dashboard. Use the official portal password manager.</p>
 
 <div class="settings-btn-row">
 
@@ -1730,15 +1693,13 @@ function login(){
         document.getElementById("loginPage")
         .style.display = "none";
 
-        document.getElementById("errorMsg")
-        .innerHTML = "";
+        document.getElementById("errorMsg").textContent = "";
 
     })
 
     .catch((error) => {
 
-        document.getElementById("errorMsg")
-        .innerHTML = error.message;
+        document.getElementById("errorMsg").textContent = error.message;
 
     });
 
@@ -1825,7 +1786,6 @@ function clearSettingsFields(){
     document.getElementById("edit_extra").value = "";
     document.getElementById("edit_group").value = "";
     document.getElementById("edit_user").value = "";
-    document.getElementById("edit_pass").value = "";
     document.getElementById("edit_active").checked = true;
 
 }
@@ -1913,122 +1873,52 @@ function openGSTPortal(user){
 }
 
 /* RENDER FIXED */
+function appendCell(row, value){
+    const cell = document.createElement("td");
+    cell.textContent = value == null ? "" : String(value);
+    row.appendChild(cell);
+    return cell;
+}
+
 function renderGST(){
+    const table = document.getElementById("gstTable");
+    table.replaceChildren();
+    const header = document.createElement("tr");
+    ["GST", "Trade Name", "Legal Name", "GSTIN", "Group", "Username"].forEach(v => {
+        const th = document.createElement("th"); th.textContent = v; header.appendChild(th);
+    });
+    table.appendChild(header);
 
-    document.getElementById("gstTable").innerHTML = `
-
-    <tr>
-        <th>GST</th>
-        <th>Trade Name</th>
-        <th>Legal Name</th>
-        <th>GSTIN</th>
-        <th>Group</th>
-        <th>Username</th>
-        <th>Password</th>
-    </tr>
-
-    ` +
-
-    gstClients
-.filter(c => c.active !== false)
-.map((c,i)=>`
-
-        <tr>
-
-            <!-- GST LOGIN BUTTON -->
-            <td style="text-align:center;">
-
-    <span
-        onclick='openGSTPortal(${JSON.stringify(c.user)})'
-        style="
-            cursor:pointer;
-            font-size:22px;
-        "
-        title="Open GST Portal"
-    >
-        🏛️
-    </span>
-
-</td>
-
-            <td>${c.trade}</td>
-            <td>${c.legal}</td>
-            <td>${c.gstin}</td>
-            <td>${c.group || ""}</td>
-            <td>${c.user}</td>
-
-            <td>
-                <div class="pass-cell">
-
-                    <span
-                        id="gst_pass_${i}"
-                        class="pass-text"
-                        data-pass="${c.pass}"
-                        data-visible="0"
-                    >
-                        ••••••
-                    </span>
-
-                    <span
-                        onclick="toggleTablePass('gst_pass_${i}', this)"
-                        style="cursor:pointer;"
-                    >
-                        👁️
-                    </span>
-
-                </div>
-            </td>
-
-        </tr>
-
-    `).join("");
+    gstClients.filter(c => c.active !== false).forEach(c => {
+        const row = document.createElement("tr");
+        const portalCell = document.createElement("td");
+        portalCell.style.textAlign = "center";
+        const portalButton = document.createElement("button");
+        portalButton.type = "button"; portalButton.textContent = "🏛️";
+        portalButton.title = "Open GST Portal";
+        portalButton.addEventListener("click", () => openGSTPortal(c.user || ""));
+        portalCell.appendChild(portalButton); row.appendChild(portalCell);
+        appendCell(row, c.trade); appendCell(row, c.legal); appendCell(row, c.gstin);
+        appendCell(row, c.group); appendCell(row, c.user);
+        table.appendChild(row);
+    });
 }
 
 function renderITR(){
+    const table = document.getElementById("itrTable");
+    table.replaceChildren();
+    const header = document.createElement("tr");
+    ["Trade Name", "Legal Name", "PAN", "Group", "Username"].forEach(v => {
+        const th = document.createElement("th"); th.textContent = v; header.appendChild(th);
+    });
+    table.appendChild(header);
 
-    document.getElementById("itrTable").innerHTML = `
-
-    <tr>
-        <th>Trade Name</th>
-        <th>Legal Name</th>
-        <th>PAN</th>
-        <th>Group</th>
-        <th>Username</th>
-        <th>Password</th>
-    </tr>
-
-    ` +
-
-    itrClients
-    .filter(c => c.active !== false)
-    .map((c,i)=>`
-
-        <tr>
-            <td>${c.trade}</td>
-            <td>${c.legal}</td>
-            <td>${c.pan}</td>
-            <td>${c.group || ""}</td>
-            <td>${c.user}</td>
-
-            <td>
-                <div class="pass-cell">
-                    <span
-                        id="itr_pass_${i}"
-                        class="pass-text"
-                        data-pass="${c.pass}"
-                        data-visible="0"
-                    >
-                        ••••••
-                    </span>
-
-                    <span onclick="toggleTablePass('itr_pass_${i}', this)">
-                        👁️
-                    </span>
-                </div>
-            </td>
-        </tr>
-
-    `).join("");
+    itrClients.filter(c => c.active !== false).forEach(c => {
+        const row = document.createElement("tr");
+        appendCell(row, c.trade); appendCell(row, c.legal); appendCell(row, c.pan);
+        appendCell(row, c.group); appendCell(row, c.user);
+        table.appendChild(row);
+    });
 }
 
 let searchTimer;
@@ -2117,7 +2007,7 @@ function toggleTablePass(id, icon){
 
 /* REPORT */
 function uploadFile(){
-    
+    if(!auth.currentUser) return alert("Please log in first");
     let file =
     document.getElementById("fileInput").files[0];
 
@@ -2164,10 +2054,9 @@ function uploadFile(){
     storage.ref().child(filePath);
 
     // RESUMABLE FAST UPLOAD
-    let uploadTask =
-    storageRef.put(file, {
-        cacheControl: "public,max-age=86400"
-    });
+    // Do not mark confidential client documents as publicly cacheable.
+    // Firebase Storage security rules must still enforce authenticated admin-only access.
+    let uploadTask = storageRef.put(file);
 
     uploadTask.on(
 
@@ -2238,6 +2127,7 @@ function uploadFile(){
 }
 function deleteFile(type, clientKey, fileURL){
 
+    if(!auth.currentUser) return alert("Please log in first");
     if(!confirm("Delete this file?")) return;
 
     // DELETE FROM DATABASE FIRST
@@ -2375,7 +2265,7 @@ function updatePopupPlaceholder(){
 }
 
 function savePopupClient(){
-
+    if(!auth.currentUser) return alert("Please log in first");
     let type =
     document.getElementById("popupType").value;
 
@@ -2393,8 +2283,6 @@ function savePopupClient(){
         user:
         document.getElementById("popup_user").value,
 
-        pass:
-        document.getElementById("popup_pass").value
     };
 
     let extra =
@@ -2435,7 +2323,6 @@ function savePopupClient(){
     document.getElementById("popup_extra").value = "";
     document.getElementById("popup_group").value = "";
     document.getElementById("popup_user").value = "";
-    document.getElementById("popup_pass").value = "";
 }
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
@@ -2460,10 +2347,10 @@ window.addEventListener("DOMContentLoaded", function(){
     loadFiles();
 
     // RESTORE LAST OPENED SECTION
-    let savedSection =
-    localStorage.getItem("activeSection")
-    || "dashboard";
-
+    let savedSection = localStorage.getItem("activeSection") || "dashboard";
+    if(!document.getElementById(savedSection) || !document.getElementById(savedSection).classList.contains("section")){
+        savedSection = "dashboard";
+    }
     showSection(savedSection);
     
     updatePopupPlaceholder();
@@ -2563,27 +2450,7 @@ box-sizing:border-box;
 font-size:16px;
 ">
 
-<div class="pass-wrap" style="margin-top:12px;">
-
-<input
-id="popup_pass"
-type="password"
-placeholder="Password"
-style="
-width:100%;
-padding:14px;
-font-size:16px;
-box-sizing:border-box;
-">
-
-<span
-class="toggle-pass"
-onclick="togglePassword('popup_pass', this)"
->
-Show
-</span>
-
-</div>
+<p class="security-note">Do not enter or store client portal passwords in this dashboard.</p>
 
 <div style="
 display:flex;
