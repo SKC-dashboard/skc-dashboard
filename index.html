@@ -16,7 +16,6 @@
 
 <script>
 
-// SECURITY NOTE: Client-side checks are not an authorization boundary. Configure Firebase RTDB and Storage rules to allow only the designated admin UID.
 // FIREBASE CONFIG
 const firebaseConfig = {
     apiKey: "AIzaSyBtJAL_w794WNn0Z0mJ8ysuQd9SvZLuYc0",
@@ -44,56 +43,77 @@ const auth = firebase.auth();
     
 let gstClients = [];
 let itrClients = [];
-let dataListenersAttached = false;
-let gstClientsRef = db.ref("gstClients");
-let itrClientsRef = db.ref("itrClients");
+    /* LIVE GST CLIENTS */
+db.ref("gstClients").on("value", snapshot => {
 
-function attachClientDataListeners(){
-    if(dataListenersAttached) return;
-    dataListenersAttached = true;
+    let data = snapshot.val();
 
-    gstClientsRef.on("value", snapshot => {
-        const data = snapshot.val() || {};
-        gstClients = Object.keys(data).map(key => ({ ...data[key], firebaseKey: key }));
-        renderGST(); updateAll(); loadUploadClients(); loadSettingsClients();
-        if(document.getElementById("uploadClientSelect").value) loadFiles();
-    }, handleFirebaseReadError);
+    gstClients = [];
 
-    itrClientsRef.on("value", snapshot => {
-        const data = snapshot.val() || {};
-        itrClients = Object.keys(data).map(key => ({ ...data[key], firebaseKey: key }));
-        renderITR(); updateAll(); loadUploadClients(); loadSettingsClients();
-        if(document.getElementById("uploadClientSelect").value) loadFiles();
-    }, handleFirebaseReadError);
-}
+    if(data){
 
-function detachClientDataListeners(){
-    if(!dataListenersAttached) return;
-    gstClientsRef.off("value");
-    itrClientsRef.off("value");
-    dataListenersAttached = false;
-    gstClients = []; itrClients = [];
-    renderGST(); renderITR(); updateAll();
-}
+        Object.keys(data).forEach(key => {
 
-function handleFirebaseReadError(error){
-    console.error("Firebase read error:", error);
-    alert("Unable to load dashboard data. Please check your account permissions.");
-}
+            gstClients.push({
+                ...data[key],
+                firebaseKey: key
+            });
 
-window.addEventListener("load", () => {
-    auth.onAuthStateChanged(user => {
-        const loginPage = document.getElementById("loginPage");
-        if(user){
-            loginPage.style.display = "none";
-            attachClientDataListeners();
-        } else {
-            loginPage.style.display = "flex";
-            detachClientDataListeners();
-        }
-    });
+        });
+
+    }
+
+    renderGST();
+    updateAll();
+    loadUploadClients();
+    loadSettingsClients();
 });
 
+/* LIVE ITR CLIENTS */
+db.ref("itrClients").on("value", snapshot => {
+
+    let data = snapshot.val();
+
+    itrClients = [];
+
+    if(data){
+
+        Object.keys(data).forEach(key => {
+
+            itrClients.push({
+                ...data[key],
+                firebaseKey: key
+            });
+
+        });
+
+    }
+
+    renderITR();
+    updateAll();
+    loadUploadClients();
+    loadSettingsClients();
+
+});
+window.addEventListener("load", () => {
+
+    auth.onAuthStateChanged(user => {
+
+        if(user){
+
+            document.getElementById("loginPage")
+            .style.display = "none";
+
+        } else {
+
+            document.getElementById("loginPage")
+            .style.display = "flex";
+
+        }
+
+    });
+
+});
 function loadUploadClients(){
 
     let type = document.getElementById("uploadType").value;
@@ -124,7 +144,7 @@ function loadUploadClients(){
     let savedClient =
     localStorage.getItem("selectedUploadClient");
 
-    if(savedClient && list.some(c => c.firebaseKey === savedClient)){
+    if(savedClient){
         select.value = savedClient;
     }
 
@@ -175,6 +195,7 @@ function loadClientDetails(){
     document.getElementById("edit_trade").value = client.trade || "";
     document.getElementById("edit_legal").value = client.legal || "";
     document.getElementById("edit_user").value = client.user || "";
+    document.getElementById("edit_pass").value = client.pass || "";
 
     document.getElementById("edit_extra").value =
         type === "gst"
@@ -187,7 +208,6 @@ function loadClientDetails(){
 }
 
 function updateClient(){
-    if(!auth.currentUser) return alert("Please log in first");
     let type = document.getElementById("typeSelect").value;
     let index = document.getElementById("clientSelect").value;
 
@@ -211,6 +231,9 @@ let updatedData = {
 
     user:
     document.getElementById("edit_user").value,
+
+    pass:
+    document.getElementById("edit_pass").value,
 
     active:
     !document.getElementById("edit_active").checked
@@ -236,7 +259,6 @@ let updatedData = {
 }
 
 function deleteClient(){
-    if(!auth.currentUser) return alert("Please log in first");
     let type = document.getElementById("typeSelect").value;
     let index = document.getElementById("clientSelect").value;
 
@@ -279,7 +301,6 @@ function deleteClient(){
 }
   function loadFiles(){
 
-    if(!auth.currentUser || !dataListenersAttached) return;
     let type = document.getElementById("uploadType").value;
     let index = document.getElementById("uploadClientSelect").value;
 
@@ -332,30 +353,42 @@ fileList.appendChild(heading);
 
             li.style.marginBottom = "10px";
 
-            const row = document.createElement("div");
-            row.style.cssText = "width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;";
-            const link = document.createElement("a");
-            link.textContent = file.name || "Unnamed file";
-            link.href = file.url || "#";
-            link.target = "_blank";
-            link.rel = "noopener noreferrer";
-            row.appendChild(link);
+li.innerHTML = `
 
-            const actions = document.createElement("div");
-            actions.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;";
-            const download = document.createElement("button");
-            download.type = "button"; download.textContent = "Download";
-            download.addEventListener("click", () => downloadFile(file.url, file.name));
-            const share = document.createElement("button");
-            share.type = "button"; share.textContent = "Share";
-            share.addEventListener("click", () => shareFile(file.url, file.name));
-            const remove = document.createElement("button");
-            remove.type = "button"; remove.textContent = "Delete";
-            remove.style.cssText = "background:red;color:white;border:0;padding:5px 10px;cursor:pointer;";
-            remove.addEventListener("click", () => deleteFile(type, client.firebaseKey, file.url));
-            actions.append(download, share, remove);
-            row.appendChild(actions);
-            li.replaceChildren(row);
+<div style="width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+
+    <a href="${file.url}" target="_blank">
+        ${file.name}
+    </a>
+
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+
+        <button onclick="downloadFile('${file.url}','${file.name}')">
+            Download
+        </button>
+
+        <button onclick="shareFile('${file.url}','${file.name}')">
+            Share
+        </button>
+
+        <button 
+            onclick="deleteFile('${type}','${client.firebaseKey}','${file.url}')"
+            style="
+                background:red;
+                color:white;
+                border:none;
+                padding:5px 10px;
+                cursor:pointer;
+            ">
+            Delete
+        </button>
+
+    </div>
+
+</div>
+
+`;
+
             fileList.appendChild(li);
 
         });
@@ -382,7 +415,8 @@ function exportGSTExcel(){
         "Legal Name": c.legal || "",
         "GSTIN": c.gstin || "",
         "Group": c.group || "",
-        "Username": c.user || ""
+        "Username": c.user || "",
+        "Password": c.pass || ""
 
     }));
 
@@ -407,7 +441,8 @@ function exportITRExcel(){
         "Legal Name": c.legal || "",
         "PAN": c.pan || "",
         "Group": c.group || "",
-        "Username": c.user || ""
+        "Username": c.user || "",
+        "Password": c.pass || ""
 
     }));
 
@@ -426,7 +461,6 @@ function exportITRExcel(){
 
 function importGSTExcel(file){
 
-    if(!auth.currentUser) return alert("Please log in first");
     if(!file) return;
 
     let reader = new FileReader();
@@ -451,7 +485,8 @@ function importGSTExcel(file){
                 legal: row["Legal Name"] || "",
                 gstin: row["GSTIN"] || "",
                 group: row["Group"] || "",
-                user: row["Username"] || ""
+                user: row["Username"] || "",
+                pass: row["Password"] || ""
 
             };
 
@@ -473,7 +508,6 @@ function importGSTExcel(file){
 
 function importITRExcel(file){
 
-    if(!auth.currentUser) return alert("Please log in first");
     if(!file) return;
 
     let reader = new FileReader();
@@ -498,7 +532,8 @@ function importITRExcel(file){
                 legal: row["Legal Name"] || "",
                 pan: row["PAN"] || "",
                 group: row["Group"] || "",
-                user: row["Username"] || ""
+                user: row["Username"] || "",
+                pass: row["Password"] || ""
 
             };
 
@@ -531,7 +566,7 @@ function importITRExcel(file){
         #163d4d
     );
 
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 99999;
@@ -1363,7 +1398,31 @@ button {
 
     z-index: 999999 !important;
 }
-.security-note{color:#725b16;background:#fff8df;border-left:3px solid #d4af37;padding:10px 12px;font-size:13px;line-height:1.5;}
+
+/* ========================= UPGRADE LAYER ========================= */
+.mini-row{display:grid;grid-template-columns:1.2fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf0f0;font:12px Arial,sans-serif}.mini-row:last-child{border-bottom:0}.mini-row strong{color:#26383f}.mini-row span{color:#718087}.mini-row small{color:#9a762f;text-align:right}
+:root{--sk-ink:#17252b;--sk-gold:#b58a3a;--sk-gold-light:#f6eedf;--sk-muted:#718087;--sk-line:#e7e9e8;--sk-bg:#f5f6f7;--sk-white:#fff}
+body{background:var(--sk-bg);color:var(--sk-ink);font-family:"Bookman Old Style",Georgia,serif}
+.sidebar{background:#111c21!important;box-shadow:8px 0 28px rgba(0,0,0,.08);padding-top:20px}
+.sidebar a{padding:13px 18px!important;margin:3px 10px;border-radius:9px;color:#e8edf0!important;font-size:14px;transition:.2s}
+.sidebar a:hover{background:rgba(181,138,58,.18)!important;color:#f0c879!important}
+.nav-caption{color:#b58a3a;font:700 10px Arial,sans-serif;letter-spacing:1.5px;padding:18px 20px 6px}
+.main{background:var(--sk-bg)}
+.header{background:#fff!important;border-bottom:1px solid var(--sk-line);box-shadow:0 3px 14px rgba(15,30,35,.04)}
+.header .title{color:#17252b!important;letter-spacing:1.5px}.header .subtitle{color:#9a762f!important}
+.section{max-width:1500px;margin:auto;padding:26px!important}.section-top{align-items:center;gap:15px}.section-top h2,.section h2{color:#17252b;letter-spacing:.2px}.section-subtitle{margin:5px 0 0;color:var(--sk-muted);font:13px Arial,sans-serif}
+.new-client-btn,button{border-radius:9px!important;background:#17252b!important;color:#fff!important;border:1px solid #17252b!important;padding:11px 16px!important;font:600 12px Arial,sans-serif!important;letter-spacing:.3px;cursor:pointer;transition:.2s}
+.new-client-btn:hover,button:hover{background:#9a762f!important;border-color:#9a762f!important;transform:translateY(-1px)}
+.dashboard-cards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px!important;margin-top:20px}
+.dash-card{position:relative;background:#fff!important;border:1px solid var(--sk-line);border-radius:14px!important;padding:21px!important;box-shadow:0 5px 18px rgba(20,35,40,.035);min-height:135px;transition:.2s}
+.dash-card:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(20,35,40,.08)}.dash-card h2{font:600 13px Arial,sans-serif!important;color:#68777d!important}.dash-card h1{font:700 30px Arial,sans-serif!important;color:#17252b!important;margin:12px 0 4px}.dash-card small{color:#879399;font:11px Arial,sans-serif}.card-icon{display:inline-flex;background:var(--sk-gold-light);color:#8a6729;border-radius:7px;padding:6px 8px;font:700 9px Arial,sans-serif;letter-spacing:.7px;margin-bottom:10px}
+.welcome-strip{display:flex;justify-content:space-between;align-items:center;gap:15px;background:linear-gradient(115deg,#17252b,#263d45);color:#fff;padding:24px 26px;border-radius:15px;margin:15px 0 20px}.welcome-strip h2{color:#fff!important;margin:6px 0;font-size:22px}.welcome-strip p{margin:0;color:#d2dadd;font:13px Arial,sans-serif}.eyebrow{font:700 10px Arial,sans-serif;letter-spacing:2px;color:#d6b46f}.today-chip{border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:9px 13px;color:#f2d99f;font:12px Arial,sans-serif;white-space:nowrap}
+.dashboard-panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.panel-card{background:#fff;border:1px solid var(--sk-line);border-radius:13px;padding:20px;margin-top:16px}.panel-heading{display:flex;align-items:center;justify-content:space-between}.panel-heading h3,.panel-card h3{margin:0 0 12px;font-size:16px}.small-action{padding:7px 10px!important;font-size:10px!important}.empty-state{color:#89969b;padding:14px 0;font:13px Arial,sans-serif}.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.filter-row input{flex:1;min-width:200px}.filter-row select{min-width:180px}
+.section input:not([type=checkbox]),.section select,.section textarea{border:1px solid #dfe4e5!important;border-radius:8px!important;padding:11px 12px!important;background:#fff;box-sizing:border-box;font:13px Arial,sans-serif;max-width:100%}.section input:focus,.section select:focus,.section textarea:focus{outline:none;border-color:#b58a3a!important;box-shadow:0 0 0 3px rgba(181,138,58,.12)}
+.table-wrap{width:100%;overflow-x:auto;background:#fff;border:1px solid var(--sk-line);border-radius:12px}.modern-table{width:100%;border-collapse:collapse;min-width:720px;font:12px Arial,sans-serif}.modern-table th{background:#f4f5f3;color:#59666b;text-align:left;padding:13px 12px;white-space:nowrap}.modern-table td{padding:12px;border-top:1px solid #edf0f0;color:#344248;vertical-align:top}.modern-table tr:hover td{background:#fcfaf5}.modern-table button{padding:7px 9px!important;font-size:10px!important;margin:2px}.status-pill{display:inline-block;border-radius:30px;padding:5px 9px;background:#f4eedf;color:#806027;font:700 10px Arial,sans-serif}.form-panel{max-width:1000px}.form-panel[hidden]{display:none!important}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.form-grid label{display:flex;flex-direction:column;gap:6px;color:#59666b;font:600 11px Arial,sans-serif}.form-grid input,.form-grid select,.form-grid textarea{width:100%}.full-field{grid-column:1/-1}.form-actions{display:flex;gap:9px;margin-top:16px}.secondary-btn{background:#fff!important;color:#26383f!important;border-color:#d9dfe0!important}.billing-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.summary-tile{background:#fff;border:1px solid var(--sk-line);border-radius:12px;padding:16px}.summary-tile span{display:block;color:#78868b;font:11px Arial,sans-serif}.summary-tile strong{display:block;margin-top:8px;font:700 22px Arial,sans-serif;color:#17252b}.summary-tile:last-child strong{color:#9a762f}
+@media(max-width:900px){.dashboard-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-panels{grid-template-columns:1fr}}
+@media(max-width:600px){.section{padding:15px!important}.dashboard-cards{grid-template-columns:1fr 1fr!important;gap:9px!important}.dash-card{padding:14px!important;min-height:120px}.dash-card h1{font-size:24px!important}.dash-card h2{font-size:11px!important}.welcome-strip{padding:18px;align-items:flex-start}.welcome-strip h2{font-size:18px}.today-chip{display:none}.section-top{align-items:flex-start;flex-direction:column}.section-top button{width:100%}.form-grid{grid-template-columns:1fr}.full-field{grid-column:auto}.billing-summary{grid-template-columns:1fr}.filter-row>*{width:100%;min-width:0!important}.form-actions button{flex:1}.header{padding-left:10px;padding-right:10px}}
+
 </style>
 </head>
 
@@ -1433,13 +1492,21 @@ button {
     
 <!-- SIDEBAR (UNCHANGED) -->
 <div class="sidebar" id="sidebar">
-    <a onclick="showSection('dashboard')">Dashboard</a>
-    <a onclick="showSection('gst')">GST Client</a>
-    <a onclick="showSection('itr')">ITR Client</a>
-    <a onclick="showSection('reports')">Reports</a>
-    <a onclick="showSection('upload')">Upload Files</a>
-    <a onclick="showSection('settings')">Settings</a>
-    <a onclick="logout()">Logout</a>
+    <div class="nav-caption">WORKSPACE</div>
+    <a onclick="showSection('dashboard')">▦ &nbsp; Dashboard</a>
+    <a onclick="showSection('gst')">▤ &nbsp; GST Clients</a>
+    <a onclick="showSection('itr')">▤ &nbsp; ITR Clients</a>
+    <div class="nav-caption">PRACTICE MANAGEMENT</div>
+    <a onclick="showSection('work')">▣ &nbsp; GST & ITR Work</a>
+    <a onclick="showSection('documents')">▧ &nbsp; Document Register</a>
+    <a onclick="showSection('tasks')">☑ &nbsp; Tasks</a>
+    <a onclick="showSection('calendar')">▦ &nbsp; Compliance Calendar</a>
+    <a onclick="showSection('billing')">₹ &nbsp; Fees & Billing</a>
+    <div class="nav-caption">ADMINISTRATION</div>
+    <a onclick="showSection('reports')">▥ &nbsp; Reports & Excel</a>
+    <a onclick="showSection('upload')">⇧ &nbsp; Upload Files</a>
+    <a onclick="showSection('settings')">⚙ &nbsp; Settings</a>
+    <a onclick="logout()">↪ &nbsp; Logout</a>
 </div>
   
 <div id="overlay" onclick="closeSidebar()"></div>
@@ -1469,19 +1536,16 @@ button {
 
     </div>
 
+    <div class="welcome-strip"><div><span class="eyebrow">PRACTICE OVERVIEW</span><h2>Welcome to your workspace</h2><p>Manage clients, compliance, documents and professional fees in one place.</p></div><div class="today-chip" id="dashboardToday">SK CONSULTANT</div></div>
     <div class="dashboard-cards">
-
-        <div class="dash-card" onclick="showSection('gst')" style="cursor:pointer;">
-            <h2>GST Clients</h2>
-            <h1 id="gstCount">...</h1>
-        </div>
-
-        <div class="dash-card" onclick="showSection('itr')" style="cursor:pointer;">
-            <h2>ITR Clients</h2>
-            <h1 id="itrCount">...</h1>
-        </div>
-
+        <div class="dash-card" onclick="showSection('gst')"><span class="card-icon">GST</span><h2>GST Clients</h2><h1 id="gstCount">...</h1><small>Client register</small></div>
+        <div class="dash-card" onclick="showSection('itr')"><span class="card-icon">ITR</span><h2>ITR Clients</h2><h1 id="itrCount">...</h1><small>Client register</small></div>
+        <div class="dash-card" onclick="showSection('work')"><span class="card-icon">WORK</span><h2>Open Work Items</h2><h1 id="dashWorkCount">0</h1><small>GST & income tax</small></div>
+        <div class="dash-card" onclick="showSection('tasks')"><span class="card-icon">TASK</span><h2>Pending Tasks</h2><h1 id="dashTaskCount">0</h1><small>To be completed</small></div>
+        <div class="dash-card" onclick="showSection('calendar')"><span class="card-icon">DUE</span><h2>Upcoming / Overdue</h2><h1 id="dashDueCount">0</h1><small>Compliance dates</small></div>
+        <div class="dash-card" onclick="showSection('billing')"><span class="card-icon">₹</span><h2>Fees Outstanding</h2><h1 id="dashOutstanding">₹0</h1><small>Recorded invoices</small></div>
     </div>
+    <div class="dashboard-panels"><div class="panel-card"><div class="panel-heading"><h3>Recent Work</h3><button class="small-action" onclick="showSection('work')">View work</button></div><div id="dashRecentWork" class="empty-state">No work items added yet.</div></div><div class="panel-card"><div class="panel-heading"><h3>Upcoming Compliance</h3><button class="small-action" onclick="showSection('calendar')">View calendar</button></div><div id="dashUpcoming" class="empty-state">No compliance dates added yet.</div></div></div>
 
 </div>
 
@@ -1552,6 +1616,7 @@ button {
             <button onclick="exportITRExcel()">
                 Export ITR Excel
             </button>
+            <button onclick="exportPracticeReport()">Export Practice Report</button>
 
             <button onclick="document.getElementById('importGSTExcel').click()">
                 Import GST Excel
@@ -1618,7 +1683,10 @@ button {
         <input id="edit_group" placeholder="Group">
         <input id="edit_user" placeholder="Username">
 
-        <p class="security-note">Portal passwords are not managed or exported by this dashboard. Use the official portal password manager.</p>
+        <div class="pass-wrap">
+            <input id="edit_pass" type="password" placeholder="Password">
+            <span class="toggle-pass" onclick="togglePassword('edit_pass', this)">Show</span>
+        </div>
 
 <div class="settings-btn-row">
 
@@ -1640,6 +1708,26 @@ button {
 </div>
 </div>
 
+
+<!-- GST & INCOME TAX WORK MANAGEMENT -->
+<div id="work" class="section">
+  <div class="section-top"><div><h2>GST & Income Tax Work</h2><p class="section-subtitle">Track returns, audits, refunds, notices, appeals and other assignments.</p></div><button class="new-client-btn" onclick="openWorkForm()">+ ADD WORK</button></div>
+  <div class="filter-row"><input id="workSearch" placeholder="Search client, work or FY..." oninput="renderWork()"><select id="workFilter" onchange="renderWork()"><option value="">All work types</option><option>GST Return</option><option>GST Audit / Reconciliation</option><option>GST Refund</option><option>GST Notice / Reply</option><option>GST Appeal / Hearing</option><option>ITR Filing</option><option>Tax Audit</option><option>TDS Return</option><option>Income Tax Notice</option><option>Other</option></select><select id="workStatusFilter" onchange="renderWork()"><option value="">All statuses</option><option>Pending</option><option>In Progress</option><option>Filed</option><option>Completed</option><option>On Hold</option></select></div>
+  <div class="table-wrap"><table id="workTable" class="modern-table"></table></div>
+  <div class="panel-card form-panel" id="workFormPanel" hidden><h3 id="workFormTitle">Add Work Item</h3><div class="form-grid"><label>Client<select id="workClient"></select></label><label>Category<select id="workCategory"><option>GST Return</option><option>GST Audit / Reconciliation</option><option>GST Refund</option><option>GST Notice / Reply</option><option>GST Appeal / Hearing</option><option>ITR Filing</option><option>Tax Audit</option><option>TDS Return</option><option>Income Tax Notice</option><option>Other</option></select></label><label>Financial Year<input id="workFY" placeholder="2026-27"></label><label>Period / Assessment Year<input id="workPeriod" placeholder="e.g. Oct 2026 / AY 2027-28"></label><label>Due Date<input id="workDue" type="date"></label><label>Status<select id="workStatus"><option>Pending</option><option>In Progress</option><option>Filed</option><option>Completed</option><option>On Hold</option></select></label><label class="full-field">Description<textarea id="workDescription" rows="3" placeholder="Work details, ARN, notice reference, hearing details..."></textarea></label></div><div class="form-actions"><button onclick="saveWork()">Save Work</button><button class="secondary-btn" onclick="closeWorkForm()">Cancel</button></div></div>
+</div>
+
+<!-- DOCUMENT REGISTER -->
+<div id="documents" class="section"><div class="section-top"><div><h2>Document Register</h2><p class="section-subtitle">Search uploaded client documents and open the existing upload workspace.</p></div><button class="new-client-btn" onclick="showSection('upload')">+ UPLOAD DOCUMENT</button></div><div class="panel-card"><p>Documents uploaded through the existing Upload Files section continue to be stored in your current Firebase Storage structure. Use the filters below to find a client record, then open Upload Files to view, download or share the stored documents.</p><div class="form-grid"><label>Client type<select id="docType"><option value="gst">GST Client</option><option value="itr">ITR Client</option></select></label><label>Client<select id="docClient"></select></label></div><div class="form-actions"><button onclick="openSelectedDocuments()">Open Client Documents</button></div></div></div>
+
+<!-- TASK MANAGEMENT -->
+<div id="tasks" class="section"><div class="section-top"><div><h2>Task Management</h2><p class="section-subtitle">Assign internal follow-ups, set priorities and track completion.</p></div><button class="new-client-btn" onclick="openTaskForm()">+ ADD TASK</button></div><div class="filter-row"><input id="taskSearch" placeholder="Search tasks..." oninput="renderTasks()"><select id="taskStatusFilter" onchange="renderTasks()"><option value="">All statuses</option><option>Pending</option><option>In Progress</option><option>Completed</option><option>On Hold</option></select></div><div class="table-wrap"><table id="tasksTable" class="modern-table"></table></div><div class="panel-card form-panel" id="taskFormPanel" hidden><h3>Add Task</h3><div class="form-grid"><label>Task title<input id="taskTitle" placeholder="e.g. Follow up for GSTR-3B data"></label><label>Related client<select id="taskClient"></select></label><label>Priority<select id="taskPriority"><option>Normal</option><option>High</option><option>Urgent</option><option>Low</option></select></label><label>Due date<input id="taskDue" type="date"></label><label>Status<select id="taskStatus"><option>Pending</option><option>In Progress</option><option>Completed</option><option>On Hold</option></select></label><label class="full-field">Notes<textarea id="taskNotes" rows="3"></textarea></label></div><div class="form-actions"><button onclick="saveTask()">Save Task</button><button class="secondary-btn" onclick="closeTaskForm()">Cancel</button></div></div></div>
+
+<!-- COMPLIANCE CALENDAR -->
+<div id="calendar" class="section"><div class="section-top"><div><h2>Compliance Calendar</h2><p class="section-subtitle">Maintain statutory due dates and office-specific reminders.</p></div><button class="new-client-btn" onclick="openEventForm()">+ ADD DATE</button></div><div class="table-wrap"><table id="calendarTable" class="modern-table"></table></div><div class="panel-card form-panel" id="eventFormPanel" hidden><h3>Add Compliance Date</h3><div class="form-grid"><label>Compliance / event<input id="eventTitle" placeholder="e.g. GSTR-3B filing"></label><label>Related client<select id="eventClient"></select></label><label>Due date<input id="eventDate" type="date"></label><label>Category<select id="eventCategory"><option>GST</option><option>Income Tax</option><option>TDS</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="eventNotes" rows="2"></textarea></label></div><div class="form-actions"><button onclick="saveEvent()">Save Date</button><button class="secondary-btn" onclick="closeEventForm()">Cancel</button></div></div></div>
+
+<!-- FEES & BILLING -->
+<div id="billing" class="section"><div class="section-top"><div><h2>Fees & Billing</h2><p class="section-subtitle">Record professional fees, receipts and outstanding balances.</p></div><button class="new-client-btn" onclick="openFeeForm()">+ RECORD FEE</button></div><div class="billing-summary"><div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div><div class="summary-tile"><span>Received</span><strong id="feeReceived">₹0</strong></div><div class="summary-tile"><span>Outstanding</span><strong id="feePending">₹0</strong></div></div><div class="table-wrap"><table id="billingTable" class="modern-table"></table></div><div class="panel-card form-panel" id="feeFormPanel" hidden><h3>Record Professional Fee</h3><div class="form-grid"><label>Client<select id="feeClient"></select></label><label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label><label>Service<input id="feeService" placeholder="GST return / appeal / ITR..." ></label><label>Invoice date<input id="feeDate" type="date"></label><label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01"></label><label>Amount received (₹)<input id="feePaid" type="number" min="0" step="0.01" value="0"></label><label>Payment date<input id="feePaymentDate" type="date"></label><label>Payment mode<select id="feeMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label></div><div class="form-actions"><button onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div></div></div>
 
 <!-- FOOTER -->
 <div class="footer">
@@ -1693,13 +1781,15 @@ function login(){
         document.getElementById("loginPage")
         .style.display = "none";
 
-        document.getElementById("errorMsg").textContent = "";
+        document.getElementById("errorMsg")
+        .innerHTML = "";
 
     })
 
     .catch((error) => {
 
-        document.getElementById("errorMsg").textContent = error.message;
+        document.getElementById("errorMsg")
+        .innerHTML = error.message;
 
     });
 
@@ -1786,6 +1876,7 @@ function clearSettingsFields(){
     document.getElementById("edit_extra").value = "";
     document.getElementById("edit_group").value = "";
     document.getElementById("edit_user").value = "";
+    document.getElementById("edit_pass").value = "";
     document.getElementById("edit_active").checked = true;
 
 }
@@ -1873,52 +1964,122 @@ function openGSTPortal(user){
 }
 
 /* RENDER FIXED */
-function appendCell(row, value){
-    const cell = document.createElement("td");
-    cell.textContent = value == null ? "" : String(value);
-    row.appendChild(cell);
-    return cell;
-}
-
 function renderGST(){
-    const table = document.getElementById("gstTable");
-    table.replaceChildren();
-    const header = document.createElement("tr");
-    ["GST", "Trade Name", "Legal Name", "GSTIN", "Group", "Username"].forEach(v => {
-        const th = document.createElement("th"); th.textContent = v; header.appendChild(th);
-    });
-    table.appendChild(header);
 
-    gstClients.filter(c => c.active !== false).forEach(c => {
-        const row = document.createElement("tr");
-        const portalCell = document.createElement("td");
-        portalCell.style.textAlign = "center";
-        const portalButton = document.createElement("button");
-        portalButton.type = "button"; portalButton.textContent = "🏛️";
-        portalButton.title = "Open GST Portal";
-        portalButton.addEventListener("click", () => openGSTPortal(c.user || ""));
-        portalCell.appendChild(portalButton); row.appendChild(portalCell);
-        appendCell(row, c.trade); appendCell(row, c.legal); appendCell(row, c.gstin);
-        appendCell(row, c.group); appendCell(row, c.user);
-        table.appendChild(row);
-    });
+    document.getElementById("gstTable").innerHTML = `
+
+    <tr>
+        <th>GST</th>
+        <th>Trade Name</th>
+        <th>Legal Name</th>
+        <th>GSTIN</th>
+        <th>Group</th>
+        <th>Username</th>
+        <th>Password</th>
+    </tr>
+
+    ` +
+
+    gstClients
+.filter(c => c.active !== false)
+.map((c,i)=>`
+
+        <tr>
+
+            <!-- GST LOGIN BUTTON -->
+            <td style="text-align:center;">
+
+    <span
+        onclick='openGSTPortal(${JSON.stringify(c.user)})'
+        style="
+            cursor:pointer;
+            font-size:22px;
+        "
+        title="Open GST Portal"
+    >
+        🏛️
+    </span>
+
+</td>
+
+            <td>${c.trade}</td>
+            <td>${c.legal}</td>
+            <td>${c.gstin}</td>
+            <td>${c.group || ""}</td>
+            <td>${c.user}</td>
+
+            <td>
+                <div class="pass-cell">
+
+                    <span
+                        id="gst_pass_${i}"
+                        class="pass-text"
+                        data-pass="${c.pass}"
+                        data-visible="0"
+                    >
+                        ••••••
+                    </span>
+
+                    <span
+                        onclick="toggleTablePass('gst_pass_${i}', this)"
+                        style="cursor:pointer;"
+                    >
+                        👁️
+                    </span>
+
+                </div>
+            </td>
+
+        </tr>
+
+    `).join("");
 }
 
 function renderITR(){
-    const table = document.getElementById("itrTable");
-    table.replaceChildren();
-    const header = document.createElement("tr");
-    ["Trade Name", "Legal Name", "PAN", "Group", "Username"].forEach(v => {
-        const th = document.createElement("th"); th.textContent = v; header.appendChild(th);
-    });
-    table.appendChild(header);
 
-    itrClients.filter(c => c.active !== false).forEach(c => {
-        const row = document.createElement("tr");
-        appendCell(row, c.trade); appendCell(row, c.legal); appendCell(row, c.pan);
-        appendCell(row, c.group); appendCell(row, c.user);
-        table.appendChild(row);
-    });
+    document.getElementById("itrTable").innerHTML = `
+
+    <tr>
+        <th>Trade Name</th>
+        <th>Legal Name</th>
+        <th>PAN</th>
+        <th>Group</th>
+        <th>Username</th>
+        <th>Password</th>
+    </tr>
+
+    ` +
+
+    itrClients
+    .filter(c => c.active !== false)
+    .map((c,i)=>`
+
+        <tr>
+            <td>${c.trade}</td>
+            <td>${c.legal}</td>
+            <td>${c.pan}</td>
+            <td>${c.group || ""}</td>
+            <td>${c.user}</td>
+
+            <td>
+                <div class="pass-cell">
+                    <span
+                        id="itr_pass_${i}"
+                        class="pass-text"
+                        data-pass="${c.pass}"
+                        data-visible="0"
+                    >
+                        ••••••
+                    </span>
+
+                    <span onclick="toggleTablePass('itr_pass_${i}', this)">
+                        👁️
+                    </span>
+                </div>
+            </td>
+        </tr>
+
+    `).join("");
 }
 
 let searchTimer;
@@ -2007,7 +2168,7 @@ function toggleTablePass(id, icon){
 
 /* REPORT */
 function uploadFile(){
-    if(!auth.currentUser) return alert("Please log in first");
+    
     let file =
     document.getElementById("fileInput").files[0];
 
@@ -2054,9 +2215,10 @@ function uploadFile(){
     storage.ref().child(filePath);
 
     // RESUMABLE FAST UPLOAD
-    // Do not mark confidential client documents as publicly cacheable.
-    // Firebase Storage security rules must still enforce authenticated admin-only access.
-    let uploadTask = storageRef.put(file);
+    let uploadTask =
+    storageRef.put(file, {
+        cacheControl: "public,max-age=86400"
+    });
 
     uploadTask.on(
 
@@ -2127,7 +2289,6 @@ function uploadFile(){
 }
 function deleteFile(type, clientKey, fileURL){
 
-    if(!auth.currentUser) return alert("Please log in first");
     if(!confirm("Delete this file?")) return;
 
     // DELETE FROM DATABASE FIRST
@@ -2265,7 +2426,7 @@ function updatePopupPlaceholder(){
 }
 
 function savePopupClient(){
-    if(!auth.currentUser) return alert("Please log in first");
+
     let type =
     document.getElementById("popupType").value;
 
@@ -2283,6 +2444,8 @@ function savePopupClient(){
         user:
         document.getElementById("popup_user").value,
 
+        pass:
+        document.getElementById("popup_pass").value
     };
 
     let extra =
@@ -2323,6 +2486,7 @@ function savePopupClient(){
     document.getElementById("popup_extra").value = "";
     document.getElementById("popup_group").value = "";
     document.getElementById("popup_user").value = "";
+    document.getElementById("popup_pass").value = "";
 }
 /* AUTO LOAD DROPDOWN */
 window.addEventListener("DOMContentLoaded", function(){
@@ -2347,15 +2511,67 @@ window.addEventListener("DOMContentLoaded", function(){
     loadFiles();
 
     // RESTORE LAST OPENED SECTION
-    let savedSection = localStorage.getItem("activeSection") || "dashboard";
-    if(!document.getElementById(savedSection) || !document.getElementById(savedSection).classList.contains("section")){
-        savedSection = "dashboard";
-    }
+    let savedSection =
+    localStorage.getItem("activeSection")
+    || "dashboard";
+
     showSection(savedSection);
     
     updatePopupPlaceholder();
     
 });
+
+
+/* =========================
+   ADDITIVE PRACTICE MODULES
+   New records use separate Firebase paths and do not alter existing client data.
+========================= */
+let workItems = [], taskItems = [], complianceItems = [], feeItems = [];
+let editingWorkKey = null;
+const moduleRefs = {
+  work: db.ref('practiceWorkItems'), tasks: db.ref('practiceTasks'),
+  calendar: db.ref('practiceComplianceDates'), fees: db.ref('practiceFeeRecords')
+};
+function moduleListen(ref, setter, renderer){
+  ref.on('value', snap => { const v=snap.val()||{}; setter(Object.keys(v).map(k=>({...v[k],firebaseKey:k}))); renderer(); });
+}
+moduleListen(moduleRefs.work,v=>workItems=v,()=>{renderWork();updatePracticeDashboard();});
+moduleListen(moduleRefs.tasks,v=>taskItems=v,()=>{renderTasks();updatePracticeDashboard();});
+moduleListen(moduleRefs.calendar,v=>complianceItems=v,()=>{renderCalendar();updatePracticeDashboard();});
+moduleListen(moduleRefs.fees,v=>feeItems=v,()=>{renderBilling();updatePracticeDashboard();});
+function allPracticeClients(){return [...gstClients.map(c=>({...c,_type:'GST'})),...itrClients.map(c=>({...c,_type:'ITR'}))];}
+function clientLabel(c){return (c.tradeName||c.trade||c.legalName||c.legal||c.name||c.extra||'Unnamed client')+' ('+(c._type||'Client')+')';}
+function fillClientSelect(id, includeAll=true, onlyType=null){const el=document.getElementById(id);if(!el)return;const old=el.value;const clients=allPracticeClients().filter(c=>!onlyType||c._type===onlyType);el.innerHTML=(includeAll?'<option value="">Select client (optional)</option>':'<option value="">Select client</option>')+clients.map(c=>`<option value="${c._type}|${c.firebaseKey}">${escapeHTML(clientLabel(c))}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old;}
+function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function selectedClientName(value){if(!value)return '—';const [type,key]=value.split('|');const list=type==='GST'?gstClients:itrClients;const c=list.find(x=>x.firebaseKey===key);return c?clientLabel({...c,_type:type}):'Client record';}
+function populateModuleSelects(){['workClient','taskClient','eventClient','feeClient'].forEach(id=>fillClientSelect(id));const dt=document.getElementById('docType');fillClientSelect('docClient',true,dt?dt.value.toUpperCase():null);}
+function openWorkForm(){populateModuleSelects();editingWorkKey=null;document.getElementById('workFormTitle').textContent='Add Work Item';document.getElementById('workFormPanel').hidden=false;}
+function closeWorkForm(){document.getElementById('workFormPanel').hidden=true;}
+function saveWork(){const data={client:document.getElementById('workClient').value,category:document.getElementById('workCategory').value,financialYear:document.getElementById('workFY').value.trim(),period:document.getElementById('workPeriod').value.trim(),dueDate:document.getElementById('workDue').value,status:document.getElementById('workStatus').value,description:document.getElementById('workDescription').value.trim(),updatedAt:Date.now()};if(!data.category){alert('Select work category.');return;}const ref=editingWorkKey?moduleRefs.work.child(editingWorkKey):moduleRefs.work.push();if(!editingWorkKey)data.createdAt=Date.now();ref.set(data).then(()=>{closeWorkForm();alert('Work item saved.');}).catch(e=>alert(e.message));}
+function renderWork(){const t=document.getElementById('workTable');if(!t)return;const q=(document.getElementById('workSearch')?.value||'').toLowerCase(),f=document.getElementById('workFilter')?.value||'',st=document.getElementById('workStatusFilter')?.value||'';const rows=workItems.filter(x=>(!f||x.category===f)&&(!st||x.status===st)&&JSON.stringify(x).toLowerCase().includes(q)).sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));t.innerHTML='<thead><tr><th>Client</th><th>Work</th><th>FY / Period</th><th>Due date</th><th>Status</th><th>Description</th><th>Action</th></tr></thead><tbody>'+ (rows.length?rows.map(x=>`<tr><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.category)}</td><td>${escapeHTML(x.financialYear||'—')}<br>${escapeHTML(x.period||'')}</td><td>${escapeHTML(x.dueDate||'—')}</td><td><span class="status-pill">${escapeHTML(x.status||'Pending')}</span></td><td>${escapeHTML(x.description||'—')}</td><td><button onclick="editWork('${x.firebaseKey}')">Edit</button><button onclick="removeModuleRecord('work','${x.firebaseKey}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="7">No work items found.</td></tr>')+'</tbody>';}
+function editWork(key){const x=workItems.find(a=>a.firebaseKey===key);if(!x)return;populateModuleSelects();editingWorkKey=key;document.getElementById('workFormTitle').textContent='Edit Work Item';[['workClient','client'],['workCategory','category'],['workFY','financialYear'],['workPeriod','period'],['workDue','dueDate'],['workStatus','status'],['workDescription','description']].forEach(([a,b])=>document.getElementById(a).value=x[b]||'');document.getElementById('workFormPanel').hidden=false;}
+function openTaskForm(){populateModuleSelects();document.getElementById('taskFormPanel').hidden=false;}
+function closeTaskForm(){document.getElementById('taskFormPanel').hidden=true;}
+function saveTask(){const d={title:document.getElementById('taskTitle').value.trim(),client:document.getElementById('taskClient').value,priority:document.getElementById('taskPriority').value,dueDate:document.getElementById('taskDue').value,status:document.getElementById('taskStatus').value,notes:document.getElementById('taskNotes').value.trim(),createdAt:Date.now()};if(!d.title){alert('Enter a task title.');return;}moduleRefs.tasks.push(d).then(()=>{closeTaskForm();['taskTitle','taskDue','taskNotes'].forEach(id=>document.getElementById(id).value='');alert('Task saved.');}).catch(e=>alert(e.message));}
+function renderTasks(){const t=document.getElementById('tasksTable');if(!t)return;const q=(document.getElementById('taskSearch')?.value||'').toLowerCase(),st=document.getElementById('taskStatusFilter')?.value||'';const rows=taskItems.filter(x=>(!st||x.status===st)&&JSON.stringify(x).toLowerCase().includes(q)).sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));t.innerHTML='<thead><tr><th>Task</th><th>Client</th><th>Priority</th><th>Due date</th><th>Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>'+(rows.length?rows.map(x=>`<tr><td>${escapeHTML(x.title)}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.priority)}</td><td>${escapeHTML(x.dueDate||'—')}</td><td><select onchange="updateTaskStatus('${x.firebaseKey}',this.value)">${['Pending','In Progress','Completed','On Hold'].map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></td><td>${escapeHTML(x.notes||'—')}</td><td><button onclick="removeModuleRecord('tasks','${x.firebaseKey}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="7">No tasks found.</td></tr>')+'</tbody>';}
+function updateTaskStatus(key,status){moduleRefs.tasks.child(key).update({status,updatedAt:Date.now()});}
+function openEventForm(){populateModuleSelects();document.getElementById('eventFormPanel').hidden=false;}
+function closeEventForm(){document.getElementById('eventFormPanel').hidden=true;}
+function saveEvent(){const d={title:document.getElementById('eventTitle').value.trim(),client:document.getElementById('eventClient').value,dueDate:document.getElementById('eventDate').value,category:document.getElementById('eventCategory').value,notes:document.getElementById('eventNotes').value.trim(),createdAt:Date.now()};if(!d.title||!d.dueDate){alert('Enter compliance name and due date.');return;}moduleRefs.calendar.push(d).then(()=>{closeEventForm();alert('Compliance date saved.');}).catch(e=>alert(e.message));}
+function renderCalendar(){const t=document.getElementById('calendarTable');if(!t)return;const rows=[...complianceItems].sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));t.innerHTML='<thead><tr><th>Due date</th><th>Compliance</th><th>Category</th><th>Client</th><th>Notes</th><th>Action</th></tr></thead><tbody>'+(rows.length?rows.map(x=>`<tr><td>${escapeHTML(x.dueDate)}</td><td>${escapeHTML(x.title)}</td><td>${escapeHTML(x.category)}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.notes||'—')}</td><td><button onclick="removeModuleRecord('calendar','${x.firebaseKey}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="6">No compliance dates added.</td></tr>')+'</tbody>';}
+function openFeeForm(){populateModuleSelects();document.getElementById('feeDate').value=new Date().toISOString().slice(0,10);document.getElementById('feeFormPanel').hidden=false;}
+function closeFeeForm(){document.getElementById('feeFormPanel').hidden=true;}
+function saveFee(){const amount=Number(document.getElementById('feeAmount').value||0),paid=Number(document.getElementById('feePaid').value||0);if(!amount||amount<0||paid<0||paid>amount){alert('Check billed and received amounts. Received amount cannot exceed billed amount.');return;}const d={client:document.getElementById('feeClient').value,reference:document.getElementById('feeReference').value.trim(),service:document.getElementById('feeService').value.trim(),invoiceDate:document.getElementById('feeDate').value,amount,paid,paymentDate:document.getElementById('feePaymentDate').value,mode:document.getElementById('feeMode').value,notes:document.getElementById('feeNotes').value.trim(),createdAt:Date.now()};moduleRefs.fees.push(d).then(()=>{closeFeeForm();alert('Fee record saved.');}).catch(e=>alert(e.message));}
+function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});}
+function renderBilling(){const t=document.getElementById('billingTable');if(!t)return;let billed=0,received=0;feeItems.forEach(x=>{billed+=Number(x.amount||0);received+=Number(x.paid||0);});document.getElementById('feeBilled').textContent=money(billed);document.getElementById('feeReceived').textContent=money(received);document.getElementById('feePending').textContent=money(billed-received);t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Reference</th><th>Service</th><th>Billed</th><th>Received</th><th>Balance</th><th>Action</th></tr></thead><tbody>'+(feeItems.length?[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).map(x=>`<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—')}</td><td>${money(x.amount)}</td><td>${money(x.paid)}</td><td>${money(Number(x.amount||0)-Number(x.paid||0))}</td><td><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="8">No fee records added.</td></tr>')+'</tbody>';}
+function removeModuleRecord(type,key){if(!confirm('Delete this record? This action cannot be undone.'))return;moduleRefs[type].child(key).remove().catch(e=>alert(e.message));}
+function updatePracticeDashboard(){const el=id=>document.getElementById(id);if(!el('dashWorkCount'))return;el('dashWorkCount').textContent=workItems.filter(x=>!['Completed','Filed'].includes(x.status)).length;el('dashTaskCount').textContent=taskItems.filter(x=>x.status!=='Completed').length;const today=new Date().toISOString().slice(0,10);el('dashDueCount').textContent=complianceItems.filter(x=>x.dueDate&&x.dueDate>=today).length+complianceItems.filter(x=>x.dueDate&&x.dueDate<today).length;const outstanding=feeItems.reduce((a,x)=>a+Math.max(0,Number(x.amount||0)-Number(x.paid||0)),0);el('dashOutstanding').textContent=money(outstanding);const recent=[...workItems].sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0)).slice(0,4);el('dashRecentWork').innerHTML=recent.length?recent.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.category)}</strong><span>${escapeHTML(selectedClientName(x.client))}</span><small>${escapeHTML(x.status||'Pending')}</small></div>`).join(''):'No work items added yet.';const upcoming=[...complianceItems].filter(x=>x.dueDate).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,4);el('dashUpcoming').innerHTML=upcoming.length?upcoming.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.title)}</strong><span>${escapeHTML(x.dueDate)}</span><small>${escapeHTML(x.category||'')}</small></div>`).join(''):'No compliance dates added yet.';}
+function openSelectedDocuments(){const type=document.getElementById('docType').value,client=document.getElementById('docClient').value;if(!client){alert('Select a client.');return;}document.getElementById('uploadType').value=type.toLowerCase();loadUploadClients();setTimeout(()=>{document.getElementById('uploadClientSelect').value=client.split('|')[1];showSection('upload');if(typeof loadFiles==='function')loadFiles();},150);}
+function exportPracticeReport(){const rows=[['Module','Client','Description','Date','Status / Amount']];workItems.forEach(x=>rows.push(['Work',selectedClientName(x.client),x.category+' '+(x.description||''),x.dueDate||'',x.status||'']));taskItems.forEach(x=>rows.push(['Task',selectedClientName(x.client),x.title,x.dueDate||'',x.status||'']));complianceItems.forEach(x=>rows.push(['Compliance',selectedClientName(x.client),x.title,x.dueDate||'',x.category||'']));feeItems.forEach(x=>rows.push(['Fee',selectedClientName(x.client),x.service,x.invoiceDate||'',`${x.amount||0} billed / ${x.paid||0} received`]));const ws=XLSX.utils.aoa_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Practice Report');XLSX.writeFile(wb,'SK_Consultant_Practice_Report.xlsx');}
+db.ref('gstClients').on('value',()=>populateModuleSelects());
+db.ref('itrClients').on('value',()=>populateModuleSelects());
+document.addEventListener('DOMContentLoaded',()=>{const today=document.getElementById('dashboardToday');if(today)today.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});['workClient','taskClient','eventClient','feeClient','docClient'].forEach(id=>fillClientSelect(id));const docType=document.getElementById('docType');if(docType)docType.addEventListener('change',()=>fillClientSelect('docClient',true,docType.value.toUpperCase()));});
+
 </script>
 <!-- CLIENT POPUP -->
 
@@ -2450,7 +2666,27 @@ box-sizing:border-box;
 font-size:16px;
 ">
 
-<p class="security-note">Do not enter or store client portal passwords in this dashboard.</p>
+<div class="pass-wrap" style="margin-top:12px;">
+
+<input
+id="popup_pass"
+type="password"
+placeholder="Password"
+style="
+width:100%;
+padding:14px;
+font-size:16px;
+box-sizing:border-box;
+">
+
+<span
+class="toggle-pass"
+onclick="togglePassword('popup_pass', this)"
+>
+Show
+</span>
+
+</div>
 
 <div style="
 display:flex;
