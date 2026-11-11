@@ -13,6 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
 
@@ -415,6 +416,7 @@ function exportGSTExcel(){
         "Legal Name": c.legal || "",
         "GSTIN": c.gstin || "",
         "Group": c.group || "",
+        "Frequency": c.frequency || "Monthly",
         "Username": c.user || "",
         "Password": c.pass || ""
 
@@ -485,6 +487,7 @@ function importGSTExcel(file){
                 legal: row["Legal Name"] || "",
                 gstin: row["GSTIN"] || "",
                 group: row["Group"] || "",
+                frequency: row["Frequency"] || "Monthly",
                 user: row["Username"] || "",
                 pass: row["Password"] || ""
 
@@ -1399,6 +1402,16 @@ button {
     z-index: 999999 !important;
 }
 
+/* ========================= USER DESIGN REFINEMENTS ========================= */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+body{font-family:'DM Sans',Arial,sans-serif!important;letter-spacing:.05px}
+.header .title{font-family:'Playfair Display',Georgia,serif!important}
+.section h2,.section-top h2,.welcome-strip h2{font-family:'Playfair Display',Georgia,serif!important}
+.section{font-size:14px}
+.frequency-select{min-width:112px;padding:7px 8px;border:1px solid #e0e4e4;border-radius:7px;background:#fff;font:12px 'DM Sans',sans-serif}
+@media(min-width:769px){.sidebar{transform:translateX(-100%);transition:transform .25s ease}.sidebar.peek-open{transform:translateX(0)}.main{margin-left:0!important}.sidebar.peek-open~.main{margin-left:0!important}}
+@media(max-width:768px){.header{background:#080b0d!important}}
+
 /* ========================= UPGRADE LAYER ========================= */
 .mini-row{display:grid;grid-template-columns:1.2fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf0f0;font:12px Arial,sans-serif}.mini-row:last-child{border-bottom:0}.mini-row strong{color:#26383f}.mini-row span{color:#718087}.mini-row small{color:#9a762f;text-align:right}
 :root{--sk-ink:#17252b;--sk-gold:#b58a3a;--sk-gold-light:#f6eedf;--sk-muted:#718087;--sk-line:#e7e9e8;--sk-bg:#f5f6f7;--sk-white:#fff}
@@ -1408,8 +1421,8 @@ body{background:var(--sk-bg);color:var(--sk-ink);font-family:"Bookman Old Style"
 .sidebar a:hover{background:rgba(181,138,58,.18)!important;color:#f0c879!important}
 .nav-caption{color:#b58a3a;font:700 10px Arial,sans-serif;letter-spacing:1.5px;padding:18px 20px 6px}
 .main{background:var(--sk-bg)}
-.header{background:#fff!important;border-bottom:1px solid var(--sk-line);box-shadow:0 3px 14px rgba(15,30,35,.04)}
-.header .title{color:#17252b!important;letter-spacing:1.5px}.header .subtitle{color:#9a762f!important}
+.header{background:#080b0d!important;border-bottom:1px solid #b58a3a;box-shadow:0 3px 14px rgba(15,30,35,.12)}
+.header .title{color:#fff!important;letter-spacing:2px}.header .subtitle{color:#d6b46f!important}
 .section{max-width:1500px;margin:auto;padding:26px!important}.section-top{align-items:center;gap:15px}.section-top h2,.section h2{color:#17252b;letter-spacing:.2px}.section-subtitle{margin:5px 0 0;color:var(--sk-muted);font:13px Arial,sans-serif}
 .new-client-btn,button{border-radius:9px!important;background:#17252b!important;color:#fff!important;border:1px solid #17252b!important;padding:11px 16px!important;font:600 12px Arial,sans-serif!important;letter-spacing:.3px;cursor:pointer;transition:.2s}
 .new-client-btn:hover,button:hover{background:#9a762f!important;border-color:#9a762f!important;transform:translateY(-1px)}
@@ -1540,10 +1553,7 @@ body{background:var(--sk-bg);color:var(--sk-ink);font-family:"Bookman Old Style"
     <div class="dashboard-cards">
         <div class="dash-card" onclick="showSection('gst')"><span class="card-icon">GST</span><h2>GST Clients</h2><h1 id="gstCount">...</h1><small>Client register</small></div>
         <div class="dash-card" onclick="showSection('itr')"><span class="card-icon">ITR</span><h2>ITR Clients</h2><h1 id="itrCount">...</h1><small>Client register</small></div>
-        <div class="dash-card" onclick="showSection('work')"><span class="card-icon">WORK</span><h2>Open Work Items</h2><h1 id="dashWorkCount">0</h1><small>GST & income tax</small></div>
-        <div class="dash-card" onclick="showSection('tasks')"><span class="card-icon">TASK</span><h2>Pending Tasks</h2><h1 id="dashTaskCount">0</h1><small>To be completed</small></div>
         <div class="dash-card" onclick="showSection('calendar')"><span class="card-icon">DUE</span><h2>Upcoming / Overdue</h2><h1 id="dashDueCount">0</h1><small>Compliance dates</small></div>
-        <div class="dash-card" onclick="showSection('billing')"><span class="card-icon">₹</span><h2>Fees Outstanding</h2><h1 id="dashOutstanding">₹0</h1><small>Recorded invoices</small></div>
     </div>
     <div class="dashboard-panels"><div class="panel-card"><div class="panel-heading"><h3>Recent Work</h3><button class="small-action" onclick="showSection('work')">View work</button></div><div id="dashRecentWork" class="empty-state">No work items added yet.</div></div><div class="panel-card"><div class="panel-heading"><h3>Upcoming Compliance</h3><button class="small-action" onclick="showSection('calendar')">View calendar</button></div><div id="dashUpcoming" class="empty-state">No compliance dates added yet.</div></div></div>
 
@@ -1974,6 +1984,7 @@ function renderGST(){
         <th>Legal Name</th>
         <th>GSTIN</th>
         <th>Group</th>
+        <th>Frequency</th>
         <th>Username</th>
         <th>Password</th>
     </tr>
@@ -1982,6 +1993,7 @@ function renderGST(){
 
     gstClients
 .filter(c => c.active !== false)
+.sort((a,b)=>(a.trade||a.tradeName||'').localeCompare(b.trade||b.tradeName||'', 'en', {sensitivity:'base'}))
 .map((c,i)=>`
 
         <tr>
@@ -2006,6 +2018,7 @@ function renderGST(){
             <td>${c.legal}</td>
             <td>${c.gstin}</td>
             <td>${c.group || ""}</td>
+            <td><select class="frequency-select" aria-label="GST filing frequency" onchange="updateGSTFrequency('${c.firebaseKey}',this.value)"><option value="Monthly" ${(c.frequency||'Monthly')==='Monthly'?'selected':''}>Monthly</option><option value="Quarterly" ${c.frequency==='Quarterly'?'selected':''}>Quarterly</option></select></td>
             <td>${c.user}</td>
 
             <td>
@@ -2052,6 +2065,7 @@ function renderITR(){
 
     itrClients
     .filter(c => c.active !== false)
+    .sort((a,b)=>(a.trade||a.tradeName||'').localeCompare(b.trade||b.tradeName||'', 'en', {sensitivity:'base'}))
     .map((c,i)=>`
 
         <tr>
@@ -2450,6 +2464,8 @@ function savePopupClient(){
 
     let extra =
     document.getElementById("popup_extra").value;
+    const freqEl=document.getElementById('popup_frequency');
+    if(type==='gst') data.frequency=freqEl?freqEl.value:'Monthly';
     if(
 !data.trade.trim() ||
 !extra.trim()
@@ -2537,10 +2553,10 @@ function moduleListen(ref, setter, renderer){
 }
 moduleListen(moduleRefs.work,v=>workItems=v,()=>{renderWork();updatePracticeDashboard();});
 moduleListen(moduleRefs.tasks,v=>taskItems=v,()=>{renderTasks();updatePracticeDashboard();});
-moduleListen(moduleRefs.calendar,v=>complianceItems=v,()=>{renderCalendar();updatePracticeDashboard();});
+moduleListen(moduleRefs.calendar,v=>complianceItems=v,()=>{renderCalendar();updatePracticeDashboard();if(!window._defaultCalendarSeeded){window._defaultCalendarSeeded=true;addDefaultGSTCalendar();}});
 moduleListen(moduleRefs.fees,v=>feeItems=v,()=>{renderBilling();updatePracticeDashboard();});
 function allPracticeClients(){return [...gstClients.map(c=>({...c,_type:'GST'})),...itrClients.map(c=>({...c,_type:'ITR'}))];}
-function clientLabel(c){return (c.tradeName||c.trade||c.legalName||c.legal||c.name||c.extra||'Unnamed client')+' ('+(c._type||'Client')+')';}
+function clientLabel(c){return (c.tradeName||c.trade||c.legalName||c.legal||c.name||c.extra||'Unnamed client');}
 function fillClientSelect(id, includeAll=true, onlyType=null){const el=document.getElementById(id);if(!el)return;const old=el.value;const clients=allPracticeClients().filter(c=>!onlyType||c._type===onlyType);el.innerHTML=(includeAll?'<option value="">Select client (optional)</option>':'<option value="">Select client</option>')+clients.map(c=>`<option value="${c._type}|${c.firebaseKey}">${escapeHTML(clientLabel(c))}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old;}
 function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function selectedClientName(value){if(!value)return '—';const [type,key]=value.split('|');const list=type==='GST'?gstClients:itrClients;const c=list.find(x=>x.firebaseKey===key);return c?clientLabel({...c,_type:type}):'Client record';}
@@ -2559,18 +2575,33 @@ function openEventForm(){populateModuleSelects();document.getElementById('eventF
 function closeEventForm(){document.getElementById('eventFormPanel').hidden=true;}
 function saveEvent(){const d={title:document.getElementById('eventTitle').value.trim(),client:document.getElementById('eventClient').value,dueDate:document.getElementById('eventDate').value,category:document.getElementById('eventCategory').value,notes:document.getElementById('eventNotes').value.trim(),createdAt:Date.now()};if(!d.title||!d.dueDate){alert('Enter compliance name and due date.');return;}moduleRefs.calendar.push(d).then(()=>{closeEventForm();alert('Compliance date saved.');}).catch(e=>alert(e.message));}
 function renderCalendar(){const t=document.getElementById('calendarTable');if(!t)return;const rows=[...complianceItems].sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));t.innerHTML='<thead><tr><th>Due date</th><th>Compliance</th><th>Category</th><th>Client</th><th>Notes</th><th>Action</th></tr></thead><tbody>'+(rows.length?rows.map(x=>`<tr><td>${escapeHTML(x.dueDate)}</td><td>${escapeHTML(x.title)}</td><td>${escapeHTML(x.category)}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.notes||'—')}</td><td><button onclick="removeModuleRecord('calendar','${x.firebaseKey}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="6">No compliance dates added.</td></tr>')+'</tbody>';}
-function openFeeForm(){populateModuleSelects();document.getElementById('feeDate').value=new Date().toISOString().slice(0,10);document.getElementById('feeFormPanel').hidden=false;}
+function openFeeForm(){populateModuleSelects();ensureBillingFields();document.getElementById('feeDate').value=new Date().toISOString().slice(0,10);document.getElementById('feeReference').value=autoReference();document.getElementById('feeDiscount').value='0';updateNetBilled();document.getElementById('feeFormPanel').hidden=false;}
 function closeFeeForm(){document.getElementById('feeFormPanel').hidden=true;}
-function saveFee(){const amount=Number(document.getElementById('feeAmount').value||0),paid=Number(document.getElementById('feePaid').value||0);if(!amount||amount<0||paid<0||paid>amount){alert('Check billed and received amounts. Received amount cannot exceed billed amount.');return;}const d={client:document.getElementById('feeClient').value,reference:document.getElementById('feeReference').value.trim(),service:document.getElementById('feeService').value.trim(),invoiceDate:document.getElementById('feeDate').value,amount,paid,paymentDate:document.getElementById('feePaymentDate').value,mode:document.getElementById('feeMode').value,notes:document.getElementById('feeNotes').value.trim(),createdAt:Date.now()};moduleRefs.fees.push(d).then(()=>{closeFeeForm();alert('Fee record saved.');}).catch(e=>alert(e.message));}
+function saveFee(){const amount=Number(document.getElementById('feeAmount').value||0),discount=Number(document.getElementById('feeDiscount')?.value||0),net=Math.max(0,amount-discount),paid=Number(document.getElementById('feePaid').value||0);if(!amount||amount<0||discount<0||discount>amount||paid<0||paid>net){alert('Check fee, discount and receipt. Discount cannot exceed fee and receipt cannot exceed net billed amount.');return;}const d={client:document.getElementById('feeClient').value,reference:document.getElementById('feeReference').value.trim()||autoReference(),service:document.getElementById('feeService').value.trim(),invoiceDate:document.getElementById('feeDate').value,amount,discount,netAmount:net,paid,paymentDate:document.getElementById('feePaymentDate').value,mode:document.getElementById('feeMode').value,notes:document.getElementById('feeNotes').value.trim(),createdAt:Date.now()};moduleRefs.fees.push(d).then(()=>{closeFeeForm();alert('Fee record saved.');}).catch(e=>alert(e.message));}
 function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});}
-function renderBilling(){const t=document.getElementById('billingTable');if(!t)return;let billed=0,received=0;feeItems.forEach(x=>{billed+=Number(x.amount||0);received+=Number(x.paid||0);});document.getElementById('feeBilled').textContent=money(billed);document.getElementById('feeReceived').textContent=money(received);document.getElementById('feePending').textContent=money(billed-received);t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Reference</th><th>Service</th><th>Billed</th><th>Received</th><th>Balance</th><th>Action</th></tr></thead><tbody>'+(feeItems.length?[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).map(x=>`<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—')}</td><td>${money(x.amount)}</td><td>${money(x.paid)}</td><td>${money(Number(x.amount||0)-Number(x.paid||0))}</td><td><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="8">No fee records added.</td></tr>')+'</tbody>';}
+function renderBilling(){const t=document.getElementById('billingTable');if(!t)return;let billed=0,received=0;feeItems.forEach(x=>{billed+=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));received+=Number(x.paid||0);});document.getElementById('feeBilled').textContent=money(billed);document.getElementById('feeReceived').textContent=money(received);document.getElementById('feePending').textContent=money(billed-received);t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>Gross</th><th>Discount</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Invoice</th><th>Action</th></tr></thead><tbody>'+(feeItems.length?[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).map(x=>{const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));return `<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client).replace(/ \((GST|ITR)\)$/,''))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—')}</td><td>${money(x.amount)}</td><td>${money(x.discount||0)}</td><td><b>${money(net)}</b></td><td>${money(x.paid)}</td><td>${money(net-Number(x.paid||0))}</td><td><button onclick="invoicePDF('${x.firebaseKey}')">PDF / Print</button><button onclick="shareInvoice('${x.firebaseKey}')">Share</button></td><td><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`}).join(''):'<tr><td colspan="11">No fee records added.</td></tr>')+'</tbody>';}
 function removeModuleRecord(type,key){if(!confirm('Delete this record? This action cannot be undone.'))return;moduleRefs[type].child(key).remove().catch(e=>alert(e.message));}
 function updatePracticeDashboard(){const el=id=>document.getElementById(id);if(!el('dashWorkCount'))return;el('dashWorkCount').textContent=workItems.filter(x=>!['Completed','Filed'].includes(x.status)).length;el('dashTaskCount').textContent=taskItems.filter(x=>x.status!=='Completed').length;const today=new Date().toISOString().slice(0,10);el('dashDueCount').textContent=complianceItems.filter(x=>x.dueDate&&x.dueDate>=today).length+complianceItems.filter(x=>x.dueDate&&x.dueDate<today).length;const outstanding=feeItems.reduce((a,x)=>a+Math.max(0,Number(x.amount||0)-Number(x.paid||0)),0);el('dashOutstanding').textContent=money(outstanding);const recent=[...workItems].sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0)).slice(0,4);el('dashRecentWork').innerHTML=recent.length?recent.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.category)}</strong><span>${escapeHTML(selectedClientName(x.client))}</span><small>${escapeHTML(x.status||'Pending')}</small></div>`).join(''):'No work items added yet.';const upcoming=[...complianceItems].filter(x=>x.dueDate).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,4);el('dashUpcoming').innerHTML=upcoming.length?upcoming.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.title)}</strong><span>${escapeHTML(x.dueDate)}</span><small>${escapeHTML(x.category||'')}</small></div>`).join(''):'No compliance dates added yet.';}
 function openSelectedDocuments(){const type=document.getElementById('docType').value,client=document.getElementById('docClient').value;if(!client){alert('Select a client.');return;}document.getElementById('uploadType').value=type.toLowerCase();loadUploadClients();setTimeout(()=>{document.getElementById('uploadClientSelect').value=client.split('|')[1];showSection('upload');if(typeof loadFiles==='function')loadFiles();},150);}
 function exportPracticeReport(){const rows=[['Module','Client','Description','Date','Status / Amount']];workItems.forEach(x=>rows.push(['Work',selectedClientName(x.client),x.category+' '+(x.description||''),x.dueDate||'',x.status||'']));taskItems.forEach(x=>rows.push(['Task',selectedClientName(x.client),x.title,x.dueDate||'',x.status||'']));complianceItems.forEach(x=>rows.push(['Compliance',selectedClientName(x.client),x.title,x.dueDate||'',x.category||'']));feeItems.forEach(x=>rows.push(['Fee',selectedClientName(x.client),x.service,x.invoiceDate||'',`${x.amount||0} billed / ${x.paid||0} received`]));const ws=XLSX.utils.aoa_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Practice Report');XLSX.writeFile(wb,'SK_Consultant_Practice_Report.xlsx');}
 db.ref('gstClients').on('value',()=>populateModuleSelects());
 db.ref('itrClients').on('value',()=>populateModuleSelects());
-document.addEventListener('DOMContentLoaded',()=>{const today=document.getElementById('dashboardToday');if(today)today.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});['workClient','taskClient','eventClient','feeClient','docClient'].forEach(id=>fillClientSelect(id));const docType=document.getElementById('docType');if(docType)docType.addEventListener('change',()=>fillClientSelect('docClient',true,docType.value.toUpperCase()));});
+function updateGSTFrequency(key,frequency){db.ref('gstClients/'+key).update({frequency}).catch(e=>alert('Could not update frequency: '+e.message));}
+function setupFrequencyField(){const extra=document.getElementById('popup_extra');if(!extra||document.getElementById('popup_frequency'))return;const sel=document.createElement('select');sel.id='popup_frequency';sel.style.cssText='width:100%;padding:14px;margin-top:12px;box-sizing:border-box;font-size:15px';sel.innerHTML='<option value=\"Monthly\">Monthly</option><option value=\"Quarterly\">Quarterly</option>';extra.insertAdjacentElement('afterend',sel);const type=document.getElementById('popupType');const sync=()=>{sel.style.display=type.value==='gst'?'block':'none'};type.addEventListener('change',sync);sync();}
+function toggleSidebar(){const side=document.getElementById('sidebar'),overlay=document.getElementById('overlay');if(window.innerWidth<=768){if(side.classList.contains('show')){side.classList.remove('show');side.classList.add('hide');overlay.style.display='none';}else{side.classList.remove('hide');side.classList.add('show');overlay.style.display='block';}}else{side.classList.toggle('peek-open');}}
+function setupSidebarHover(){if(window.innerWidth<=768)return;const side=document.getElementById('sidebar'),menu=document.querySelector('.menu-btn');if(!side||!menu)return;const open=()=>side.classList.add('peek-open');const close=()=>side.classList.remove('peek-open');menu.addEventListener('mouseenter',open);side.addEventListener('mouseenter',open);side.addEventListener('mouseleave',close);menu.addEventListener('mouseleave',()=>setTimeout(()=>{if(!side.matches(':hover'))close()},250));}
+function autoReference(){const date=new Date().toISOString().slice(0,10).replaceAll('-','');let n=feeItems.filter(x=>(x.reference||'').startsWith('SKC/'+date+'/')).length+1;let ref='SKC/'+date+'/'+String(n).padStart(3,'0');while(feeItems.some(x=>x.reference===ref)){n++;ref='SKC/'+date+'/'+String(n).padStart(3,'0');}return ref;}
+function updateNetBilled(){const gross=Number(document.getElementById('feeAmount')?.value||0),discount=Number(document.getElementById('feeDiscount')?.value||0),net=Math.max(0,gross-discount);const out=document.getElementById('feeNetAmount');if(out)out.textContent=money(net);}
+function ensureBillingFields(){const panel=document.getElementById('feeFormPanel');if(!panel||document.getElementById('feeDiscount'))return;const ref=document.getElementById('feeReference');if(ref){ref.readOnly=true;ref.placeholder='Auto-generated invoice number';}const amount=document.getElementById('feeAmount');if(amount){const label=amount.closest('label');const discount=document.createElement('label');discount.innerHTML='Discount (₹)<input id=\"feeDiscount\" type=\"number\" min=\"0\" step=\"0.01\" value=\"0\" oninput=\"updateNetBilled()\">';label.insertAdjacentElement('afterend',discount);const net=document.createElement('div');net.className='summary-tile full-field';net.innerHTML='<span>Net billed amount</span><strong id=\"feeNetAmount\">₹0</strong>';discount.insertAdjacentElement('afterend',net);amount.addEventListener('input',updateNetBilled);}}
+function invoiceHTML(x){const client=selectedClientName(x.client),net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));return {client,net,html:`<div style=\"font-family:Arial;color:#17252b;padding:28px;max-width:760px\"><div style=\"display:flex;justify-content:space-between;border-bottom:3px solid #b58a3a;padding-bottom:15px\"><div><h1 style=\"margin:0;font-family:Georgia\">SK CONSULTANT</h1><p>ADVOCATE • GST & LEGAL ADVISORY</p><p>GST & Income Tax Practice</p></div><div style=\"text-align:right\"><h2>INVOICE</h2><b>${escapeHTML(x.reference||'')}</b><br>${escapeHTML(x.invoiceDate||'')}</div></div><p><b>Bill To:</b> ${escapeHTML(client)}</p><p><b>Service:</b> ${escapeHTML(x.service||'Professional Services')}</p><table style=\"width:100%;border-collapse:collapse\"><tr><th style=\"text-align:left;border-bottom:1px solid #aaa;padding:10px\">Description</th><th style=\"text-align:right;border-bottom:1px solid #aaa;padding:10px\">Amount (₹)</th></tr><tr><td style=\"padding:10px\">Professional fees</td><td style=\"text-align:right;padding:10px\">${Number(x.amount||0).toFixed(2)}</td></tr><tr><td style=\"padding:10px\">Less: Discount</td><td style=\"text-align:right;padding:10px\">${Number(x.discount||0).toFixed(2)}</td></tr><tr><td style=\"padding:10px;border-top:2px solid #17252b\"><b>Net billed amount</b></td><td style=\"text-align:right;padding:10px;border-top:2px solid #17252b\"><b>${net.toFixed(2)}</b></td></tr><tr><td style=\"padding:10px\">Amount received</td><td style=\"text-align:right;padding:10px\">${Number(x.paid||0).toFixed(2)}</td></tr><tr><td style=\"padding:10px\"><b>Balance due</b></td><td style=\"text-align:right;padding:10px\"><b>${(net-Number(x.paid||0)).toFixed(2)}</b></td></tr></table><p style=\"margin-top:45px\">Thank you for your trust.</p><p style=\"text-align:right;margin-top:40px\"><b>For SK CONSULTANT</b><br>Advocate</p></div>`};}
+function buildInvoicePDF(x){if(!window.jspdf?.jsPDF){alert('PDF library could not load. Check internet connection and try again.');return null;}const {jsPDF}=window.jspdf,doc=new jsPDF();const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0))),client=selectedClientName(x.client);doc.setFont('helvetica','bold');doc.setFontSize(21);doc.text('SK CONSULTANT',18,22);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('ADVOCATE • GST & LEGAL ADVISORY',18,29);doc.setDrawColor(181,138,58);doc.setLineWidth(1.2);doc.line(18,35,192,35);doc.setFont('helvetica','bold');doc.setFontSize(17);doc.text('INVOICE',192,48,{align:'right'});doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Invoice No.: '+(x.reference||''),18,49);doc.text('Invoice Date: '+(x.invoiceDate||''),18,56);doc.text('Bill To: '+client,18,72);doc.text('Service: '+(x.service||'Professional Services'),18,81);const rows=[['Professional fees',money(x.amount)],['Less: Discount',money(x.discount||0)],['Net billed amount',money(net)],['Amount received',money(x.paid||0)],['Balance due',money(net-Number(x.paid||0))]];let y=103;doc.setFont('helvetica','bold');doc.text('Description',20,y);doc.text('Amount',188,y,{align:'right'});doc.line(18,y+3,192,y+3);y+=12;rows.forEach((r,i)=>{doc.setFont('helvetica',i===2||i===4?'bold':'normal');doc.text(r[0],20,y);doc.text(r[1],188,y,{align:'right'});y+=10;if(i===1)doc.line(18,y-5,192,y-5);});doc.setFont('helvetica','normal');doc.text('Thank you for your trust.',18,174);doc.setFont('helvetica','bold');doc.text('For SK CONSULTANT',192,190,{align:'right'});doc.setFont('helvetica','normal');doc.text('Advocate',192,197,{align:'right'});return doc;}
+function invoicePDF(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=buildInvoicePDF(x);if(doc)doc.save((x.reference||'SKC_Invoice')+'.pdf');}
+async function shareInvoice(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=buildInvoicePDF(x);if(!doc)return;const blob=doc.output('blob'),file=new File([blob],(x.reference||'SKC_Invoice')+'.pdf',{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){try{await navigator.share({title:'SK CONSULTANT Invoice '+(x.reference||''),text:'Please find the invoice attached.',files:[file]});}catch(e){if(e.name!=='AbortError')alert('Sharing was not completed. You can use PDF / Print to download the invoice.');}}else{doc.save((x.reference||'SKC_Invoice')+'.pdf');alert('PDF downloaded. You can now attach it to WhatsApp or email.');}}
+function addDefaultGSTCalendar(){const existing=new Set(complianceItems.map(x=>(x.title||'')+'|'+(x.dueDate||'')));const today=new Date();const add=[];for(let i=0;i<12;i++){const m=new Date(today.getFullYear(),today.getMonth()+i,1);const y=m.getFullYear(),mo=m.getMonth();const g1=new Date(y,mo,11),g3=new Date(y,mo,20);if(g1>=new Date(today.getFullYear(),today.getMonth(),today.getDate())){const d=g1.toISOString().slice(0,10),k='GSTR-1 (Monthly)|'+d;if(!existing.has(k))add.push({title:'GSTR-1 (Monthly)',dueDate:d,category:'GST',client:'',notes:'Default monthly return reminder',defaultReminder:true});}if(g3>=new Date(today.getFullYear(),today.getMonth(),today.getDate())){const d=g3.toISOString().slice(0,10),k='GSTR-3B (Monthly)|'+d;if(!existing.has(k))add.push({title:'GSTR-3B (Monthly)',dueDate:d,category:'GST',client:'',notes:'Default monthly return reminder; verify applicable due date/extension',defaultReminder:true});}}
+// Quarterly QRMP reminder dates (GSTR-1: 13th; GSTR-3B: 24th for Gujarat) for quarter-end months
+for(let i=0;i<12;i++){const m=new Date(today.getFullYear(),today.getMonth()+i,1),mo=m.getMonth();if([0,3,6,9].includes(mo)){const y=m.getFullYear(),g1=new Date(y,mo,13),g3=new Date(y,mo,24);for(const [title,dt] of [['GSTR-1 (Quarterly)',g1],['GSTR-3B (Quarterly - Gujarat)',g3]])if(dt>=new Date(today.getFullYear(),today.getMonth(),today.getDate())){const d=dt.toISOString().slice(0,10),k=title+'|'+d;if(!existing.has(k))add.push({title,dueDate:d,category:'GST',client:'',notes:'Default QRMP reminder; verify applicability and any notified extension',defaultReminder:true});}}}if(add.length){const updates={};add.forEach(x=>{const key=db.ref('practiceComplianceDates').push().key;updates[key]=x;});db.ref('practiceComplianceDates').update(updates).catch(e=>console.warn('Default calendar reminders were not saved:',e.message));}}
+
+document.addEventListener('DOMContentLoaded',()=>{setupFrequencyField();setupSidebarHover();ensureBillingFields();const today=document.getElementById('dashboardToday');if(today)today.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});['workClient','taskClient','eventClient','feeClient','docClient'].forEach(id=>fillClientSelect(id));const docType=document.getElementById('docType');if(docType)docType.addEventListener('change',()=>fillClientSelect('docClient',true,docType.value.toUpperCase()));});
 
 </script>
 <!-- CLIENT POPUP -->
