@@ -1445,25 +1445,6 @@ html{font-size:16px}body{font-size:15px;line-height:1.55}
 button,.new-client-btn{font-size:13px!important}
 @media(max-width:600px){body{font-size:15px}.modern-table{font-size:13px!important}}
 </style>
-
-/* DESKTOP READABILITY: larger dashboard text without changing mobile layout */
-@media (min-width:769px){
- body{font-size:17px!important;line-height:1.65}
- .section{font-size:17px!important}
- .sidebar a{font-size:17px!important;padding:15px 20px!important}
- .section h2,.section-top h2{font-size:29px!important}
- .section-subtitle{font-size:16px!important}
- .modern-table{font-size:15.5px!important}
- .modern-table th{font-size:15px!important}
- .modern-table td{font-size:15.5px!important}
- .section input:not([type=checkbox]),.section select,.section textarea{font-size:16px!important}
- button,.new-client-btn{font-size:15px!important}
- .dash-card h2{font-size:15px!important}
- .dash-card h1{font-size:34px!important}
- .dash-card small{font-size:13px!important}
- .invoice-download-btn{font-size:22px!important;min-width:42px;line-height:1}
-}
-
 </head>
 
 <body>
@@ -2596,7 +2577,7 @@ function openFeeForm(){populateModuleSelects();ensureBillingFields();document.ge
 function closeFeeForm(){document.getElementById('feeFormPanel').hidden=true;}
 function saveFee(){const amount=Number(document.getElementById('feeAmount').value||0),discount=Number(document.getElementById('feeDiscount')?.value||0),net=Math.max(0,amount-discount),paid=Number(document.getElementById('feePaid').value||0),reference=document.getElementById('feeReference').value.trim()||autoReference();if(!amount||amount<0||discount<0||discount>amount||paid<0||paid>net){alert('Check fee, discount and receipt. Discount cannot exceed fee and receipt cannot exceed net billed amount.');return;}if(feeItems.some(x=>x.reference===reference)){alert('This invoice reference already exists. Please enter a unique invoice number.');return;}const d={client:document.getElementById('feeClient').value,reference,service:document.getElementById('feeService').value.trim(),financialYear:document.getElementById('feeFY')?.value.trim()||'',invoiceDate:document.getElementById('feeDate').value,amount,discount,netAmount:net,paid,paymentDate:document.getElementById('feePaymentDate').value,mode:document.getElementById('feeMode').value,notes:document.getElementById('feeNotes').value.trim(),createdAt:Date.now()};moduleRefs.fees.push(d).then(()=>{closeFeeForm();alert('Fee record saved.');}).catch(e=>alert(e.message));}
 function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});}
-function renderBilling(){const t=document.getElementById('billingTable');if(!t)return;let billed=0,received=0;feeItems.forEach(x=>{billed+=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));received+=Number(x.paid||0);});document.getElementById('feeBilled').textContent=money(billed);document.getElementById('feeReceived').textContent=money(received);document.getElementById('feePending').textContent=money(billed-received);t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>Gross</th><th>Discount</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Invoice</th><th>Action</th></tr></thead><tbody>'+(feeItems.length?[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).map(x=>{const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));return `<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client).replace(/ \((GST|ITR)\)$/,''))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—')}</td><td>${money(x.amount)}</td><td>${money(x.discount||0)}</td><td><b>${money(net)}</b></td><td>${money(x.paid)}</td><td>${money(net-Number(x.paid||0))}</td><td><button class="invoice-download-btn" title="Download PDF" aria-label="Download PDF" onclick="invoicePDF('${x.firebaseKey}')">⤓</button><button onclick="shareInvoice('${x.firebaseKey}')">Share</button></td><td><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`}).join(''):'<tr><td colspan="11">No fee records added.</td></tr>')+'</tbody>';}
+function renderBilling(){const t=document.getElementById('billingTable');if(!t)return;let billed=0,received=0;feeItems.forEach(x=>{billed+=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));received+=Number(x.paid||0);});document.getElementById('feeBilled').textContent=money(billed);document.getElementById('feeReceived').textContent=money(received);document.getElementById('feePending').textContent=money(billed-received);t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>Gross</th><th>Discount</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Invoice</th><th>Action</th></tr></thead><tbody>'+(feeItems.length?[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).map(x=>{const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));return `<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client).replace(/ \((GST|ITR)\)$/,''))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—')}</td><td>${money(x.amount)}</td><td>${money(x.discount||0)}</td><td><b>${money(net)}</b></td><td>${money(x.paid)}</td><td>${money(net-Number(x.paid||0))}</td><td><button onclick="invoicePDF('${x.firebaseKey}')">Download PDF</button><button onclick="shareInvoice('${x.firebaseKey}')">Share</button></td><td><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`}).join(''):'<tr><td colspan="11">No fee records added.</td></tr>')+'</tbody>';}
 function removeModuleRecord(type,key){if(!confirm('Delete this record? This action cannot be undone.'))return;moduleRefs[type].child(key).remove().catch(e=>alert(e.message));}
 function updatePracticeDashboard(){const el=id=>document.getElementById(id);if(!el('dashWorkCount'))return;el('dashWorkCount').textContent=workItems.filter(x=>!['Completed','Filed'].includes(x.status)).length;el('dashTaskCount').textContent=taskItems.filter(x=>x.status!=='Completed').length;const outstanding=feeItems.reduce((a,x)=>a+Math.max(0,Number(x.amount||0)-Number(x.discount||0)-Number(x.paid||0)),0);const outstandingEl=el('dashOutstanding');if(outstandingEl)outstandingEl.textContent=money(outstanding);const recent=[...workItems].sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0)).slice(0,4);const recentEl=el('dashRecentWork');if(recentEl)recentEl.innerHTML=recent.length?recent.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.category)}</strong><span>${escapeHTML(selectedClientName(x.client))}</span><small>${escapeHTML(x.status||'Pending')}</small></div>`).join(''):'No work items added yet.';}
 function openSelectedDocuments(){const type=document.getElementById('docType').value,client=document.getElementById('docClient').value;if(!client){alert('Select a client.');return;}document.getElementById('uploadType').value=type.toLowerCase();loadUploadClients();setTimeout(()=>{document.getElementById('uploadClientSelect').value=client.split('|')[1];showSection('upload');if(typeof loadFiles==='function')loadFiles();},150);}
@@ -2612,100 +2593,24 @@ function updateNetBilled(){const gross=Number(document.getElementById('feeAmount
 function ensureBillingFields(){const panel=document.getElementById('feeFormPanel');if(!panel||document.getElementById('feeDiscount'))return;const ref=document.getElementById('feeReference');if(ref){ref.readOnly=false;ref.placeholder='Auto-generated; you may edit manually';}const amount=document.getElementById('feeAmount');if(amount){const label=amount.closest('label');const discount=document.createElement('label');discount.innerHTML='Discount (₹)<input id=\"feeDiscount\" type=\"number\" min=\"0\" step=\"0.01\" value=\"0\" oninput=\"updateNetBilled()\">';label.insertAdjacentElement('afterend',discount);const net=document.createElement('div');net.className='summary-tile full-field';net.innerHTML='<span>Net billed amount</span><strong id=\"feeNetAmount\">₹0</strong>';discount.insertAdjacentElement('afterend',net);amount.addEventListener('input',updateNetBilled);}}
 function invoiceClientData(value){if(!value)return {};const [type,key]=value.split('|');const c=(type==='GST'?gstClients:itrClients).find(z=>z.firebaseKey===key)||{};const gstin=c.gstin||'',pan=c.pan||(gstin.length>=12?gstin.substring(2,12):'');return {trade:c.trade||c.tradeName||c.name||'',legal:c.legal||c.legalName||c.name||'',pan,gstin};}
 function invoiceImageData(url){return new Promise(resolve=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{try{const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;cv.getContext('2d').drawImage(img,0,0);resolve({data:cv.toDataURL(url.toLowerCase().includes('.png')?'image/png':'image/jpeg'),format:url.toLowerCase().includes('.png')?'PNG':'JPEG'});}catch(e){resolve(null);}};img.onerror=()=>resolve(null);img.src=url;});}
-async function buildInvoicePDF(x){
- if(!window.jspdf?.jsPDF){alert('PDF library could not load. Check internet connection and try again.');return null;}
- const {jsPDF}=window.jspdf;
- const doc=new jsPDF({unit:'mm',format:'a4'});
- const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));
- const paid=Number(x.paid||0);
- const client=invoiceClientData(x.client);
- const qrURL='https://raw.githubusercontent.com/FAIZAN/skc-dashboard/main/PAYMENT%20QR.PNG';
-
- // Letterhead
- doc.setTextColor(15,15,15);
- doc.setFont('helvetica','bold');doc.setFontSize(22);
- doc.text('SK CONSULTANT',105,18,{align:'center'});
- doc.setFontSize(11);doc.text('ADV. MOHAMAD FAIZAN SHAIKH',105,25,{align:'center'});
- doc.setFont('helvetica','normal');doc.setFontSize(9);
- doc.text('228, Times World, Opp. Atlanta Shopping Center, Althan Canal Road - 395017',105,31,{align:'center'});
- doc.text('Mo.No. +91 9173321079 | Email: skconsultancy0720@gmail.com',105,36,{align:'center'});
- doc.setDrawColor(25,25,25);doc.setLineWidth(.5);doc.line(14,41,196,41);
-
- // Invoice heading and identifiers
- doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('INVOICE',105,51,{align:'center'});
- doc.setFont('helvetica','normal');doc.setFontSize(10);
- doc.text('Inv no: '+(x.reference||''),14,61);
- doc.text('Date: '+(x.invoiceDate||''),140,61);
-
- // Customer details
- let y=72;
- doc.setFont('helvetica','bold');doc.text('Trade Name:',14,y);
- doc.setFont('helvetica','normal');doc.text(String(client.trade||'—').slice(0,75),43,y);y+=7;
- doc.setFont('helvetica','bold');doc.text('Legal Name:',14,y);
- doc.setFont('helvetica','normal');doc.text(String(client.legal||'—').slice(0,75),43,y);y+=7;
- doc.setFont('helvetica','bold');doc.text('PAN:',14,y);
- doc.setFont('helvetica','normal');doc.text(String(client.pan||'—'),43,y);y+=7;
- doc.setFont('helvetica','bold');doc.text('GSTIN:',14,y);
- doc.setFont('helvetica','normal');doc.text(String(client.gstin||'—'),43,y);
-
- // Properly aligned particulars table
- y+=12;
- const left=14,right=196;
- const colNo=29,colDetails=34,colFY=145,colAmount=192;
- doc.setFillColor(238,238,235);doc.rect(left,y-6,right-left,10,'F');
- doc.setFont('helvetica','bold');doc.setFontSize(9);
- doc.text('Sr. No.',left+2,y);
- doc.text('DETAILS',colDetails,y);
- doc.text('F.Y.',colFY,y,{align:'center'});
- doc.text('Amount (₹)',colAmount,y,{align:'right'});
- doc.setDrawColor(120,120,120);doc.line(left,y+5,right,y+5);
- y+=13;
-
- const details=String(x.service||'Professional Fees').split(/\n/).filter(Boolean);
- const lines=Math.max(3,Math.min(8,details.length));
- doc.setFont('helvetica','normal');doc.setFontSize(9);
- for(let i=0;i<lines;i++){
-   const detail=details[i]||'';
-   const fy=i===0?(x.financialYear||''):'';
-   const amt=i===0?Number(x.amount||0):0;
-   const wrapped=doc.splitTextToSize(detail,105);
-   doc.text(String(i+1),colNo,y,{align:'center'});
-   doc.text(wrapped,colDetails,y);
-   doc.text(String(fy),colFY,y,{align:'center'});
-   if(i===0)doc.text(amt.toFixed(2),colAmount,y,{align:'right'});
-   y+=Math.max(10,wrapped.length*4.5);
-   doc.setDrawColor(220,220,220);doc.line(left,y-4,right,y-4);
- }
-
+async function buildInvoicePDF(x){if(!window.jspdf?.jsPDF){alert('PDF library could not load. Check internet connection and try again.');return null;}const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'mm',format:'a4'}),net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0))),paid=Number(x.paid||0),client=invoiceClientData(x.client);const signatureURL='https://raw.githubusercontent.com/FAIZAN/skc-dashboard/main/FAIZAN%20SIGNATURE.jpeg',qrURL='https://raw.githubusercontent.com/FAIZAN/skc-dashboard/main/PAYMENT%20QR.PNG';
+// Letterhead
+ doc.setTextColor(15,15,15);doc.setFont('helvetica','bold');doc.setFontSize(22);doc.text('SK CONSULTANT',105,18,{align:'center'});doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('ADV. MOHAMAD FAIZAN SHAIKH',105,25,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('228, Times World, Opp. Atlanta Shopping Center, Althan Canal Road - 395017',105,31,{align:'center'});doc.text('Mo.No. +91 9173321079 | Email: skconsultancy0720@gmail.com',105,36,{align:'center'});doc.setDrawColor(25,25,25);doc.setLineWidth(.5);doc.line(14,41,196,41);
+// Invoice heading and identifiers
+ doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('INVOICE',105,51,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Inv no: '+(x.reference||''),14,61);doc.text('Date: '+(x.invoiceDate||''),140,61);
+// Customer details
+ let y=72;doc.setFont('helvetica','bold');doc.text('Trade Name:',14,y);doc.setFont('helvetica','normal');doc.text(String(client.trade||'—').slice(0,75),43,y);y+=7;doc.setFont('helvetica','bold');doc.text('Legal Name:',14,y);doc.setFont('helvetica','normal');doc.text(String(client.legal||'—').slice(0,75),43,y);y+=7;doc.setFont('helvetica','bold');doc.text('PAN:',14,y);doc.setFont('helvetica','normal');doc.text(String(client.pan||'—'),43,y);y+=7;doc.setFont('helvetica','bold');doc.text('GSTIN:',14,y);doc.setFont('helvetica','normal');doc.text(String(client.gstin||'—'),43,y);
+// Particulars table
+ y+=12;const left=14,right=196;doc.setFillColor(238,238,235);doc.rect(left,y-6,right-left,10,'F');doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('No.',17,y);doc.text('DETAILS',31,y);doc.text('F.Y.',145,y);doc.text('Amount (₹)',192,y,{align:'right'});doc.setDrawColor(120,120,120);doc.line(left,y+5,right,y+5);y+=13;
+ const details=String(x.service||'Professional Fees').split(/\n/).filter(Boolean);const lines=Math.max(3,Math.min(8,details.length));doc.setFont('helvetica','normal');doc.setFontSize(9);for(let i=0;i<lines;i++){const detail=details[i]||'';const fy=i===0?(x.financialYear||''):'';const amt=i===0?Number(x.amount||0):0;const wrapped=doc.splitTextToSize(detail,105);doc.text(String(i+1),17,y);doc.text(wrapped,31,y);doc.text(fy,145,y);if(i===0)doc.text(amt.toFixed(2),192,y,{align:'right'});y+=Math.max(10,wrapped.length*4.5);doc.setDrawColor(220,220,220);doc.line(left,y-4,right,y-4);}
  // Discount and total rows
- y+=2;doc.setFont('helvetica','normal');
- doc.text('Less: Discount',colDetails,y);
- doc.text(Number(x.discount||0).toFixed(2),colAmount,y,{align:'right'});
- y+=8;doc.setFont('helvetica','bold');doc.setFontSize(10);
- doc.line(120,y-5,196,y-5);doc.text('TOTAL',145,y);
- doc.text(net.toFixed(2),colAmount,y,{align:'right'});
- y+=8;doc.setFont('helvetica','normal');doc.setFontSize(9);
- doc.text('Amount Received: '+paid.toFixed(2),14,y);
- doc.text('Balance Due: '+(net-paid).toFixed(2),110,y);
-
- // Bank details and payment QR. No signature photo is loaded or embedded.
- y+=15;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('Bank Details:',14,y);
- y+=7;doc.setFont('helvetica','normal');doc.setFontSize(8.5);
- [['Bank Name','IDFC FIRST BANK'],['Account Name','SHAIKH MOHAMMAD FAIZAN MOHAMMAD ZAKIR'],['Account Number','10265164677'],['IFSC','IDFB0042261'],['MICR','395751002']].forEach(([a,b])=>{doc.text(a+':',14,y);doc.text(b,48,y);y+=5;});
- const qr=await invoiceImageData(qrURL);
- if(qr){
-   const qrY=Math.min(y-26,235);
-   doc.addImage(qr.data,qr.format,150,qrY,32,32);
-   doc.setFontSize(7);doc.text('Scan to Pay',166,Math.min(qrY+35,269),{align:'center'});
- }else{
-   doc.setFontSize(7);doc.text('Payment QR image unavailable',150,Math.min(y,265));
- }
- doc.setFont('helvetica','bold');doc.setFontSize(9);
- doc.text('For SK CONSULTANT',192,Math.min(y+16,280),{align:'right'});
- doc.setFont('helvetica','normal');
- doc.text('Authorised Signature',192,Math.min(y+21,285),{align:'right'});
- return doc;
-}
+ y+=2;doc.setFont('helvetica','normal');doc.text('Less: Discount',31,y);doc.text(Number(x.discount||0).toFixed(2),192,y,{align:'right'});y+=8;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.line(120,y-5,196,y-5);doc.text('TOTAL',145,y);doc.text(net.toFixed(2),192,y,{align:'right'});y+=8;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('Amount Received: '+paid.toFixed(2),14,y);doc.text('Balance Due: '+(net-paid).toFixed(2),110,y);
+ // Bank details
+ y+=15;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('Bank Details:',14,y);y+=7;doc.setFont('helvetica','normal');doc.setFontSize(8.5);[['Bank Name','IDFC FIRST BANK'],['Account Name','SHAIKH MOHAMMAD FAIZAN MOHAMMAD ZAKIR'],['Account Number','10265164677'],['IFSC','IDFB0042261'],['MICR','395751002']].forEach(([a,b])=>{doc.text(a+':',14,y);doc.text(b,48,y);y+=5;});
+ // QR image and signature from repository; image failures do not stop invoice creation
+ const [qr,signature]=await Promise.all([invoiceImageData(qrURL),invoiceImageData(signatureURL)]);if(qr){doc.addImage(qr.data,qr.format,150,Math.min(y-26,235),32,32);doc.setFontSize(7);doc.text('Scan to Pay',166,Math.min(y+8,269),{align:'center'});}else{doc.setFontSize(7);doc.text('Payment QR image unavailable',150,Math.min(y,265));}
+ const sigY=Math.min(y+8,260);if(signature)doc.addImage(signature.data,signature.format,143,sigY,38,17);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('For SK CONSULTANT',192,Math.min(sigY+23,280),{align:'right'});doc.setFont('helvetica','normal');doc.text('Authorised Signature',192,Math.min(sigY+28,285),{align:'right'});
+ return doc;}
 async function invoicePDF(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(doc)doc.save((x.reference||'SKC_Invoice')+'.pdf');}
 async function shareInvoice(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(!doc)return;const blob=doc.output('blob'),file=new File([blob],(x.reference||'SKC_Invoice')+'.pdf',{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){try{await navigator.share({title:'SK CONSULTANT Invoice '+(x.reference||''),text:'Please find the invoice attached.',files:[file]});}catch(e){if(e.name!=='AbortError')alert('Sharing was not completed. Please download the PDF instead.');}}else{doc.save((x.reference||'SKC_Invoice')+'.pdf');alert('PDF downloaded. You can now attach it to WhatsApp or email.');}}
 document.addEventListener('DOMContentLoaded',()=>{setupFrequencyField();setupSidebarHover();ensureBillingFields();const today=document.getElementById('dashboardToday');if(today)today.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});['workClient','taskClient','feeClient','docClient'].forEach(id=>fillClientSelect(id));const docType=document.getElementById('docType');if(docType)docType.addEventListener('change',()=>fillClientSelect('docClient',true,docType.value.toUpperCase()));});
