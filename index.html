@@ -2752,17 +2752,28 @@ async function buildInvoicePDF(x){
  doc.text('Amount Received: '+moneyText(paid),LEFT,y);
  doc.text('Balance Due: '+moneyText(net-paid),105,y);
  y+=13;
- if(y+35>205){doc.addPage();y=22;}
- doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(...navy);doc.text('Bank Details',LEFT,y);y+=7;
+ // Keep the bank details and payment block together, with enough room below it.
+ if(y+48>282){doc.addPage();y=22;}
+ const bankTop=y;
+ doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(...navy);doc.text('Bank Details',LEFT,bankTop);
+ y=bankTop+7;
  doc.setFont('helvetica','normal');doc.setFontSize(8.2);doc.setTextColor(45,52,58);
  [['Bank Name','IDFC FIRST BANK'],['Account Name','SHAIKH MOHAMMAD FAIZAN MOHAMMAD ZAKIR'],['Account Number','10265164677'],['IFSC','IDFB0042261'],['MICR','395751002']].forEach(([a,b])=>{doc.setFont('helvetica','bold');doc.text(a+':',LEFT,y);doc.setFont('helvetica','normal');doc.text(b,48,y);y+=5.2;});
- // Reserve a fixed footer zone on every final page. QR and signature cannot collide.
+ // Payment QR sits to the right of the bank details. Authorisation is directly below it.
  const qr=await getSavedPaymentQR();
- if(qr){try{doc.addImage(qr.data,qr.format,160,235,27,27,undefined,'FAST');doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(70,75,80);doc.text('Scan to Pay',173.5,265,{align:'center'});}catch(e){console.error('QR embed failed:',e);}}
- else{console.error('Repository payment QR could not be loaded; check PAYMENT QR.PNG in GitHub main branch.');}
- // Text-only authorisation; no signature photograph is embedded.
- doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...navy);doc.text('For SK CONSULTANT',RIGHT,281,{align:'right'});
- doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text('Authorised Signature',RIGHT,286,{align:'right'});
+ const qrSize=28,qrX=RIGHT-qrSize,qrY=bankTop-2;
+ if(qr){
+  try{
+   doc.addImage(qr.data,qr.format,qrX,qrY,qrSize,qrSize,undefined,'FAST');
+   doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(70,75,80);
+   doc.text('Scan to Pay',qrX+qrSize/2,qrY+qrSize+3.5,{align:'center'});
+  }catch(e){console.error('QR embed failed:',e);}
+ }else{console.error('Repository payment QR could not be loaded; check PAYMENT QR.PNG in GitHub main branch.');}
+ // Text-only authorisation directly under the QR, never at the page bottom.
+ doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...navy);
+ doc.text('For SK CONSULTANT',RIGHT,qrY+qrSize+13,{align:'right'});
+ doc.setFont('helvetica','normal');doc.setFontSize(8);
+ doc.text('Authorised Signature',RIGHT,qrY+qrSize+18,{align:'right'});
  return doc;
 }
 async function invoicePDF(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(doc)doc.save((x.reference||'SKC_Invoice')+'.pdf');}
