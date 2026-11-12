@@ -1005,6 +1005,46 @@ table {
     background: white;
     table-layout: auto;
 }
+
+/* PORTAL CREDENTIAL HELPER */
+.portal-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:100000;
+    background:rgba(0,0,0,.62);
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    box-sizing:border-box;
+}
+.portal-modal.show{display:flex;}
+.portal-modal-card{
+    width:100%;
+    max-width:440px;
+    background:#fff;
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 18px 55px rgba(0,0,0,.28);
+    font-family:Arial, sans-serif;
+}
+.portal-modal-card h3{margin:0 0 8px;color:#142f3a;font-size:22px;}
+.portal-modal-note{font-size:13px;line-height:1.5;color:#5d6870;margin:0 0 18px;}
+.portal-credential-row{margin:12px 0;}
+.portal-credential-row label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:#263943;}
+.portal-credential-control{display:flex;gap:8px;}
+.portal-credential-control input{
+    flex:1;min-width:0;padding:11px;border:1px solid #ccd4d8;
+    border-radius:8px;font-size:14px;box-sizing:border-box;
+}
+.portal-credential-control button,.portal-modal-actions button{
+    border:0;border-radius:8px;padding:10px 13px;cursor:pointer;
+    font-weight:700;background:#142f3a;color:#fff;
+}
+.portal-modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px;flex-wrap:wrap;}
+.portal-modal-actions .portal-close{background:#e9edef;color:#263943;}
+.portal-login-link{color:#142f3a;font-size:13px;word-break:break-all;}
+
 /* GST LOGIN COLUMN SMALL */
 #gstTable th:first-child,
 #gstTable td:first-child{
@@ -1012,6 +1052,14 @@ table {
     min-width: 55px;
     max-width: 55px;
     text-align: center;
+}
+
+#itrTable th:first-child,
+#itrTable td:first-child{
+    width:55px;
+    min-width:55px;
+    max-width:55px;
+    text-align:center;
 }
 
 /* OTHER COLUMNS SLIGHTLY BIG */
@@ -1450,7 +1498,38 @@ button,.new-client-btn{font-size:13px!important}
 </style>
 </head>
 
+
 <body>
+<div id="portalCredentialModal" class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="portalModalTitle">
+    <div class="portal-modal-card">
+        <h3 id="portalModalTitle">Portal Login Details</h3>
+        <p class="portal-modal-note">
+            The portal opens in a new tab. For security reasons, this dashboard cannot directly
+            fill fields on a separate government website. Use the copy buttons below to paste
+            the credentials into the portal.
+        </p>
+        <div class="portal-credential-row">
+            <label for="portalUsername">Username / User ID</label>
+            <div class="portal-credential-control">
+                <input id="portalUsername" type="text" readonly>
+                <button type="button" onclick="copyPortalCredential('portalUsername', this)">Copy</button>
+            </div>
+        </div>
+        <div class="portal-credential-row">
+            <label for="portalPassword">Password</label>
+            <div class="portal-credential-control">
+                <input id="portalPassword" type="password" readonly>
+                <button type="button" onclick="togglePortalPassword(this)">Show</button>
+                <button type="button" onclick="copyPortalCredential('portalPassword', this)">Copy</button>
+            </div>
+        </div>
+        <a id="portalOpenedLink" class="portal-login-link" href="#" target="_blank" rel="noopener"></a>
+        <div class="portal-modal-actions">
+            <button type="button" class="portal-close" onclick="closePortalCredentialModal()">Close</button>
+        </div>
+    </div>
+</div>
+
 <!-- LOGIN PAGE -->
 <div id="loginPage">
 
@@ -1973,18 +2052,79 @@ function showSection(id){
     }
 }
 
-/* GST AUTO LOGIN */
-function openGSTPortal(user){
+/* GOVERNMENT PORTAL LOGIN HELPER
+   Direct autofill into a different website is blocked by browser security.
+   Open the portal and provide one-click copy controls for the saved credentials. */
+const PORTAL_URLS = {
+    gst: "https://services.gst.gov.in/services/login",
+    itr: "https://eportal.incometax.gov.in/iec/foservices/#/login"
+};
 
-    // COPY ONLY USERNAME
-    navigator.clipboard.writeText(user);
+function openClientPortal(type, firebaseKey){
+    const list = type === "gst" ? gstClients : itrClients;
+    const client = list.find(c => c.firebaseKey === firebaseKey);
 
-    // OPEN GST PORTAL
-    window.open(
-        "https://services.gst.gov.in/services/login",
-        "_blank"
-    );
+    if(!client){
+        alert("Client details not found. Please refresh the table.");
+        return;
+    }
 
+    const portalUrl = PORTAL_URLS[type];
+    const portalTab = window.open(portalUrl, "_blank");
+
+    document.getElementById("portalModalTitle").textContent =
+        type === "gst" ? "GST Portal Login Details" : "Income Tax Portal Login Details";
+    document.getElementById("portalUsername").value = client.user || "";
+    document.getElementById("portalPassword").value = client.pass || "";
+    document.getElementById("portalPassword").type = "password";
+
+    const link = document.getElementById("portalOpenedLink");
+    link.href = portalUrl;
+    link.textContent = portalTab ? "Portal opened in a new tab" : "Open portal";
+
+    document.getElementById("portalCredentialModal").classList.add("show");
+}
+
+function openGSTPortal(firebaseKey){
+    openClientPortal("gst", firebaseKey);
+}
+
+function openITRPortal(firebaseKey){
+    openClientPortal("itr", firebaseKey);
+}
+
+async function copyPortalCredential(inputId, button){
+    const input = document.getElementById(inputId);
+    const value = input.value || "";
+    if(!value){
+        alert("No credential is saved for this client.");
+        return;
+    }
+    try{
+        await navigator.clipboard.writeText(value);
+        const oldText = button.textContent;
+        button.textContent = "Copied";
+        setTimeout(() => button.textContent = oldText, 1200);
+    }catch(error){
+        input.type = inputId === "portalPassword" ? "text" : "text";
+        input.focus();
+        input.select();
+        alert("Automatic copy was blocked. Press Ctrl+C to copy the selected value.");
+    }
+}
+
+function togglePortalPassword(button){
+    const input = document.getElementById("portalPassword");
+    const showing = input.type === "text";
+    input.type = showing ? "password" : "text";
+    button.textContent = showing ? "Show" : "Hide";
+}
+
+function closePortalCredentialModal(){
+    document.getElementById("portalCredentialModal").classList.remove("show");
+    document.getElementById("portalUsername").value = "";
+    document.getElementById("portalPassword").value = "";
+    document.getElementById("portalPassword").type = "password";
 }
 
 /* RENDER FIXED */
@@ -2016,14 +2156,14 @@ function renderGST(){
             <td style="text-align:center;">
 
     <span
-        onclick='openGSTPortal(${JSON.stringify(c.user)})'
+        onclick='openGSTPortal(${JSON.stringify(c.firebaseKey)})'
         style="
             cursor:pointer;
             font-size:22px;
         "
         title="Open GST Portal"
     >
-        G𝐒𝐓
+        🏛️
     </span>
 
 </td>
@@ -2067,6 +2207,7 @@ function renderITR(){
     document.getElementById("itrTable").innerHTML = `
 
     <tr>
+        <th>ITR</th>
         <th>Trade Name</th>
         <th>Legal Name</th>
         <th>PAN</th>
@@ -2083,6 +2224,14 @@ function renderITR(){
     .map((c,i)=>`
 
         <tr>
+            <td style="text-align:center;">
+                <span
+                    onclick='openITRPortal(${JSON.stringify(c.firebaseKey)})'
+                    style="cursor:pointer;font-size:22px;"
+                    title="Open Income Tax Portal and show saved login details"
+                    aria-label="Open Income Tax Portal"
+                >🏛️</span>
+            </td>
             <td>${c.trade}</td>
             <td>${c.legal}</td>
             <td>${c.pan}</td>
