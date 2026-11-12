@@ -1,0 +1,4 @@
+requests>=2.32.0,<3.0
+beautifulsoup4>=4.12.3,<5.0
+python-dateutil>=2.9.0,<3.0
+firebase-admin>=6.5.0,<8.0
