@@ -1550,6 +1550,103 @@ button,.new-client-btn{font-size:13px!important}
 .fee-service-row{display:grid;grid-template-columns:1.35fr 1.35fr .8fr .8fr auto;gap:8px;align-items:center;margin-top:9px}.fee-service-row input,.fee-service-row select{width:100%;min-width:0;box-sizing:border-box;padding:10px;font-size:14px}.fee-service-row button{padding:8px 10px!important}
 @media(max-width:600px){.dashboard-cards{grid-template-columns:1fr 1fr!important}.recent-work-card{grid-column:1/-1}.fee-service-row{grid-template-columns:1fr 1fr}.fee-service-row .fee-service-name{grid-column:1/-1}}
 </style>
+
+<style id="skc-advanced-dashboard">
+:root{--skc-ink:#17272e;--skc-muted:#718087;--skc-gold:#b58a3a;--skc-line:#e6e9e8;--skc-soft:#f7f8f7;--skc-green:#39745a;--skc-red:#b64c43;--skc-blue:#47718d}
+.dashboard-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.dashboard-kpis .dash-card{min-height:155px;cursor:pointer}
+.dashboard-kpis .dash-card:nth-child(3){cursor:default}
+.dashboard-overview-panels{grid-template-columns:1.25fr .9fr;gap:16px;margin-top:18px}
+.dashboard-overview-panels .panel-card{margin-top:0}
+.snapshot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 18px}
+.snapshot-grid div{background:#f7f8f7;border:1px solid #edf0ef;border-radius:9px;padding:12px;min-width:0}
+.snapshot-grid span{display:block;color:#78868b;font:11px Arial,sans-serif}
+.snapshot-grid strong{display:block;margin-top:7px;font:700 18px Arial,sans-serif;color:#17252b;overflow-wrap:anywhere}
+.calendar-heading,.calendar-toolbar,.calendar-month-controls,.calendar-heading-actions,.task-header-actions,.billing-header-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.calendar-heading{align-items:flex-start}
+.calendar-heading h3,.calendar-agenda h4{margin:0 0 5px}
+.calendar-heading-actions{justify-content:flex-end}
+.compliance-calendar{margin-top:20px!important;padding:22px!important}
+.calendar-toolbar{padding:15px 0;border-top:1px solid var(--skc-line);border-bottom:1px solid var(--skc-line);margin:15px 0}
+.calendar-month-controls{justify-content:flex-start;gap:13px}
+.calendar-month-controls strong{font:700 17px Arial,sans-serif;min-width:145px;text-align:center;color:var(--skc-ink)}
+.calendar-nav{width:34px;height:34px;padding:0!important;font-size:22px!important;line-height:1!important;border-radius:50%!important}
+.calendar-summary-label,.report-caption{font:12px Arial,sans-serif;color:var(--skc-muted)}
+.calendar-layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:stretch}
+.calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.calendar-weekdays span{text-align:center;padding:9px 3px;color:#7a878b;font:700 11px Arial,sans-serif;text-transform:uppercase;letter-spacing:.4px}
+.calendar-day{min-height:86px;border:1px solid #edf0ef;background:#fff;padding:8px 7px;text-align:left!important;color:var(--skc-ink)!important;display:flex;flex-direction:column;align-items:flex-start;gap:5px;cursor:pointer;border-radius:0!important;font:13px Arial,sans-serif!important;transition:background .15s,border-color .15s;min-width:0}
+.calendar-day:hover{background:#fbf7ee!important;border-color:#d8c49a!important;transform:none!important}
+.calendar-day.outside-month{background:#f8f9f8!important;color:#b0b8ba!important}
+.calendar-day.is-today{box-shadow:inset 0 0 0 1px var(--skc-gold);background:#fffcf5!important}
+.calendar-day.is-selected{background:#f7eedc!important;border:1px solid var(--skc-gold)!important}
+.calendar-day-number{font-weight:700;font-size:13px}
+.calendar-day-dots{display:flex;gap:3px;flex-wrap:wrap;min-height:8px}
+.calendar-day-count{font:10px Arial,sans-serif;color:#718087}
+.legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.gst-dot,.dot-gst{background:#4b8a71}.itr-dot,.dot-itr{background:#6687ac}.tax-dot,.dot-tax{background:#b58a3a}.client-dot,.dot-client{background:#b75f51}.custom-dot,.dot-custom{background:#8e75a9}
+.calendar-agenda{border:1px solid var(--skc-line);border-radius:11px;padding:14px;min-width:0;background:#fcfcfb}
+.agenda-title{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding-bottom:11px;border-bottom:1px solid var(--skc-line);font:700 13px Arial,sans-serif}
+.agenda-title span{color:var(--skc-muted);font:11px Arial,sans-serif;text-align:right}
+.agenda-list{max-height:440px;overflow:auto}
+.agenda-item{padding:11px 0;border-bottom:1px solid #edf0ef;font:12px Arial,sans-serif}
+.agenda-item:last-child{border-bottom:0}
+.agenda-item-top{display:flex;align-items:flex-start;gap:8px}
+.agenda-type-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:0 0 auto}
+.agenda-item strong{display:block;color:#293a40;font-size:12px;line-height:1.4}
+.agenda-item small{display:block;color:#7d898d;margin-top:4px;line-height:1.4}
+.agenda-item p{margin:5px 0 0;color:#718087;line-height:1.4}
+.agenda-item button{padding:5px 8px!important;font-size:10px!important;margin:7px 4px 0 0}
+.calendar-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:15px;color:#718087;font:11px Arial,sans-serif}
+.calendar-disclaimer{margin:13px 0 0;color:#8b969a;font:11px/1.5 Arial,sans-serif}
+.calendar-event-form{margin-top:14px}
+.analytics-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.analytics-tile{border:1px solid var(--skc-line);background:white;border-radius:12px;padding:16px;min-width:0;box-shadow:0 3px 12px rgba(25,40,45,.025)}
+.analytics-tile span{display:block;font:12px Arial,sans-serif;color:var(--skc-muted)}
+.analytics-tile strong{display:block;margin-top:8px;font:700 22px Arial,sans-serif;color:var(--skc-ink);overflow-wrap:anywhere}
+.analytics-emphasis strong{color:#9a762f}
+.reports-visual-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+.reports-visual-grid .panel-card{margin-top:0;min-width:0}
+.mini-bar-chart{display:flex;align-items:flex-end;gap:12px;min-height:180px;padding:20px 6px 4px;overflow-x:auto}
+.bar-column{min-width:42px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:150px;gap:7px}
+.bar-value{font:10px Arial,sans-serif;color:#617078;white-space:nowrap}
+.bar-track{height:112px;width:100%;display:flex;align-items:flex-end;background:#f4f5f3;border-radius:6px 6px 2px 2px;overflow:hidden}
+.bar-fill{width:100%;background:linear-gradient(180deg,#d4b36e,#9b7737);border-radius:6px 6px 0 0;min-height:2px}
+.bar-label{font:10px Arial,sans-serif;color:#718087;white-space:nowrap}
+.task-breakdown{display:grid;gap:12px;padding:9px 0}
+.task-breakdown-row{display:grid;grid-template-columns:94px minmax(40px,1fr) 28px;gap:9px;align-items:center;font:11px Arial,sans-serif;color:#5f6c72}
+.task-breakdown-track{height:8px;background:#f0f2f1;border-radius:10px;overflow:hidden}
+.task-breakdown-fill{height:100%;background:#b58a3a;border-radius:10px}
+.export-panel{margin-top:16px}
+.export-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.export-warning{margin:14px 0 0;padding:11px 13px;background:#fbf7ed;border-left:3px solid #b58a3a;color:#76613c;font:11px/1.5 Arial,sans-serif;border-radius:3px}
+.task-summary-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.task-summary-strip div{background:#fff;border:1px solid var(--skc-line);border-radius:10px;padding:13px}
+.task-summary-strip span{display:block;color:#78868b;font:11px Arial,sans-serif}
+.task-summary-strip strong{display:block;font:700 20px Arial,sans-serif;color:var(--skc-ink);margin-top:6px}
+.task-action-group{display:flex;gap:5px;flex-wrap:wrap;min-width:120px}
+.task-action-group button{padding:7px 8px!important;font-size:10px!important}
+.task-complete-btn{background:#2f684d!important;border-color:#2f684d!important}
+.task-overdue-text{color:#b64c43;font-weight:700}
+.task-due-soon{color:#a57925;font-weight:700}
+.billing-header-actions{justify-content:flex-end}
+.billing-filters{align-items:center}
+.billing-filters input{max-width:520px}
+.billing-subpanel{margin-top:0}
+.billing-subpanel .table-wrap{border:0}
+.billing-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.billing-detail-grid .panel-card{margin-top:0;min-width:0}
+.billing-detail-grid .table-wrap{border:0}
+.payment-form-panel{margin-top:16px}
+.balance-positive{color:#9a762f;font-weight:700}
+.balance-zero{color:#39745a;font-weight:700}
+.payment-history{font:11px Arial,sans-serif;color:#758187}
+.form-panel[hidden]{display:none!important}
+@media(max-width:1100px){.dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}.analytics-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.calendar-layout{grid-template-columns:minmax(0,1fr) 270px}}
+@media(max-width:850px){.calendar-layout,.dashboard-overview-panels,.reports-visual-grid,.billing-detail-grid{grid-template-columns:1fr}.calendar-agenda{min-height:180px}.agenda-list{max-height:260px}}
+@media(max-width:600px){.dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-kpis .dash-card{min-height:126px}.dashboard-kpis .dash-card h1{font-size:23px!important}.dashboard-overview-panels{grid-template-columns:1fr}.snapshot-grid{grid-template-columns:1fr 1fr}.snapshot-grid div:last-child{grid-column:1/-1}.calendar-heading{display:block}.calendar-heading-actions{justify-content:flex-start;margin-top:12px}.calendar-day{min-height:60px;padding:5px 4px}.calendar-day-count{font-size:9px}.calendar-month-controls strong{min-width:125px;font-size:15px}.calendar-legend{gap:10px}.analytics-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.analytics-tile{padding:12px}.analytics-tile strong{font-size:19px}.task-summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.task-header-actions,.billing-header-actions{width:100%;justify-content:stretch}.task-header-actions button,.billing-header-actions button{flex:1}.billing-detail-grid{grid-template-columns:1fr}.export-actions button{width:100%}.calendar-toolbar{align-items:flex-start}.calendar-summary-label{width:100%}}
+</style>
+
 </head>
 
 
@@ -1671,24 +1768,75 @@ button,.new-client-btn{font-size:13px!important}
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="section">
-
     <div class="section-top">
-
-        <h2>Dashboard</h2>
-
-        <button class="new-client-btn" onclick="openClientPopup()">
-            + NEW CLIENT
-        </button>
-
+        <div><h2>Practice Dashboard</h2><p class="section-subtitle">A live overview of clients, compliance work, collections and upcoming statutory dates.</p></div>
+        <button class="new-client-btn" onclick="openClientPopup()">+ NEW CLIENT</button>
+    </div>
+    <div class="welcome-strip">
+        <div><span class="eyebrow">SK CONSULTANT · PRACTICE OVERVIEW</span><h2>Welcome to your workspace</h2><p>Keep your client register, compliance calendar, tasks and professional fees connected in one workspace.</p></div>
+        <div class="today-chip" id="dashboardToday">SK CONSULTANT</div>
+    </div>
+    <div class="dashboard-cards dashboard-kpis">
+        <div class="dash-card" onclick="showSection('gst')"><span class="card-icon">GST</span><h2>Total GST Clients</h2><h1 id="gstCount">0</h1><small>Registered in client database</small></div>
+        <div class="dash-card" onclick="showSection('itr')"><span class="card-icon">ITR</span><h2>Total ITR Clients</h2><h1 id="itrCount">0</h1><small>Registered in client database</small></div>
+        <div class="dash-card"><span class="card-icon">ACTIVE</span><h2>Active Clients</h2><h1 id="dashActiveClients">0</h1><small>GST + ITR clients, excluding inactive</small></div>
+        <div class="dash-card" onclick="showSection('tasks')"><span class="card-icon">TASKS</span><h2>Pending Tasks</h2><h1 id="dashPendingCount">0</h1><small>Open tasks and client work items</small></div>
+    </div>
+    <div class="dashboard-panels dashboard-overview-panels">
+        <div class="panel-card">
+            <div class="panel-heading"><h3>Recent Work & Follow-ups</h3><button class="small-action" onclick="showSection('tasks')">Open Task Desk</button></div>
+            <div id="dashRecentWork" class="empty-state">No work items added yet.</div>
+        </div>
+        <div class="panel-card">
+            <h3>Fees Snapshot</h3>
+            <div class="snapshot-grid">
+                <div><span>Total billed</span><strong id="dashBilled">₹0</strong></div>
+                <div><span>Collected</span><strong id="dashCollected">₹0</strong></div>
+                <div><span>Outstanding</span><strong id="dashOutstanding">₹0</strong></div>
+            </div>
+            <button class="small-action" onclick="showSection('billing')">Open Fees & Billing</button>
+        </div>
     </div>
 
-    <div class="welcome-strip"><div><span class="eyebrow">PRACTICE OVERVIEW</span><h2>Welcome to your workspace</h2><p>Manage clients, compliance, documents and professional fees in one place.</p></div><div class="today-chip" id="dashboardToday">SK CONSULTANT</div></div>
-    <div class="dashboard-cards">
-        <div class="dash-card" onclick="showSection('gst')"><span class="card-icon">GST</span><h2>GST Clients</h2><h1 id="gstCount">...</h1><small>Client register</small></div>
-        <div class="dash-card" onclick="showSection('itr')"><span class="card-icon">ITR</span><h2>ITR Clients</h2><h1 id="itrCount">...</h1><small>Client register</small></div>
-        <div class="dash-card recent-work-card"><div class="panel-heading"><h2>Recent Work</h2><button class="small-action" onclick="showSection('tasks')">View work</button></div><div id="dashRecentWork" class="empty-state">No work items added yet.</div></div>
+    <!-- SINGLE COMPLIANCE / DUE-DATE CALENDAR -->
+    <div class="panel-card compliance-calendar" id="complianceCalendar">
+        <div class="calendar-heading">
+            <div><h3>Compliance & Due-date Calendar</h3><p class="section-subtitle">GST returns, ITR deadlines, advance tax, TDS statements and client-specific tasks in one calendar.</p></div>
+            <div class="calendar-heading-actions">
+                <button class="secondary-btn small-action" onclick="enableDueNotifications()">Enable Reminders</button>
+                <button class="small-action" onclick="openCalendarEventForm()">+ Add Due Date</button>
+            </div>
+        </div>
+        <div class="calendar-toolbar">
+            <div class="calendar-month-controls"><button class="calendar-nav" onclick="changeCalendarMonth(-1)" aria-label="Previous month">‹</button><strong id="calendarMonthLabel">Calendar</strong><button class="calendar-nav" onclick="changeCalendarMonth(1)" aria-label="Next month">›</button></div>
+            <span id="calendarMonthSummary" class="calendar-summary-label"></span>
+        </div>
+        <div class="calendar-layout">
+            <div class="calendar-main">
+                <div class="calendar-weekdays"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+                <div id="calendarGrid" class="calendar-grid"></div>
+            </div>
+            <aside class="calendar-agenda">
+                <div class="agenda-title"><strong id="calendarSelectedDate">Selected date</strong><span id="calendarSelectedCount">0 items</span></div>
+                <div id="calendarAgendaList" class="agenda-list"><div class="empty-state">Select a date to view its deadlines.</div></div>
+            </aside>
+        </div>
+        <div class="calendar-legend">
+            <span><i class="legend-dot gst-dot"></i> GST</span><span><i class="legend-dot itr-dot"></i> ITR</span><span><i class="legend-dot tax-dot"></i> Advance Tax / TDS</span><span><i class="legend-dot client-dot"></i> Client work</span><span><i class="legend-dot custom-dot"></i> Custom</span>
+        </div>
+        <p class="calendar-disclaimer">Statutory dates are default reminders and may be changed by Government notifications. Review applicability, filing frequency, State category and extensions before relying on a date. Client work appears when a due date is entered in the Task Desk. Browser notifications work only while this page is open and permission is enabled.</p>
     </div>
-
+    <div class="panel-card form-panel calendar-event-form" id="calendarEventForm" hidden>
+        <h3>Add Calendar Reminder</h3>
+        <div class="form-grid">
+            <label>Reminder title<input id="calendarEventTitle" placeholder="e.g. Client document follow-up" maxlength="120"></label>
+            <label>Category<select id="calendarEventCategory"><option>GST</option><option>ITR</option><option>Advance Tax</option><option>TDS</option><option>Client Work</option><option>Other</option></select></label>
+            <label>Related client (optional)<select id="calendarEventClient"></select></label>
+            <label>Due date<input id="calendarEventDate" type="date"></label>
+            <label class="full-field">Notes<textarea id="calendarEventNotes" rows="2" placeholder="Reference, return period or action required"></textarea></label>
+        </div>
+        <div class="form-actions"><button onclick="saveCalendarEvent()">Save Reminder</button><button class="secondary-btn" onclick="closeCalendarEventForm()">Cancel</button></div>
+    </div>
 </div>
 
 <!-- GST -->
@@ -1739,55 +1887,36 @@ button,.new-client-btn{font-size:13px!important}
 
 </div>
       
-<!-- REPORTS -->
+<!-- REPORTS & BUSINESS ANALYTICS -->
 <div id="reports" class="section">
-
-    <h2>Reports</h2>
-
-    <div class="settings-box">
-
-        <p>GST Clients: <span id="rep_gst">0</span></p>
-        <p>ITR Clients: <span id="rep_itr">0</span></p>
-
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:15px;">
-
-            <button onclick="exportGSTExcel()">
-                Export GST Excel
-            </button>
-
-            <button onclick="exportITRExcel()">
-                Export ITR Excel
-            </button>
-            <button onclick="exportPracticeReport()">Export Practice Report</button>
-
-            <button onclick="document.getElementById('importGSTExcel').click()">
-                Import GST Excel
-            </button>
-
-            <button onclick="document.getElementById('importITRExcel').click()">
-                Import ITR Excel
-            </button>
-
-        </div>
-
-        <input
-            type="file"
-            id="importGSTExcel"
-            accept=".xlsx,.xls"
-            style="display:none"
-            onchange="importGSTExcel(this.files[0])"
-        >
-
-        <input
-            type="file"
-            id="importITRExcel"
-            accept=".xlsx,.xls"
-            style="display:none"
-            onchange="importITRExcel(this.files[0])"
-        >
-
+    <div class="section-top"><div><h2>Reports & Business Analytics</h2><p class="section-subtitle">Monitor client strength, workload, fees and monthly collections; export structured practice reports.</p></div></div>
+    <div class="analytics-kpis">
+        <div class="analytics-tile"><span>Total GST Clients</span><strong id="rep_gst">0</strong></div>
+        <div class="analytics-tile"><span>Total ITR Clients</span><strong id="rep_itr">0</strong></div>
+        <div class="analytics-tile"><span>Active Clients</span><strong id="rep_active">0</strong></div>
+        <div class="analytics-tile"><span>Pending Tasks</span><strong id="rep_pending">0</strong></div>
+        <div class="analytics-tile"><span>Total Billed</span><strong id="rep_billed">₹0</strong></div>
+        <div class="analytics-tile"><span>Total Collected</span><strong id="rep_collected">₹0</strong></div>
+        <div class="analytics-tile analytics-emphasis"><span>Outstanding Fees</span><strong id="rep_outstanding">₹0</strong></div>
     </div>
-
+    <div class="reports-visual-grid">
+        <div class="panel-card"><div class="panel-heading"><h3>Monthly Fee Collections</h3><span class="report-caption">Based on recorded receipt dates</span></div><div id="reportsMonthlyChart" class="mini-bar-chart"><div class="empty-state">No collection records yet.</div></div></div>
+        <div class="panel-card"><div class="panel-heading"><h3>Task Status Overview</h3><span class="report-caption">Tasks + legacy work items</span></div><div id="reportsTaskBreakdown" class="task-breakdown"><div class="empty-state">No tasks recorded yet.</div></div></div>
+    </div>
+    <div class="panel-card export-panel">
+        <div class="panel-heading"><div><h3>Client Registers & Data Export</h3><p class="section-subtitle">GST and ITR exports retain the Username and Password columns from your client register.</p></div></div>
+        <div class="export-actions">
+            <button onclick="exportGSTExcel()">Export GST Clients · Excel</button>
+            <button onclick="exportITRExcel()">Export ITR Clients · Excel</button>
+            <button onclick="exportPracticeReport()">Export Full Practice Report · Excel</button>
+            <button onclick="exportPracticeReportPDF()">Export Practice Report · PDF</button>
+            <button class="secondary-btn" onclick="document.getElementById('importGSTExcel').click()">Import GST Excel</button>
+            <button class="secondary-btn" onclick="document.getElementById('importITRExcel').click()">Import ITR Excel</button>
+        </div>
+        <input type="file" id="importGSTExcel" accept=".xlsx,.xls" style="display:none" onchange="importGSTExcel(this.files[0])">
+        <input type="file" id="importITRExcel" accept=".xlsx,.xls" style="display:none" onchange="importITRExcel(this.files[0])">
+        <p class="export-warning">Security note: exported client-register workbooks contain portal usernames and passwords. Keep downloaded files access-controlled and do not share them in unsecured channels.</p>
+    </div>
 </div>
 
 <!-- UPLOAD (UNCHANGED STRUCTURE) -->
@@ -1867,23 +1996,36 @@ button,.new-client-btn{font-size:13px!important}
 
 <!-- UNIFIED TASK MANAGEMENT DESK -->
 <div id="tasks" class="section">
- <div class="section-top"><div><h2>Task Management Desk</h2><p class="section-subtitle">Manage GST, ITR, compliance work and general follow-ups together in one place.</p></div><button class="new-client-btn" onclick="openTaskForm()">+ ADD TASK / WORK</button></div>
- <div class="filter-row"><input id="taskSearch" placeholder="Search client, task, service or FY..." oninput="renderTasks()"><select id="taskStatusFilter" onchange="renderTasks()"><option value="">All statuses</option><option>Pending</option><option>In Progress</option><option>Filed</option><option>Completed</option><option>On Hold</option></select></div>
+ <div class="section-top"><div><h2>Unified Task Management Desk</h2><p class="section-subtitle">GST, ITR, TDS, notices, appeals and general client work in one task list.</p></div><div class="task-header-actions"><button class="secondary-btn" onclick="enableDueNotifications()">Enable Due-date Notifications</button><button class="new-client-btn" onclick="openTaskForm()">+ ADD TASK / WORK</button></div></div>
+ <div class="task-summary-strip"><div><span>Open tasks</span><strong id="taskOpenCount">0</strong></div><div><span>Due today</span><strong id="taskTodayCount">0</strong></div><div><span>Overdue</span><strong id="taskOverdueCount">0</strong></div><div><span>Recurring</span><strong id="taskRecurringCount">0</strong></div></div>
+ <div class="filter-row"><input id="taskSearch" placeholder="Search client, task, service or FY..." oninput="renderTasks()"><select id="taskStatusFilter" onchange="renderTasks()"><option value="">All statuses</option><option>Pending</option><option>In Progress</option><option>Filed</option><option>Completed</option><option>On Hold</option></select><select id="taskDueFilter" onchange="renderTasks()"><option value="">All due dates</option><option value="overdue">Overdue</option><option value="today">Due today</option><option value="week">Next 7 days</option><option value="nodate">No due date</option></select></div>
  <div class="table-wrap"><table id="tasksTable" class="modern-table"></table></div>
- <div class="panel-card form-panel" id="taskFormPanel" hidden><h3>Add Task / Work</h3><div class="form-grid">
+ <div class="panel-card form-panel" id="taskFormPanel" hidden><h3 id="taskFormTitle">Add Task / Work</h3><div class="form-grid">
  <label>Task / Service<select id="taskCategory"><option>GST Return</option><option>GST Audit / Reconciliation</option><option>GST Refund</option><option>GST Notice / Reply</option><option>GST Appeal / Hearing</option><option>ITR Filing</option><option>Tax Audit</option><option>TDS Return</option><option>Income Tax Notice</option><option>General Follow-up</option><option>Other</option></select></label>
  <label id="taskOtherLabel" style="display:none">Custom service (if Other)<input id="taskOther" placeholder="Enter service / task"></label>
  <label>Task title / details<input id="taskTitle" placeholder="e.g. Prepare GSTR-3B and follow up for data"></label><label>Related client<select id="taskClient"></select></label>
  <label>Financial Year<input id="taskFY" placeholder="2026-27"></label><label>Period / Assessment Year<input id="taskPeriod" placeholder="e.g. Oct 2026 / AY 2027-28"></label>
  <label>Priority<select id="taskPriority"><option>Normal</option><option>High</option><option>Urgent</option><option>Low</option></select></label><label>Due date<input id="taskDue" type="date"></label>
+ <label>Repeat task<select id="taskRecurrence"><option value="">Does not repeat</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select></label>
  <label>Status<select id="taskStatus"><option>Pending</option><option>In Progress</option><option>Filed</option><option>Completed</option><option>On Hold</option></select></label><label class="full-field">Notes / Description<textarea id="taskNotes" rows="3"></textarea></label></div>
- <div class="form-actions"><button onclick="saveTask()">Save Task / Work</button><button class="secondary-btn" onclick="closeTaskForm()">Cancel</button></div></div>
- <!-- Legacy work editor retained inside the unified desk for existing records -->
+ <div class="form-actions"><button id="saveTaskButton" onclick="saveTask()">Save Task / Work</button><button class="secondary-btn" onclick="closeTaskForm()">Cancel</button></div></div>
+ <!-- Legacy work editor retained for previously saved work items -->
  <div class="panel-card form-panel" id="workFormPanel" hidden><h3 id="workFormTitle">Edit Existing Work Item</h3><div class="form-grid"><label>Client<select id="workClient"></select></label><label>Category<select id="workCategory"><option>GST Return</option><option>GST Audit / Reconciliation</option><option>GST Refund</option><option>GST Notice / Reply</option><option>GST Appeal / Hearing</option><option>ITR Filing</option><option>Tax Audit</option><option>TDS Return</option><option>Income Tax Notice</option><option>Other</option></select></label><label>Financial Year<input id="workFY" placeholder="2026-27"></label><label>Period / Assessment Year<input id="workPeriod"></label><label>Due Date<input id="workDue" type="date"></label><label>Status<select id="workStatus"><option>Pending</option><option>In Progress</option><option>Filed</option><option>Completed</option><option>On Hold</option></select></label><label class="full-field">Description<textarea id="workDescription" rows="3"></textarea></label></div><div class="form-actions"><button onclick="saveWork()">Update Work</button><button class="secondary-btn" onclick="closeWorkForm()">Cancel</button></div></div>
 </div>
 
 <!-- FEES & BILLING -->
-<div id="billing" class="section"><div class="section-top"><div><h2>Fees & Billing</h2><p class="section-subtitle">Record professional fees, receipts and outstanding balances.</p></div><button class="new-client-btn" onclick="openFeeForm()">+ RECORD FEE</button></div><div class="billing-summary"><div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div><div class="summary-tile"><span>Received</span><strong id="feeReceived">₹0</strong></div><div class="summary-tile"><span>Outstanding</span><strong id="feePending">₹0</strong></div></div><div class="filter-row" style="margin:16px 0 10px;"><input id="billingSearch" type="search" placeholder="Search invoice, client, service, date or amount..." oninput="renderBilling()" style="width:100%;max-width:520px;"></div><div class="table-wrap"><table id="billingTable" class="modern-table"></table></div><div class="panel-card form-panel" id="feeFormPanel" hidden><h3 id="feeFormTitle">Record Professional Fee</h3><div class="form-grid"><label>Client<select id="feeClient"></select></label><label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label><div class="full-field fee-services-field"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><strong>Services / Particulars</strong><button type="button" class="small-action" onclick="addFeeServiceLine()">+ ADD SERVICE</button></div><div id="feeServiceLines"></div></div><label>Financial Year (default)<input id="feeFY" placeholder="2026-27"></label><label>Invoice date<input id="feeDate" type="date"></label><label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01" readonly></label><label>Amount received (₹)<input id="feePaid" type="number" min="0" step="0.01" value="0"></label><label>Payment date<input id="feePaymentDate" type="date"></label><label>Payment mode<select id="feeMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label></div><div class="form-actions"><button id="saveFeeButton" onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div></div></div>
+<div id="billing" class="section">
+ <div class="section-top"><div><h2>Fees & Billing</h2><p class="section-subtitle">Invoice register, client-wise balances, part-payments and monthly collection analysis.</p></div><div class="billing-header-actions"><button class="secondary-btn" onclick="exportBillingExcel()">Export Billing · Excel</button><button class="secondary-btn" onclick="exportBillingPDF()">Export Billing · PDF</button><button class="new-client-btn" onclick="openFeeForm()">+ RECORD FEE</button></div></div>
+ <div class="billing-summary"><div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div><div class="summary-tile"><span>Total received</span><strong id="feeReceived">₹0</strong></div><div class="summary-tile"><span>Outstanding balance</span><strong id="feePending">₹0</strong></div></div>
+ <div class="filter-row billing-filters"><input id="billingSearch" type="search" placeholder="Search invoice, client, service, date or amount..." oninput="renderBilling()"><select id="billingFYFilter" onchange="renderBilling()"><option value="">All Financial Years</option></select></div>
+ <div class="panel-card billing-subpanel"><div class="panel-heading"><h3>Invoice Register</h3><span class="report-caption">Use Record Payment for additional or part-payments.</span></div><div class="table-wrap"><table id="billingTable" class="modern-table"></table></div></div>
+ <div class="billing-detail-grid">
+  <div class="panel-card"><div class="panel-heading"><h3>Client-wise Outstanding</h3></div><div class="table-wrap"><table id="clientBalanceTable" class="modern-table"></table></div></div>
+  <div class="panel-card"><div class="panel-heading"><h3>Monthly Collections</h3></div><div class="table-wrap"><table id="monthlyCollectionTable" class="modern-table"></table></div></div>
+ </div>
+ <div class="panel-card form-panel" id="feeFormPanel" hidden><h3 id="feeFormTitle">Record Professional Fee</h3><div class="form-grid"><label>Client<select id="feeClient"></select></label><label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label><div class="full-field fee-services-field"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><strong>Services / Particulars</strong><button type="button" class="small-action" onclick="addFeeServiceLine()">+ ADD SERVICE</button></div><div id="feeServiceLines"></div></div><label>Financial Year (default)<input id="feeFY" placeholder="2026-27"></label><label>Invoice date<input id="feeDate" type="date"></label><label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01" readonly></label><label>Amount received at invoice stage (₹)<input id="feePaid" type="number" min="0" step="0.01" value="0"></label><label>Payment date<input id="feePaymentDate" type="date"></label><label>Payment mode<select id="feeMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label></div><div class="form-actions"><button id="saveFeeButton" onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div></div>
+ <div class="panel-card form-panel payment-form-panel" id="paymentFormPanel" hidden><h3>Record Part-payment</h3><p id="paymentInvoiceInfo" class="section-subtitle"></p><div class="form-grid"><label>Payment amount (₹)<input id="paymentAmount" type="number" min="0.01" step="0.01" placeholder="Enter amount"></label><label>Payment date<input id="paymentDate" type="date"></label><label>Payment mode<select id="paymentMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label>Reference / notes<input id="paymentNotes" placeholder="UTR / receipt reference (optional)"></label></div><div class="form-actions"><button onclick="savePartialPayment()">Save Payment</button><button class="secondary-btn" onclick="closePaymentForm()">Cancel</button></div></div>
+</div>
 
 <!-- FOOTER -->
 <div class="footer">
@@ -3088,6 +3230,555 @@ async function shareInvoice(key){const x=feeItems.find(a=>a.firebaseKey===key);i
 document.addEventListener('DOMContentLoaded',()=>{const taskCat=document.getElementById('taskCategory');if(taskCat)taskCat.addEventListener('change',()=>{const el=document.getElementById('taskOtherLabel');if(el)el.style.display=taskCat.value==='Other'?'block':'none';});setupFrequencyField();setupSidebarHover();ensureBillingFields();const today=document.getElementById('dashboardToday');if(today)today.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});['workClient','taskClient','feeClient','docClient'].forEach(id=>fillClientSelect(id));const docType=document.getElementById('docType');if(docType)docType.addEventListener('change',()=>fillClientSelect('docClient',true,docType.value.toUpperCase()));});
 
 </script>
+
+<script id="skc-advanced-functional-layer">
+/* ======================================================================
+   SK CONSULTANT - ADVANCED PRACTICE MANAGEMENT
+   Additive module layer. Existing GST / ITR client records, login,
+   upload, settings, document register and portal helper are retained.
+====================================================================== */
+
+const advancedCalendarRef = db.ref('practiceCalendarEvents');
+let advancedCalendarEvents = [];
+let advancedCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+let advancedSelectedDate = localDateISO(new Date());
+let advancedEditingTaskKey = null;
+let advancedPaymentInvoiceKey = null;
+let advancedReminderTimer = null;
+
+function localDateISO(date){
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function parseLocalDate(value){
+  if(!value) return null;
+  const p=String(value).slice(0,10).split('-').map(Number);
+  if(p.length!==3 || !p[0] || !p[1] || !p[2]) return null;
+  return new Date(p[0],p[1]-1,p[2]);
+}
+function addMonthsToISO(value, months){
+  const d=parseLocalDate(value); if(!d)return '';
+  const day=d.getDate(); d.setDate(1); d.setMonth(d.getMonth()+months);
+  const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  d.setDate(Math.min(day,last)); return localDateISO(d);
+}
+function formatDateLong(value){
+  const d=parseLocalDate(value);return d?d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):(value||'—');
+}
+function activePracticeClients(){return allPracticeClients().filter(c=>c.active!==false);}
+function openPracticeTasks(){
+  return [...taskItems.map(x=>({...x,_kind:'task'})),...workItems.map(x=>({...x,_kind:'work',title:x.category||'Work item',notes:x.description||''}))]
+    .filter(x=>!['Completed','Filed'].includes(x.status));
+}
+function eventClass(category){
+  const c=String(category||'').toLowerCase();
+  if(c.includes('gst')||c.includes('cmp'))return 'gst';
+  if(c.includes('itr')||c.includes('income tax'))return 'itr';
+  if(c.includes('advance')||c.includes('tds'))return 'tax';
+  if(c.includes('client')||c.includes('task')||c.includes('work'))return 'client';
+  return 'custom';
+}
+function addStatEvent(list, id, dueDate, title, category, notes, client=''){
+  if(!dueDate)return;
+  list.push({id,dueDate,title,category,notes,client,source:'statutory',status:'Pending',_eventClass:eventClass(category)});
+}
+function buildStatutoryEvents(){
+  const result=[];
+  const now=new Date(), currentYear=now.getFullYear();
+  const clients=gstClients.filter(c=>c.active!==false);
+  const monthlyGST=clients.filter(c=>(c.frequency||'Monthly').toLowerCase()==='monthly');
+  const quarterlyGST=clients.filter(c=>(c.frequency||'Monthly').toLowerCase()==='quarterly');
+  const compositionGST=clients.filter(c=>(c.frequency||'Monthly').toLowerCase()==='composition');
+  const qrmp22StateCodes=['22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37'];
+  const gst3bQRMPDay=c=>qrmp22StateCodes.includes(String(c.gstin||'').slice(0,2))?22:24;
+  for(let year=currentYear-1;year<=currentYear+2;year++){
+    // Monthly GST due dates: next-month 11th (GSTR-1) and 20th (GSTR-3B).
+    for(let dueMonth=0;dueMonth<12;dueMonth++){
+      const periodDate=new Date(year,dueMonth-1,1);
+      const periodLabel=periodDate.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
+      monthlyGST.forEach(c=>{
+        const name=clientLabel(c);
+        addStatEvent(result,`gst_m_${c.firebaseKey}_${year}_${dueMonth+1}_gstr1`,`${year}-${String(dueMonth+1).padStart(2,'0')}-11`,`GSTR-1 · ${name} · ${periodLabel}`,'GST',`Monthly GSTR-1 default due date. GSTIN: ${c.gstin||'not recorded'}`,`GST|${c.firebaseKey}`);
+        addStatEvent(result,`gst_m_${c.firebaseKey}_${year}_${dueMonth+1}_gstr3b`,`${year}-${String(dueMonth+1).padStart(2,'0')}-20`,`GSTR-3B · ${name} · ${periodLabel}`,'GST',`Monthly GSTR-3B default due date. Confirm any notified extension.`,`GST|${c.firebaseKey}`);
+      });
+    }
+    // QRMP taxpayers: quarterly GSTR-1 on 13th and GSTR-3B on 22nd/24th by State group.
+    [0,3,6,9].forEach(dueMonth=>{
+      const periodEnd=new Date(year,dueMonth-1,1);
+      const quarterLabel=`Q${dueMonth===0?4:dueMonth/3} ${periodEnd.getFullYear()}`;
+      quarterlyGST.forEach(c=>{
+        const name=clientLabel(c), mm=String(dueMonth+1).padStart(2,'0');
+        addStatEvent(result,`gst_q_${c.firebaseKey}_${year}_${dueMonth+1}_gstr1`,`${year}-${mm}-13`,`GSTR-1 (Quarterly) · ${name} · ${quarterLabel}`,'GST','QRMP quarterly GSTR-1 default due date (13th of month after quarter).',`GST|${c.firebaseKey}`);
+        const day=gst3bQRMPDay(c);
+        addStatEvent(result,`gst_q_${c.firebaseKey}_${year}_${dueMonth+1}_gstr3b`,`${year}-${mm}-${day}`,`GSTR-3B (QRMP) · ${name} · ${quarterLabel}`,'GST',`QRMP quarterly GSTR-3B default due date for the State group inferred from GSTIN. Verify the GST portal due date.`,`GST|${c.firebaseKey}`);
+      });
+      compositionGST.forEach(c=>{
+        const name=clientLabel(c),mm=String(dueMonth+1).padStart(2,'0');
+        addStatEvent(result,`gst_cmp_${c.firebaseKey}_${year}_${dueMonth+1}`,`${year}-${mm}-18`,`CMP-08 · ${name} · ${quarterLabel}`,'GST','Composition taxpayer quarterly statement/payment default due date.',`GST|${c.firebaseKey}`);
+      });
+    });
+    // Annual GSTR-4 for composition taxpayers.
+    compositionGST.forEach(c=>addStatEvent(result,`gst_gstr4_${c.firebaseKey}_${year}`,`${year}-04-30`,`GSTR-4 · ${clientLabel(c)} · FY ${year-1}-${String(year).slice(-2)}`,'GST','Annual composition return default due date.',`GST|${c.firebaseKey}`));
+
+    // Advance tax instalments for the financial year starting in April.
+    const adv=[['06-15','1st instalment · 15%'],['09-15','2nd instalment · 45%'],['12-15','3rd instalment · 75%']];
+    adv.forEach(([md,label])=>addStatEvent(result,`advance_${year}_${md}`,`${year}-${md}`,`Advance Tax · ${label}`,'Advance Tax','Default advance tax instalment reminder. Check liability and applicable presumptive-tax rules.'));
+    addStatEvent(result,`advance_${year+1}_03-15`,`${year+1}-03-15`,'Advance Tax · Final instalment · 100%','Advance Tax','Default final advance tax instalment reminder; payment by 31 March is generally treated as advance tax for the financial year.');
+
+    // TDS quarterly statements - standard due-date pattern.
+    addStatEvent(result,`tds_q1_${year}`,`${year}-07-31`,`TDS Statement · Q1 ${year}`,'TDS','Quarterly TDS statement default due date (Apr-Jun).');
+    addStatEvent(result,`tds_q2_${year}`,`${year}-10-31`,`TDS Statement · Q2 ${year}`,'TDS','Quarterly TDS statement default due date (Jul-Sep).');
+    addStatEvent(result,`tds_q3_${year}`,`${year+1}-01-31`,`TDS Statement · Q3 ${year}`,'TDS','Quarterly TDS statement default due date (Oct-Dec).');
+    addStatEvent(result,`tds_q4_${year}`,`${year+1}-05-31`,`TDS Statement · Q4 ${year}`,'TDS','Quarterly TDS statement default due date (Jan-Mar).');
+
+    // ITR base dates. The 2026 audit date is set to the notified 21-Nov extension;
+    // future audit dates are shown as provisional 31-Oct defaults pending extensions.
+    addStatEvent(result,`itr_individual_${year}`,`${year}-07-31`,`ITR filing · ITR-1 / ITR-2 · ${year}`,'ITR','Default due date for eligible non-audit individual cases; check the taxpayer category and applicable Act.');
+    addStatEvent(result,`itr_nonaudit_${year}`,`${year}-08-31`,`ITR filing · Non-audit business / trust · ${year}`,'ITR','Default due date for non-audit business cases/trusts where applicable.');
+    const auditDate=year===2026?`${year}-11-21`:`${year}-10-31`;
+    addStatEvent(result,`itr_audit_${year}`,auditDate,`ITR filing · Audit cases · ${year}`,'ITR',year===2026?'CBDT-extended due date for AY 2026-27 audit cases; verify the applicable taxpayer category.':'Provisional standard audit-case reminder; check later CBDT extensions.');
+    addStatEvent(result,`itr_tp_${year}`,`${year}-11-30`,`ITR filing · Transfer-pricing cases · ${year}`,'ITR','Provisional transfer-pricing return reminder; verify the applicable audit-report and return deadlines.');
+  }
+  return result;
+}
+function getAllCalendarEvents(){
+  const events=buildStatutoryEvents();
+  openPracticeTasks().forEach(x=>{
+    if(!x.dueDate)return;
+    events.push({id:`${x._kind}_${x.firebaseKey}`,dueDate:x.dueDate,title:x.title||x.category||'Client work',category:'Client Work',notes:x.notes||x.description||'',client:x.client,source:x._kind,status:x.status||'Pending',firebaseKey:x.firebaseKey,_eventClass:'client'});
+  });
+  advancedCalendarEvents.filter(x=>x.status!=='Completed').forEach(x=>events.push({...x,source:'custom',_eventClass:eventClass(x.category)}));
+  return events;
+}
+function changeCalendarMonth(offset){
+  advancedCalendarMonth=new Date(advancedCalendarMonth.getFullYear(),advancedCalendarMonth.getMonth()+offset,1);
+  const y=advancedCalendarMonth.getFullYear(),m=advancedCalendarMonth.getMonth()+1;
+  if(!advancedSelectedDate.startsWith(`${y}-${String(m).padStart(2,'0')}`))advancedSelectedDate=localDateISO(advancedCalendarMonth);
+  renderDueCalendar();
+}
+function selectCalendarDate(date){advancedSelectedDate=date;renderDueCalendar();}
+function renderDueCalendar(){
+  const grid=document.getElementById('calendarGrid');if(!grid)return;
+  const y=advancedCalendarMonth.getFullYear(),m=advancedCalendarMonth.getMonth();
+  const label=advancedCalendarMonth.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  document.getElementById('calendarMonthLabel').textContent=label;
+  const events=getAllCalendarEvents();
+  const monthPrefix=`${y}-${String(m+1).padStart(2,'0')}`;
+  const monthEvents=events.filter(e=>(e.dueDate||'').startsWith(monthPrefix));
+  const openCount=monthEvents.filter(e=>!['Completed','Filed'].includes(e.status)).length;
+  document.getElementById('calendarMonthSummary').textContent=`${monthEvents.length} calendar item${monthEvents.length===1?'':'s'} · ${openCount} open`;
+  const first=new Date(y,m,1),offset=(first.getDay()+6)%7;
+  const start=new Date(y,m,1-offset);
+  const today=localDateISO(new Date());
+  const html=[];
+  for(let i=0;i<42;i++){
+    const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),iso=localDateISO(d);
+    const dayEvents=events.filter(e=>e.dueDate===iso);
+    const classes=['calendar-day'];
+    if(d.getMonth()!==m)classes.push('outside-month');
+    if(iso===today)classes.push('is-today');
+    if(iso===advancedSelectedDate)classes.push('is-selected');
+    const dots=[...new Set(dayEvents.map(e=>e._eventClass||eventClass(e.category)))].slice(0,4);
+    html.push(`<button type="button" class="${classes.join(' ')}" onclick="selectCalendarDate('${iso}')"><span class="calendar-day-number">${d.getDate()}</span><span class="calendar-day-dots">${dots.map(c=>`<i class="legend-dot dot-${c}"></i>`).join('')}</span>${dayEvents.length?`<span class="calendar-day-count">${dayEvents.length} item${dayEvents.length===1?'':'s'}</span>`:''}</button>`);
+  }
+  grid.innerHTML=html.join('');
+  const selectedEvents=events.filter(e=>e.dueDate===advancedSelectedDate).sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+  document.getElementById('calendarSelectedDate').textContent=formatDateLong(advancedSelectedDate);
+  document.getElementById('calendarSelectedCount').textContent=`${selectedEvents.length} item${selectedEvents.length===1?'':'s'}`;
+  const agenda=document.getElementById('calendarAgendaList');
+  agenda.innerHTML=selectedEvents.length?selectedEvents.map(e=>{
+    const client=e.client?` · ${escapeHTML(selectedClientName(e.client))}`:'';
+    const dot=e._eventClass||eventClass(e.category);
+    let action='';
+    if(e.source==='task')action=`<button class="task-complete-btn" onclick="completeTask('${e.firebaseKey}')">Complete</button><button class="secondary-btn" onclick="editTask('${e.firebaseKey}')">Edit</button>`;
+    else if(e.source==='work')action=`<button class="secondary-btn" onclick="editWork('${e.firebaseKey}')">Edit work</button><button class="task-complete-btn" onclick="completeWork('${e.firebaseKey}')">Complete</button>`;
+    else if(e.source==='custom')action=`<button class="task-complete-btn" onclick="completeCalendarEvent('${e.firebaseKey}')">Mark done</button>`;
+    return `<div class="agenda-item"><div class="agenda-item-top"><i class="agenda-type-dot dot-${dot}"></i><div><strong>${escapeHTML(e.title||'Reminder')}</strong><small>${escapeHTML(e.category||'Reminder')}${client}</small></div></div>${e.notes?`<p>${escapeHTML(e.notes)}</p>`:''}${action?`<div>${action}</div>`:''}</div>`;
+  }).join(''):'<div class="empty-state">No due dates or pending work scheduled for this day.</div>';
+}
+function openCalendarEventForm(){
+  populateModuleSelects();
+  const panel=document.getElementById('calendarEventForm');
+  document.getElementById('calendarEventTitle').value='';
+  document.getElementById('calendarEventCategory').value='Other';
+  document.getElementById('calendarEventDate').value=advancedSelectedDate||localDateISO(new Date());
+  document.getElementById('calendarEventNotes').value='';
+  panel.hidden=false;panel.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function closeCalendarEventForm(){document.getElementById('calendarEventForm').hidden=true;}
+function saveCalendarEvent(){
+  const title=document.getElementById('calendarEventTitle').value.trim();
+  const dueDate=document.getElementById('calendarEventDate').value;
+  if(!title||!dueDate){alert('Enter a reminder title and due date.');return;}
+  const record={title,category:document.getElementById('calendarEventCategory').value,client:document.getElementById('calendarEventClient').value,dueDate,notes:document.getElementById('calendarEventNotes').value.trim(),status:'Pending',createdAt:Date.now(),updatedAt:Date.now()};
+  advancedCalendarRef.push(record).then(()=>{closeCalendarEventForm();selectCalendarDate(dueDate);alert('Calendar reminder saved.');}).catch(e=>alert('Could not save reminder: '+e.message));
+}
+function completeCalendarEvent(key){if(!confirm('Mark this calendar reminder as completed?'))return;advancedCalendarRef.child(key).update({status:'Completed',completedAt:Date.now(),updatedAt:Date.now()}).catch(e=>alert(e.message));}
+
+// Notifications are browser notifications while the dashboard is open. No server-side push is configured.
+async function enableDueNotifications(){
+  if(!('Notification' in window)){alert('This browser does not support desktop notifications. Your due dates remain visible in the dashboard calendar.');return;}
+  try{
+    const permission=await Notification.requestPermission();
+    if(permission==='granted'){
+      try{localStorage.setItem('skcDueNotificationsEnabled','1');}catch(e){}
+      checkDueDateNotifications();
+      if(!advancedReminderTimer)advancedReminderTimer=setInterval(checkDueDateNotifications,30*60*1000);
+      alert('Due-date notifications enabled for this browser while the dashboard is open.')
+    }else alert('Notification permission was not granted. You can still view reminders in the dashboard.');
+  }catch(e){alert('Could not enable browser notifications: '+e.message);}
+}
+function checkDueDateNotifications(){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  let enabled=false;try{enabled=localStorage.getItem('skcDueNotificationsEnabled')==='1';}catch(e){}
+  if(!enabled)return;
+  const today=parseLocalDate(localDateISO(new Date()));
+  getAllCalendarEvents().forEach(e=>{
+    if(!e.dueDate||['Completed','Filed'].includes(e.status))return;
+    const due=parseLocalDate(e.dueDate);if(!due)return;
+    const days=Math.round((due-today)/86400000);
+    if(days>3||days< -7)return;
+    const token=`skc_due_${e.id}_${e.dueDate}`;
+    let already=false;try{already=localStorage.getItem(token)==='1';}catch(err){}
+    if(already)return;
+    const when=days<0?`${Math.abs(days)} day(s) overdue`:days===0?'due today':`due in ${days} day(s)`;
+    try{new Notification('SK Consultant · Due-date reminder',{body:`${e.title} — ${when}.`});localStorage.setItem(token,'1');}catch(err){console.warn('Notification failed',err);}
+  });
+}
+
+/* --------------------------- TASK DESK --------------------------- */
+function openTaskForm(){
+  populateModuleSelects();advancedEditingTaskKey=null;
+  document.getElementById('taskFormTitle').textContent='Add Task / Work';
+  document.getElementById('saveTaskButton').textContent='Save Task / Work';
+  ['taskTitle','taskFY','taskPeriod','taskDue','taskNotes','taskOther'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('taskCategory').value='GST Return';
+  document.getElementById('taskPriority').value='Normal';
+  document.getElementById('taskStatus').value='Pending';
+  document.getElementById('taskRecurrence').value='';
+  document.getElementById('taskClient').value='';
+  document.getElementById('taskFormPanel').hidden=false;
+  document.getElementById('taskCategory').dispatchEvent(new Event('change'));
+  document.getElementById('taskFormPanel').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function closeTaskForm(){document.getElementById('taskFormPanel').hidden=true;advancedEditingTaskKey=null;}
+function saveTask(){
+  const category=document.getElementById('taskCategory').value,other=document.getElementById('taskOther').value.trim();
+  const title=document.getElementById('taskTitle').value.trim();
+  const data={title:title||(category==='Other'?other:category),category:category==='Other'?other:category,client:document.getElementById('taskClient').value,financialYear:document.getElementById('taskFY').value.trim(),period:document.getElementById('taskPeriod').value.trim(),priority:document.getElementById('taskPriority').value,dueDate:document.getElementById('taskDue').value,status:document.getElementById('taskStatus').value,recurrence:document.getElementById('taskRecurrence').value||'',notes:document.getElementById('taskNotes').value.trim(),updatedAt:Date.now()};
+  if(category==='Other'&&!other){alert('Enter the custom service / task.');return;}
+  if(!data.title){alert('Enter a task title or select a service.');return;}
+  if(data.recurrence&&!data.dueDate){alert('A due date is required for a recurring task.');return;}
+  const old=advancedEditingTaskKey?taskItems.find(x=>x.firebaseKey===advancedEditingTaskKey):null;
+  data.createdAt=old?.createdAt||Date.now();
+  const ref=advancedEditingTaskKey?moduleRefs.tasks.child(advancedEditingTaskKey):moduleRefs.tasks.push();
+  ref.set(data).then(()=>{closeTaskForm();renderTasks();alert(old?'Task updated.':'Task saved.');}).catch(e=>alert('Could not save task: '+e.message));
+}
+function editTask(key){
+  const x=taskItems.find(a=>a.firebaseKey===key);if(!x)return;
+  populateModuleSelects();advancedEditingTaskKey=key;
+  document.getElementById('taskFormTitle').textContent='Edit Task / Work';
+  document.getElementById('saveTaskButton').textContent='Update Task';
+  document.getElementById('taskCategory').value=INVOICE_SERVICE_OPTIONS.includes(x.category)?x.category:(['GST Return','GST Audit / Reconciliation','GST Refund','GST Notice / Reply','GST Appeal / Hearing','ITR Filing','Tax Audit','TDS Return','Income Tax Notice','General Follow-up','Other'].includes(x.category)?x.category:'Other');
+  document.getElementById('taskOther').value=document.getElementById('taskCategory').value==='Other'?x.category||'':'';
+  document.getElementById('taskTitle').value=x.title||'';
+  document.getElementById('taskClient').value=x.client||'';
+  document.getElementById('taskFY').value=x.financialYear||'';
+  document.getElementById('taskPeriod').value=x.period||'';
+  document.getElementById('taskPriority').value=x.priority||'Normal';
+  document.getElementById('taskDue').value=x.dueDate||'';
+  document.getElementById('taskRecurrence').value=x.recurrence||'';
+  document.getElementById('taskStatus').value=x.status||'Pending';
+  document.getElementById('taskNotes').value=x.notes||'';
+  document.getElementById('taskCategory').dispatchEvent(new Event('change'));
+  document.getElementById('taskFormPanel').hidden=false;
+  document.getElementById('taskFormPanel').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function nextRecurringDate(dueDate,rule){return addMonthsToISO(dueDate,rule==='monthly'?1:rule==='quarterly'?3:rule==='yearly'?12:0);}
+async function completeTask(key){
+  const task=taskItems.find(x=>x.firebaseKey===key);if(!task||['Completed','Filed'].includes(task.status))return;
+  const updates={status:'Completed',completedAt:Date.now(),updatedAt:Date.now()};
+  try{
+    // Use a transaction flag so repeated clicks do not create duplicate next occurrences.
+    const ref=moduleRefs.tasks.child(key);
+    const result=await ref.transaction(current=>{
+      if(!current||['Completed','Filed'].includes(current.status))return;
+      current.status='Completed';current.completedAt=Date.now();current.updatedAt=Date.now();
+      if(current.recurrence&&current.dueDate&&!current.nextInstanceCreated)current.nextInstanceCreated=true;
+      return current;
+    });
+    if(!result.committed)return;
+    const saved=result.snapshot.val();
+    if(saved?.recurrence&&saved?.dueDate&&saved.nextInstanceCreated&&!task.nextInstanceCreated){
+      const nextDate=nextRecurringDate(saved.dueDate,saved.recurrence);
+      if(nextDate){
+        const next={...saved};
+        delete next.nextInstanceCreated;delete next.completedAt;delete next.firebaseKey;
+        next.dueDate=nextDate;next.status='Pending';next.createdAt=Date.now();next.updatedAt=Date.now();next.previousTaskKey=key;
+        next.notes=(saved.notes||'')+(saved.notes?'\n':'')+`Recurring task generated from previous due date ${saved.dueDate}.`;
+        await moduleRefs.tasks.push(next);
+      }
+    }
+  }catch(e){alert('Could not complete task: '+e.message);}
+}
+function completeWork(key){const item=workItems.find(x=>x.firebaseKey===key);if(!item)return;if(!confirm('Mark this work item completed?'))return;moduleRefs.work.child(key).update({status:'Completed',completedAt:Date.now(),updatedAt:Date.now()}).catch(e=>alert(e.message));}
+function updateTaskStatus(key,status){if(status==='Completed'){completeTask(key);return;}moduleRefs.tasks.child(key).update({status,updatedAt:Date.now()}).catch(e=>alert(e.message));}
+function renderTasks(){
+  const table=document.getElementById('tasksTable');if(!table)return;
+  const q=(document.getElementById('taskSearch')?.value||'').toLowerCase().trim();
+  const status=document.getElementById('taskStatusFilter')?.value||'';
+  const dueFilter=document.getElementById('taskDueFilter')?.value||'';
+  const today=localDateISO(new Date()),weekEnd=localDateISO(new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()+7));
+  const all=[...taskItems.map(x=>({...x,_kind:'task'})),...workItems.map(x=>({...x,_kind:'work',title:x.category||'Work item',notes:x.description||'',priority:x.priority||'Normal'}))];
+  const filtered=all.filter(x=>{
+    if(status&&x.status!==status)return false;
+    if(q&&!JSON.stringify({...x,clientName:selectedClientName(x.client)}).toLowerCase().includes(q))return false;
+    if(dueFilter==='overdue'&&(!x.dueDate||x.dueDate>=today||['Completed','Filed'].includes(x.status)))return false;
+    if(dueFilter==='today'&&(x.dueDate!==today||['Completed','Filed'].includes(x.status)))return false;
+    if(dueFilter==='week'&&(!x.dueDate||x.dueDate<today||x.dueDate>weekEnd||['Completed','Filed'].includes(x.status)))return false;
+    if(dueFilter==='nodate'&&x.dueDate)return false;
+    return true;
+  }).sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));
+  const countOpen=openPracticeTasks().length;
+  document.getElementById('taskOpenCount').textContent=countOpen;
+  document.getElementById('taskTodayCount').textContent=openPracticeTasks().filter(x=>x.dueDate===today).length;
+  document.getElementById('taskOverdueCount').textContent=openPracticeTasks().filter(x=>x.dueDate&&x.dueDate<today).length;
+  document.getElementById('taskRecurringCount').textContent=taskItems.filter(x=>x.recurrence&&!['Completed','Filed'].includes(x.status)).length;
+  table.innerHTML='<thead><tr><th>Task / Service</th><th>Client</th><th>F.Y. / Period</th><th>Priority</th><th>Due date</th><th>Repeat</th><th>Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>'+
+  (filtered.length?filtered.map(x=>{
+    const overdue=x.dueDate&&x.dueDate<today&&!['Completed','Filed'].includes(x.status);
+    const dueToday=x.dueDate===today&&!['Completed','Filed'].includes(x.status);
+    const dueClass=overdue?'task-overdue-text':dueToday?'task-due-soon':'';
+    const actions=x._kind==='task'?`<button class="task-complete-btn" onclick="completeTask('${x.firebaseKey}')" ${['Completed','Filed'].includes(x.status)?'disabled':''}>${['Completed','Filed'].includes(x.status)?'Done':'Complete'}</button><button class="secondary-btn" onclick="editTask('${x.firebaseKey}')">Edit</button><button class="secondary-btn" onclick="removeModuleRecord('tasks','${x.firebaseKey}')">Delete</button>`:`<button class="task-complete-btn" onclick="completeWork('${x.firebaseKey}')" ${['Completed','Filed'].includes(x.status)?'disabled':''}>${['Completed','Filed'].includes(x.status)?'Done':'Complete'}</button><button class="secondary-btn" onclick="editWork('${x.firebaseKey}')">Edit</button><button class="secondary-btn" onclick="removeModuleRecord('work','${x.firebaseKey}')">Delete</button>`;
+    return `<tr><td><b>${escapeHTML(x.title||x.category||'Task')}</b><br><small>${escapeHTML(x.category||(x._kind==='work'?'GST / ITR Work':'General Task'))}</small></td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.financialYear||'—')}<br>${escapeHTML(x.period||'')}</td><td>${escapeHTML(x.priority||'Normal')}</td><td class="${dueClass}">${escapeHTML(x.dueDate?formatDateLong(x.dueDate):'—')}</td><td>${x.recurrence?`<span class="status-pill">${escapeHTML(x.recurrence)}</span>`:'—'}</td><td>${x._kind==='task'?`<select aria-label="Task status" onchange="updateTaskStatus('${x.firebaseKey}',this.value)">${['Pending','In Progress','Filed','Completed','On Hold'].map(v=>`<option ${x.status===v?'selected':''}>${v}</option>`).join('')}</select>`:`<span class="status-pill">${escapeHTML(x.status||'Pending')}</span>`}</td><td>${escapeHTML(x.notes||'—')}</td><td><div class="task-action-group">${actions}</div></td></tr>`;
+  }).join(''):'<tr><td colspan="9">No matching tasks or work items found.</td></tr>')+'</tbody>';
+}
+
+/* --------------------------- FEES, BILLING & RECEIPTS --------------------------- */
+function getInvoiceNet(x){return Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));}
+function getInvoicePayments(x){
+  if(Array.isArray(x.payments)&&x.payments.length)return x.payments.map(p=>({...p,amount:Number(p.amount||0)}));
+  const paid=Number(x.paid||0);
+  return paid>0?[{amount:paid,date:x.paymentDate||x.invoiceDate||'',mode:x.mode||'Previously recorded',notes:'Existing receipt'}]:[];
+}
+function getInvoicePaid(x){return getInvoicePayments(x).reduce((sum,p)=>sum+Number(p.amount||0),0)||Number(x.paid||0);}
+function getInvoiceOutstanding(x){return Math.max(0,getInvoiceNet(x)-getInvoicePaid(x));}
+function allMonthlyCollections(){
+  const map={};
+  feeItems.forEach(x=>getInvoicePayments(x).forEach(p=>{
+    const date=(p.date||x.paymentDate||x.invoiceDate||'').slice(0,7);if(!date)return;
+    if(!map[date])map[date]={month:date,amount:0,count:0};map[date].amount+=Number(p.amount||0);map[date].count++;
+  }));
+  return Object.values(map).sort((a,b)=>b.month.localeCompare(a.month));
+}
+function getClientOutstanding(){
+  const map={};
+  feeItems.forEach(x=>{
+    const value=x.client||'';const key=value||'__unassigned';
+    if(!map[key])map[key]={key,client:value,name:value?selectedClientName(value):'Unassigned client',invoices:0,billed:0,received:0,outstanding:0};
+    map[key].invoices++;map[key].billed+=getInvoiceNet(x);map[key].received+=getInvoicePaid(x);map[key].outstanding+=getInvoiceOutstanding(x);
+  });
+  return Object.values(map).sort((a,b)=>b.outstanding-a.outstanding);
+}
+function refreshBillingFYFilter(){
+  const sel=document.getElementById('billingFYFilter');if(!sel)return;
+  const old=sel.value;
+  const fys=[...new Set(feeItems.map(x=>x.financialYear||'').filter(Boolean))].sort().reverse();
+  sel.innerHTML='<option value="">All Financial Years</option>'+fys.map(y=>`<option value="${escapeHTML(y)}">${escapeHTML(y)}</option>`).join('');
+  if(fys.includes(old))sel.value=old;
+}
+function renderClientOutstanding(){
+  const t=document.getElementById('clientBalanceTable');if(!t)return;
+  const rows=getClientOutstanding();
+  t.innerHTML='<thead><tr><th>Client</th><th>Invoices</th><th>Billed</th><th>Received</th><th>Outstanding</th></tr></thead><tbody>'+
+    (rows.length?rows.map(x=>`<tr><td>${escapeHTML(x.name)}</td><td>${x.invoices}</td><td>${money(x.billed)}</td><td>${money(x.received)}</td><td class="${x.outstanding?'balance-positive':'balance-zero'}">${money(x.outstanding)}</td></tr>`).join(''):'<tr><td colspan="5">No client balances recorded.</td></tr>')+'</tbody>';
+}
+function renderMonthlyCollections(){
+  const t=document.getElementById('monthlyCollectionTable');if(!t)return;
+  const rows=allMonthlyCollections().slice(0,12);
+  t.innerHTML='<thead><tr><th>Month</th><th>Receipts</th><th>Collected</th></tr></thead><tbody>'+
+    (rows.length?rows.map(x=>{const d=parseLocalDate(x.month+'-01');return `<tr><td>${d?d.toLocaleDateString('en-IN',{month:'short',year:'numeric'}):x.month}</td><td>${x.count}</td><td><b>${money(x.amount)}</b></td></tr>`;}).join(''):'<tr><td colspan="3">No payment receipts recorded.</td></tr>')+'</tbody>';
+}
+function renderBilling(){
+  const table=document.getElementById('billingTable');if(!table)return;
+  refreshBillingFYFilter();
+  const billed=feeItems.reduce((a,x)=>a+getInvoiceNet(x),0);
+  const received=feeItems.reduce((a,x)=>a+getInvoicePaid(x),0);
+  document.getElementById('feeBilled').textContent=money(billed);
+  document.getElementById('feeReceived').textContent=money(received);
+  document.getElementById('feePending').textContent=money(Math.max(0,billed-received));
+  const query=(document.getElementById('billingSearch')?.value||'').trim().toLowerCase();
+  const fy=document.getElementById('billingFYFilter')?.value||'';
+  const rows=[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).filter(x=>{
+    if(fy&&(x.financialYear||'')!==fy)return false;
+    const text=[x.invoiceDate,selectedClientName(x.client),x.reference,x.service,x.financialYear,x.amount,x.discount,x.netAmount,getInvoicePaid(x),getInvoiceOutstanding(x),x.mode,x.notes].join(' ').toLowerCase();
+    return text.includes(query);
+  });
+  table.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>F.Y.</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Receipts</th><th>Invoice</th><th>Action</th></tr></thead><tbody>'+
+    (rows.length?rows.map(x=>`<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—').replace(/\n/g,'<br>')}</td><td>${escapeHTML(x.financialYear||'—')}</td><td><b>${money(getInvoiceNet(x))}</b></td><td>${money(getInvoicePaid(x))}</td><td class="${getInvoiceOutstanding(x)?'balance-positive':'balance-zero'}">${money(getInvoiceOutstanding(x))}</td><td><button class="secondary-btn" onclick="viewInvoicePayments('${x.firebaseKey}')">${getInvoicePayments(x).length} receipt(s)</button></td><td><button title="Download PDF" onclick="invoicePDF('${x.firebaseKey}')">⤓</button><button onclick="shareInvoice('${x.firebaseKey}')">Share</button></td><td><div class="task-action-group"><button onclick="openPaymentForm('${x.firebaseKey}')" ${getInvoiceOutstanding(x)<=0?'disabled':''}>Record Payment</button><button class="secondary-btn" onclick="editFee('${x.firebaseKey}')">Edit</button><button class="secondary-btn" onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></div></td></tr>`).join(''):'<tr><td colspan="11">'+(feeItems.length?'No matching fee records found.':'No fee records added.')+'</td></tr>')+'</tbody>';
+  renderClientOutstanding();renderMonthlyCollections();
+}
+function saveFee(){
+  const items=getFeeServiceItems(),amount=items.reduce((sum,x)=>sum+x.amount,0),discount=Number(document.getElementById('feeDiscount')?.value||0),net=Math.max(0,amount-discount),reference=document.getElementById('feeReference').value.trim()||autoReference();
+  const old=editingFeeKey?feeItems.find(x=>x.firebaseKey===editingFeeKey):null;
+  const formPaid=Number(document.getElementById('feePaid').value||0);
+  const hasExistingPayments=!!(old&&Array.isArray(old.payments)&&old.payments.length);
+  const paid=hasExistingPayments?getInvoicePaid(old):formPaid;
+  if(!items.length||items.some(x=>!x.service||x.amount<0)||!amount||discount<0||discount>amount||paid<0||paid>net){alert('Enter each service and amount. Check discount and receipt values.');return;}
+  if(feeItems.some(x=>x.reference===reference&&x.firebaseKey!==editingFeeKey)){alert('This invoice reference already exists. Please enter a unique invoice number.');return;}
+  const d={client:document.getElementById('feeClient').value,reference,items,service:items.map(x=>x.service).join('\n'),financialYear:document.getElementById('feeFY').value.trim()||items[0].financialYear||'',invoiceDate:document.getElementById('feeDate').value,amount,discount,netAmount:net,paid,paymentDate:document.getElementById('feePaymentDate').value,mode:document.getElementById('feeMode').value,notes:document.getElementById('feeNotes').value.trim(),createdAt:old?.createdAt||Date.now(),updatedAt:Date.now()};
+  if(hasExistingPayments){d.payments=old.payments;d.paymentDate=old.paymentDate||d.paymentDate;d.mode=old.mode||d.mode;}
+  else if(paid>0){d.payments=[{amount:paid,date:d.paymentDate||d.invoiceDate,mode:d.mode,notes:'Receipt recorded with invoice',createdAt:Date.now()}];}
+  const ref=editingFeeKey?moduleRefs.fees.child(editingFeeKey):moduleRefs.fees.push();
+  const wasEditing=!!editingFeeKey;ref.set(d).then(()=>{closeFeeForm();alert(wasEditing?'Fee record updated.':'Fee record saved.');}).catch(e=>alert(e.message));
+}
+function editFee(key){
+  const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return;populateModuleSelects();ensureBillingFields();editingFeeKey=key;resetFeeForm();
+  document.getElementById('feeClient').value=x.client||'';document.getElementById('feeReference').value=x.reference||'';document.getElementById('feeFY').value=x.financialYear||'';document.getElementById('feeDate').value=x.invoiceDate||'';document.getElementById('feePaid').value=getInvoicePaid(x);document.getElementById('feePaid').readOnly=!!(Array.isArray(x.payments)&&x.payments.length);document.getElementById('feePaymentDate').value=x.paymentDate||'';document.getElementById('feeMode').value=x.mode||'Bank Transfer';document.getElementById('feeNotes').value=x.notes||'';document.getElementById('feeDiscount').value=Number(x.discount||0);
+  document.getElementById('feeServiceLines').innerHTML='';
+  const items=Array.isArray(x.items)&&x.items.length?x.items:String(x.service||'Professional Fees').split('\n').filter(Boolean).map((service,i)=>({service,financialYear:i===0?(x.financialYear||''):'',amount:i===0?Number(x.amount||0):0}));
+  items.forEach(item=>addFeeServiceLine(item));document.getElementById('feeAmount').value=Number(x.amount||0);updateNetBilled();
+  document.getElementById('feeFormTitle').textContent='Edit Fee Record';document.getElementById('saveFeeButton').textContent='Update Fee Record';document.getElementById('feeFormPanel').hidden=false;document.getElementById('feeFormPanel').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function closeFeeForm(){document.getElementById('feeFormPanel').hidden=true;editingFeeKey=null;document.getElementById('feePaid').readOnly=false;}
+function openPaymentForm(key){
+  const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return;
+  if(getInvoiceOutstanding(x)<=0){alert('This invoice has no outstanding balance.');return;}
+  advancedPaymentInvoiceKey=key;
+  document.getElementById('paymentInvoiceInfo').textContent=`${x.reference||'Invoice'} · ${selectedClientName(x.client)} · Balance due: ${money(getInvoiceOutstanding(x))}`;
+  document.getElementById('paymentAmount').value='';document.getElementById('paymentAmount').max=getInvoiceOutstanding(x).toFixed(2);
+  document.getElementById('paymentDate').value=localDateISO(new Date());document.getElementById('paymentMode').value='Bank Transfer';document.getElementById('paymentNotes').value='';
+  const panel=document.getElementById('paymentFormPanel');panel.hidden=false;panel.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function closePaymentForm(){document.getElementById('paymentFormPanel').hidden=true;advancedPaymentInvoiceKey=null;}
+async function savePartialPayment(){
+  const x=feeItems.find(a=>a.firebaseKey===advancedPaymentInvoiceKey);if(!x)return;
+  const amount=Number(document.getElementById('paymentAmount').value||0),date=document.getElementById('paymentDate').value;
+  if(!(amount>0)||!date){alert('Enter a positive payment amount and payment date.');return;}
+  const balance=getInvoiceOutstanding(x);if(amount>balance+0.0001){alert(`Payment exceeds the outstanding balance of ${money(balance)}.`);return;}
+  let payments=getInvoicePayments(x);
+  // Existing legacy receipts are retained and converted into the receipt list on first part-payment.
+  payments=payments.map(p=>({...p,amount:Number(p.amount||0)}));
+  payments.push({amount,date,mode:document.getElementById('paymentMode').value,notes:document.getElementById('paymentNotes').value.trim(),createdAt:Date.now()});
+  const paid=payments.reduce((s,p)=>s+Number(p.amount||0),0);
+  try{await moduleRefs.fees.child(advancedPaymentInvoiceKey).update({payments,paid,paymentDate:date,mode:document.getElementById('paymentMode').value,updatedAt:Date.now()});closePaymentForm();alert('Payment recorded successfully.');}
+  catch(e){alert('Could not record payment: '+e.message);}
+}
+function viewInvoicePayments(key){
+  const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return;
+  const lines=getInvoicePayments(x).map((p,i)=>`${i+1}. ${formatDateLong(p.date)} | ${money(p.amount)} | ${p.mode||'—'}${p.notes?' | '+p.notes:''}`);
+  alert(`Invoice: ${x.reference||'—'}\nTotal received: ${money(getInvoicePaid(x))}\n\n${lines.length?lines.join('\n'):'No receipt entries.'}`);
+}
+
+/* --------------------------- ANALYTICS & EXPORTS --------------------------- */
+function updateAdvancedAnalytics(){
+  const el=id=>document.getElementById(id);
+  const active=activePracticeClients().length,pending=openPracticeTasks().length;
+  const billed=feeItems.reduce((s,x)=>s+getInvoiceNet(x),0),collected=feeItems.reduce((s,x)=>s+getInvoicePaid(x),0),outstanding=Math.max(0,billed-collected);
+  [['rep_gst',gstClients.length],['rep_itr',itrClients.length],['rep_active',active],['rep_pending',pending],['rep_billed',money(billed)],['rep_collected',money(collected)],['rep_outstanding',money(outstanding)],['dashActiveClients',active],['dashPendingCount',pending],['dashBilled',money(billed)],['dashCollected',money(collected)],['dashOutstanding',money(outstanding)]].forEach(([id,value])=>{if(el(id))el(id).textContent=value;});
+  const recent=allPracticeClients();
+  const work=[...taskItems.map(x=>({...x,_k:'task'})),...workItems.map(x=>({...x,_k:'work',title:x.category||'Work item'}))].sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999')).slice(0,5);
+  const recentEl=el('dashRecentWork');if(recentEl)recentEl.innerHTML=work.length?work.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.title||x.category||'Work item')}</strong><span>${escapeHTML(selectedClientName(x.client))}</span><small>${escapeHTML(x.dueDate?formatDateLong(x.dueDate):x.status||'No due date')}</small></div>`).join(''):'<div class="empty-state">No work items added yet.</div>';
+  renderAnalyticsCharts();
+}
+function renderAnalyticsCharts(){
+  const monthly=document.getElementById('reportsMonthlyChart');
+  if(monthly){
+    const now=new Date(),keys=[];
+    for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);keys.push(localDateISO(d).slice(0,7));}
+    const map={};allMonthlyCollections().forEach(x=>map[x.month]=x.amount);
+    const values=keys.map(k=>({month:k,amount:map[k]||0})),max=Math.max(1,...values.map(x=>x.amount));
+    monthly.innerHTML=values.some(x=>x.amount>0)?values.map(x=>{const d=parseLocalDate(x.month+'-01'),height=Math.max(2,x.amount/max*100);return `<div class="bar-column"><span class="bar-value">${x.amount?money(x.amount):'₹0'}</span><div class="bar-track"><div class="bar-fill" style="height:${height}%"></div></div><span class="bar-label">${d?d.toLocaleDateString('en-IN',{month:'short'}):x.month}</span></div>`;}).join(''):'<div class="empty-state">No fee collections recorded for the recent months.</div>';
+  }
+  const statusEl=document.getElementById('reportsTaskBreakdown');
+  if(statusEl){const statuses=['Pending','In Progress','Filed','Completed','On Hold'];const all=[...taskItems,...workItems];const counts=statuses.map(s=>({status:s,count:all.filter(x=>(x.status||'Pending')===s).length}));const max=Math.max(1,...counts.map(x=>x.count));statusEl.innerHTML=all.length?counts.map(x=>`<div class="task-breakdown-row"><span>${x.status}</span><div class="task-breakdown-track"><div class="task-breakdown-fill" style="width:${x.count/max*100}%"></div></div><b>${x.count}</b></div>`).join(''):'<div class="empty-state">No tasks recorded yet.</div>';}
+}
+function updatePracticeDashboard(){
+  const pending=openPracticeTasks().length;
+  const ids={dashWorkCount:pending,dashTaskCount:pending};
+  Object.entries(ids).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+  updateAdvancedAnalytics();
+  renderDueCalendar();
+  checkDueDateNotifications();
+}
+function updateAll(){
+  const gst=document.getElementById('gstCount'),itr=document.getElementById('itrCount'),rg=document.getElementById('rep_gst'),ri=document.getElementById('rep_itr');
+  if(gst)gst.textContent=gstClients.length;if(itr)itr.textContent=itrClients.length;
+  if(rg)rg.textContent=gstClients.length;if(ri)ri.textContent=itrClients.length;
+  updatePracticeDashboard();
+}
+function exportBillingExcel(){
+  const invoiceRows=feeItems.map(x=>({"Invoice Date":x.invoiceDate||'',"Client":selectedClientName(x.client),"Invoice No.":x.reference||'',"Financial Year":x.financialYear||'',"Service":x.service||'',"Gross":Number(x.amount||0),"Discount":Number(x.discount||0),"Net Billed":getInvoiceNet(x),"Received":getInvoicePaid(x),"Outstanding":getInvoiceOutstanding(x)}));
+  const receipts=[];feeItems.forEach(x=>getInvoicePayments(x).forEach(p=>receipts.push({"Invoice No.":x.reference||'',"Client":selectedClientName(x.client),"Receipt Date":p.date||'',"Amount":p.amount,"Mode":p.mode||'',"Notes":p.notes||''})));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(invoiceRows),'Invoice Register');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(receipts),'Receipts');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(allMonthlyCollections().map(x=>({Month:x.month,Receipts:x.count,Collected:x.amount}))), 'Monthly Collection');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(getClientOutstanding().map(x=>({Client:x.name,Invoices:x.invoices,Billed:x.billed,Received:x.received,Outstanding:x.outstanding}))), 'Client Outstanding');
+  XLSX.writeFile(wb,'SK_Consultant_Billing_Report.xlsx');
+}
+function exportBillingPDF(){
+  if(!window.jspdf?.jsPDF){alert('PDF library could not load.');return;}
+  const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'mm',format:'a4'});let y=18;
+  const add=(s,size=9,bold=false)=>{doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(size);const lines=doc.splitTextToSize(String(s),180);if(y+lines.length*5>280){doc.addPage();y=18;}doc.text(lines,14,y);y+=lines.length*5+2;};
+  const billed=feeItems.reduce((s,x)=>s+getInvoiceNet(x),0),received=feeItems.reduce((s,x)=>s+getInvoicePaid(x),0);
+  add('SK CONSULTANT',18,true);add('FEES & BILLING REPORT',12,true);add(`Generated: ${formatDateLong(localDateISO(new Date()))}`);add(`Total billed: ${money(billed)}   |   Collected: ${money(received)}   |   Outstanding: ${money(Math.max(0,billed-received))}`,10,true);y+=3;
+  add('INVOICE REGISTER',11,true);
+  feeItems.slice().sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).forEach(x=>add(`${x.reference||'—'} | ${selectedClientName(x.client)} | ${x.invoiceDate||'—'} | Net ${money(getInvoiceNet(x))} | Received ${money(getInvoicePaid(x))} | Due ${money(getInvoiceOutstanding(x))}`));
+  y+=3;add('MONTHLY COLLECTIONS',11,true);allMonthlyCollections().forEach(x=>add(`${x.month} | ${x.count} receipt(s) | ${money(x.amount)}`));
+  y+=3;add('CLIENT-WISE OUTSTANDING',11,true);getClientOutstanding().forEach(x=>add(`${x.name} | ${x.invoices} invoice(s) | Outstanding ${money(x.outstanding)}`));
+  doc.save('SK_Consultant_Billing_Report.pdf');
+}
+function exportPracticeReport(){
+  const wb=XLSX.utils.book_new();
+  const clients=[...gstClients.map(c=>({'Type':'GST','Trade Name':c.trade||c.tradeName||'', 'Legal Name':c.legal||c.legalName||'', 'GSTIN':c.gstin||'', 'PAN':'', 'Frequency':c.frequency||'Monthly','Group':c.group||'','Username':c.user||'','Password':c.pass||'','Active':c.active!==false?'Yes':'No'})),...itrClients.map(c=>({'Type':'ITR','Trade Name':c.trade||c.tradeName||'', 'Legal Name':c.legal||c.legalName||'', 'GSTIN':'', 'PAN':c.pan||'', 'Frequency':'','Group':c.group||'','Username':c.user||'','Password':c.pass||'','Active':c.active!==false?'Yes':'No'}))];
+  const tasks=[...taskItems.map(x=>({'Type':'Task','Title':x.title||'',Client:selectedClientName(x.client),Category:x.category||'',FY:x.financialYear||'',Period:x.period||'',DueDate:x.dueDate||'',Priority:x.priority||'',Repeat:x.recurrence||'',Status:x.status||'',Notes:x.notes||''})),...workItems.map(x=>({'Type':'Work','Title':x.category||'',Client:selectedClientName(x.client),Category:x.category||'',FY:x.financialYear||'',Period:x.period||'',DueDate:x.dueDate||'',Priority:x.priority||'',Repeat:'',Status:x.status||'',Notes:x.description||''}))];
+  const invoices=feeItems.map(x=>({'Invoice Date':x.invoiceDate||'',Client:selectedClientName(x.client),'Invoice No.':x.reference||'',FY:x.financialYear||'',Service:x.service||'',Gross:Number(x.amount||0),Discount:Number(x.discount||0),NetBilled:getInvoiceNet(x),Received:getInvoicePaid(x),Outstanding:getInvoiceOutstanding(x)}));
+  const receipts=[];feeItems.forEach(x=>getInvoicePayments(x).forEach(p=>receipts.push({'Invoice No.':x.reference||'',Client:selectedClientName(x.client),Date:p.date||'',Amount:p.amount,Mode:p.mode||'',Notes:p.notes||''})));
+  const outstanding=getClientOutstanding().map(x=>({Client:x.name,Invoices:x.invoices,Billed:x.billed,Received:x.received,Outstanding:x.outstanding}));
+  const statutory=getAllCalendarEvents().sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||'')).map(x=>({'Due Date':x.dueDate||'',Title:x.title||'',Category:x.category||'',Client:x.client?selectedClientName(x.client):'',Source:x.source||'',Status:x.status||'',Notes:x.notes||''}));
+  const addSheet=(rows,name)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),name);
+  addSheet(clients,'Client Registers');addSheet(tasks,'Tasks & Work');addSheet(invoices,'Invoice Register');addSheet(receipts,'Payment Receipts');addSheet(allMonthlyCollections().map(x=>({Month:x.month,Receipts:x.count,Collected:x.amount})),'Monthly Collection');addSheet(outstanding,'Client Outstanding');addSheet(statutory,'Calendar Due Dates');
+  XLSX.writeFile(wb,'SK_Consultant_Full_Practice_Report.xlsx');
+}
+function exportPracticeReportPDF(){
+  if(!window.jspdf?.jsPDF){alert('PDF library could not load.');return;}
+  const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'mm',format:'a4'});let y=18;
+  const add=(s,size=9,bold=false)=>{doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(size);const lines=doc.splitTextToSize(String(s),180);if(y+lines.length*5>280){doc.addPage();y=18;}doc.text(lines,14,y);y+=lines.length*5+2;};
+  const billed=feeItems.reduce((s,x)=>s+getInvoiceNet(x),0),received=feeItems.reduce((s,x)=>s+getInvoicePaid(x),0);
+  add('SK CONSULTANT',18,true);add('PRACTICE & BUSINESS ANALYTICS',12,true);add(`Generated on ${formatDateLong(localDateISO(new Date()))}`);
+  add(`GST clients: ${gstClients.length} | ITR clients: ${itrClients.length} | Active clients: ${activePracticeClients().length} | Pending tasks: ${openPracticeTasks().length}`,10,true);
+  add(`Total billed: ${money(billed)} | Collected: ${money(received)} | Outstanding: ${money(Math.max(0,billed-received))}`,10,true);y+=4;
+  add('CLIENT-WISE OUTSTANDING',11,true);getClientOutstanding().forEach(x=>add(`${x.name}: ${money(x.outstanding)} outstanding across ${x.invoices} invoice(s)`));
+  y+=3;add('OPEN TASKS & CLIENT WORK',11,true);openPracticeTasks().sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999')).forEach(x=>add(`${x.title||x.category||'Task'} | ${selectedClientName(x.client)} | Due ${x.dueDate||'—'} | ${x.status||'Pending'}`));
+  y+=3;add('MONTHLY COLLECTIONS',11,true);allMonthlyCollections().forEach(x=>add(`${x.month}: ${money(x.amount)} (${x.count} receipt(s))`));
+  doc.save('SK_Consultant_Practice_Analytics.pdf');
+}
+
+// Keep the existing GST and ITR register export functions, but refresh the enhanced report counts as data changes.
+advancedCalendarRef.on('value',snap=>{
+  const v=snap.val()||{};advancedCalendarEvents=Object.keys(v).map(k=>({...v[k],firebaseKey:k,id:`custom_${k}`}));
+  renderDueCalendar();checkDueDateNotifications();
+});
+db.ref('gstClients').on('value',()=>{updateAll();populateModuleSelects();renderDueCalendar();});
+db.ref('itrClients').on('value',()=>{updateAll();populateModuleSelects();renderDueCalendar();});
+
+// One consolidated startup hook; existing DOMContentLoaded handlers remain active.
+document.addEventListener('DOMContentLoaded',()=>{
+  const today=localDateISO(new Date());
+  const chip=document.getElementById('dashboardToday');if(chip)chip.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+  ['calendarEventClient'].forEach(id=>fillClientSelect(id));
+  const category=document.getElementById('taskCategory');
+  if(category)category.addEventListener('change',()=>{const label=document.getElementById('taskOtherLabel');if(label)label.style.display=category.value==='Other'?'flex':'none';});
+  advancedSelectedDate=today;advancedCalendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+  renderDueCalendar();renderTasks();renderBilling();updateAll();
+  let enabled=false;try{enabled=localStorage.getItem('skcDueNotificationsEnabled')==='1';}catch(e){}
+  if(enabled&&'Notification' in window&&Notification.permission==='granted'){
+    checkDueDateNotifications();if(!advancedReminderTimer)advancedReminderTimer=setInterval(checkDueDateNotifications,30*60*1000);
+  }
+});
+</script>
+
 <!-- CLIENT POPUP -->
 
 <div id="clientPopup">
