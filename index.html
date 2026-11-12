@@ -1845,6 +1845,15 @@ button,.new-client-btn{font-size:13px!important}
 }
 </style>
 
+
+<style id="skc-fee-client-search-style">
+.fee-client-picker{grid-column:1/-1;max-width:720px!important;gap:8px!important;color:#46575d!important}
+.fee-client-picker .fee-client-search,.fee-client-picker select{width:100%;min-width:0;box-sizing:border-box;padding:12px 14px!important;border:1px solid #d8dfe0!important;border-radius:9px!important;background:#fff!important;font:14px Arial,sans-serif!important;color:#24343a}
+.fee-client-picker .fee-client-search:focus,.fee-client-picker select:focus{outline:none;border-color:#b58a3a!important;box-shadow:0 0 0 3px rgba(181,138,58,.12)}
+.fee-client-picker select{cursor:pointer}
+.fee-client-hint{font:12px Arial,sans-serif;color:#7c898e;font-weight:400;line-height:1.45}
+@media(max-width:600px){.fee-client-picker{max-width:100%!important;grid-column:1/-1}}
+</style>
 </head>
 
 
@@ -2225,7 +2234,11 @@ button,.new-client-btn{font-size:13px!important}
  <div class="panel-card form-panel billing-record-panel" id="feeFormPanel" hidden>
   <div class="panel-heading"><h3 id="feeFormTitle">Record Professional Fee</h3><span class="report-caption">Payments can be entered separately from the Invoice Register.</span></div>
   <div class="form-grid">
-   <label>Client<select id="feeClient"></select></label>
+   <label class="fee-client-picker">Find client by Trade Name / Legal Name / GSTIN / PAN
+    <input id="feeClientSearch" class="fee-client-search" type="search" placeholder="Type trade name, legal name, GSTIN or PAN..." autocomplete="off" oninput="filterFeeClientOptions()">
+    <select id="feeClient" required onchange="syncFeeClientSearch()"><option value="">Select client from the matching list</option></select>
+    <small class="fee-client-hint">Type any identifying detail above, then select the correct client name from the dropdown.</small>
+   </label>
    <label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label>
    <div class="full-field fee-services-field">
     <div class="fee-service-heading"><strong>Services / Particulars</strong><button type="button" class="small-action" onclick="addFeeServiceLine()">+ ADD SERVICE</button></div>
@@ -3242,7 +3255,30 @@ function clientLabel(c){return (c.tradeName||c.trade||c.legalName||c.legal||c.na
 function fillClientSelect(id, includeAll=true, onlyType=null){const el=document.getElementById(id);if(!el)return;const old=el.value;const clients=allPracticeClients().filter(c=>!onlyType||c._type===onlyType);el.innerHTML=(includeAll?'<option value="">Select client (optional)</option>':'<option value="">Select client</option>')+clients.map(c=>`<option value="${c._type}|${c.firebaseKey}">${escapeHTML(clientLabel(c))}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old;}
 function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function selectedClientName(value){if(!value)return '—';const [type,key]=value.split('|');const list=type==='GST'?gstClients:itrClients;const c=list.find(x=>x.firebaseKey===key);return c?clientLabel({...c,_type:type}):'Client record';}
-function populateModuleSelects(){['workClient','taskClient','feeClient'].forEach(id=>fillClientSelect(id));const dt=document.getElementById('docType');fillClientSelect('docClient',true,dt?dt.value.toUpperCase():null);}
+function feeClientSearchBlob(c){return [c.trade,c.tradeName,c.legal,c.legalName,c.name,c.gstin,c.pan,c.group,c._type].filter(Boolean).join(' ').toLocaleLowerCase();}
+function feeClientOptionLabel(c){const primary=clientLabel(c);const legal=c.legalName||c.legal||'';const id=c._type==='GST'?(c.gstin||''):(c.pan||'');const extras=[legal&&legal.toLocaleLowerCase()!==primary.toLocaleLowerCase()?legal:'',id,c._type].filter(Boolean);return primary+(extras.length?' — '+extras.join(' | '):'');}
+function fillFeeClientSelect(preserveValue=true){
+ const select=document.getElementById('feeClient');if(!select)return;
+ const search=document.getElementById('feeClientSearch');
+ const old=preserveValue?select.value:'';
+ const query=(search?.value||'').trim().toLocaleLowerCase();
+ const clients=allPracticeClients().filter(c=>!query||feeClientSearchBlob(c).includes(query)).sort((a,b)=>clientLabel(a).localeCompare(clientLabel(b),'en',{sensitivity:'base'}));
+ select.innerHTML='<option value="">'+(clients.length?'Select client from the matching list':'No matching clients found')+'</option>'+clients.map(c=>`<option value="${c._type}|${c.firebaseKey}">${escapeHTML(feeClientOptionLabel(c))}</option>`).join('');
+ if(old&&clients.some(c=>`${c._type}|${c.firebaseKey}`===old))select.value=old;
+ else select.value='';
+}
+function filterFeeClientOptions(){
+ const select=document.getElementById('feeClient');if(select)select.value='';
+ fillFeeClientSelect(false);
+}
+function syncFeeClientSearch(){
+ const select=document.getElementById('feeClient');const search=document.getElementById('feeClientSearch');if(!select||!search)return;
+ if(!select.value){search.value='';return;}
+ const [type,key]=select.value.split('|');
+ const client=(type==='GST'?gstClients:itrClients).find(c=>c.firebaseKey===key);
+ if(client)search.value=clientLabel(client);
+}
+function populateModuleSelects(){['workClient','taskClient'].forEach(id=>fillClientSelect(id));fillFeeClientSelect(true);const dt=document.getElementById('docType');fillClientSelect('docClient',true,dt?dt.value.toUpperCase():null);}
 function openWorkForm(){populateModuleSelects();editingWorkKey=null;document.getElementById('workFormTitle').textContent='Add Work Item';document.getElementById('workFormPanel').hidden=false;}
 function closeWorkForm(){document.getElementById('workFormPanel').hidden=true;}
 function saveWork(){const data={client:document.getElementById('workClient').value,category:document.getElementById('workCategory').value,financialYear:document.getElementById('workFY').value.trim(),period:document.getElementById('workPeriod').value.trim(),dueDate:document.getElementById('workDue').value,status:document.getElementById('workStatus').value,description:document.getElementById('workDescription').value.trim(),updatedAt:Date.now()};if(!data.category){alert('Select work category.');return;}const ref=editingWorkKey?moduleRefs.work.child(editingWorkKey):moduleRefs.work.push();if(!editingWorkKey)data.createdAt=Date.now();ref.set(data).then(()=>{closeWorkForm();alert('Work item saved.');}).catch(e=>alert(e.message));}
@@ -3461,7 +3497,7 @@ async function buildInvoicePDF(x){
 }
 async function invoicePDF(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(doc)doc.save((x.reference||'SKC_Invoice')+'.pdf');}
 async function shareInvoice(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(!doc)return;const blob=doc.output('blob'),file=new File([blob],(x.reference||'SKC_Invoice')+'.pdf',{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){try{await navigator.share({title:'SK CONSULTANT Invoice '+(x.reference||''),text:'Please find the invoice attached.',files:[file]});}catch(e){if(e.name!=='AbortError')alert('Sharing was not completed. Please download the PDF instead.');}}else{doc.save((x.reference||'SKC_Invoice')+'.pdf');alert('PDF downloaded. You can now attach it to WhatsApp or email.');}}
-document.addEventListener('DOMContentLoaded',()=>{const taskCat=document.getElementById('taskCategory');if(taskCat)taskCat.addEventListener('change',()=>{const el=document.getElementById('taskOtherLabel');if(el)el.style.display=taskCat.value==='Other'?'block':'none';});setupFrequencyField();setupSidebarHover();ensureBillingFields();const today=document.getElementById('dashboardToday');if(today)today.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});['workClient','taskClient','feeClient','docClient'].forEach(id=>fillClientSelect(id));const docType=document.getElementById('docType');if(docType)docType.addEventListener('change',()=>fillClientSelect('docClient',true,docType.value.toUpperCase()));});
+document.addEventListener('DOMContentLoaded',()=>{const taskCat=document.getElementById('taskCategory');if(taskCat)taskCat.addEventListener('change',()=>{const el=document.getElementById('taskOtherLabel');if(el)el.style.display=taskCat.value==='Other'?'block':'none';});setupFrequencyField();setupSidebarHover();ensureBillingFields();const today=document.getElementById('dashboardToday');if(today)today.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});['workClient','taskClient','docClient'].forEach(id=>fillClientSelect(id));fillFeeClientSelect(true);const docType=document.getElementById('docType');if(docType)docType.addEventListener('change',()=>fillClientSelect('docClient',true,docType.value.toUpperCase()));});
 
 </script>
 
@@ -4201,7 +4237,8 @@ function renderDueCalendar(){
 </script>
 <script id="skc-user-billing-refinements">
 function resetFeeForm(){
-  ['feeClient','feeReference','feeFY','feeDate','feeAmount','feeNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['feeClient','feeClientSearch','feeReference','feeFY','feeDate','feeAmount','feeNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  fillFeeClientSelect(false);
   const discount=document.getElementById('feeDiscount');if(discount)discount.value='0';
   const lines=document.getElementById('feeServiceLines');if(lines)lines.innerHTML='';
   addFeeServiceLine();syncFeeServiceTotal();
@@ -4227,6 +4264,7 @@ function saveFee(){
   // Invoice creation/editing is separate from receipt entry. Existing payments remain untouched.
   const retainedPayments=old?getInvoicePayments(old):[];
   const paid=retainedPayments.reduce((sum,p)=>sum+Number(p.amount||0),0);
+  if(!document.getElementById('feeClient').value){alert('Search for a client and select the correct client name from the dropdown.');return;}
   if(!items.length||items.some(x=>!x.service||x.amount<0)||!amount||discount<0||discount>amount){alert('Enter each service and amount. Check the discount value.');return;}
   if(paid>net){alert('The revised net invoice amount cannot be lower than payments already recorded.');return;}
   if(feeItems.some(x=>x.reference===reference&&x.firebaseKey!==editingFeeKey)){alert('This invoice reference already exists. Please enter a unique invoice number.');return;}
@@ -4249,6 +4287,7 @@ function editFee(key){
   const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return;
   populateModuleSelects();ensureBillingFields();editingFeeKey=key;resetFeeForm();
   document.getElementById('feeClient').value=x.client||'';
+  syncFeeClientSearch();
   document.getElementById('feeReference').value=x.reference||'';
   document.getElementById('feeFY').value=x.financialYear||'';
   document.getElementById('feeDate').value=x.invoiceDate||'';
