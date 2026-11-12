@@ -1647,6 +1647,76 @@ button,.new-client-btn{font-size:13px!important}
 @media(max-width:600px){.dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-kpis .dash-card{min-height:126px}.dashboard-kpis .dash-card h1{font-size:23px!important}.dashboard-overview-panels{grid-template-columns:1fr}.snapshot-grid{grid-template-columns:1fr 1fr}.snapshot-grid div:last-child{grid-column:1/-1}.calendar-heading{display:block}.calendar-heading-actions{justify-content:flex-start;margin-top:12px}.calendar-day{min-height:60px;padding:5px 4px}.calendar-day-count{font-size:9px}.calendar-month-controls strong{min-width:125px;font-size:15px}.calendar-legend{gap:10px}.analytics-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.analytics-tile{padding:12px}.analytics-tile strong{font-size:19px}.task-summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.task-header-actions,.billing-header-actions{width:100%;justify-content:stretch}.task-header-actions button,.billing-header-actions button{flex:1}.billing-detail-grid{grid-template-columns:1fr}.export-actions button{width:100%}.calendar-toolbar{align-items:flex-start}.calendar-summary-label{width:100%}}
 </style>
 
+
+<style id="skc-calendar-billing-refinements">
+/* Compact Sunday-first calendar with the agenda retained alongside it. */
+.dashboard-overview-panels{grid-template-columns:1fr!important}
+.compliance-calendar{padding:18px!important}
+.calendar-toolbar{padding:9px 0;margin:10px 0}
+.calendar-layout{grid-template-columns:minmax(320px,430px) minmax(260px,1fr)!important;gap:16px;align-items:stretch}
+.calendar-main{min-width:0;max-width:430px;width:100%}
+.calendar-weekdays span{padding:6px 2px;font-size:10px}
+.calendar-day{min-height:49px!important;padding:5px 5px!important;gap:2px!important;border-radius:4px!important;font-size:12px!important}
+.calendar-day-number{font-size:12px!important}
+.calendar-day-dots{min-height:6px;gap:2px}
+.calendar-day-count{font-size:9px!important;line-height:1.1}
+.calendar-grid{gap:2px}
+.calendar-grid .calendar-day{border:1px solid #edf0ef}
+.calendar-grid .calendar-day.is-selected{border-color:var(--skc-gold)!important}
+.calendar-agenda{padding:13px;min-height:0}
+.agenda-list{max-height:350px}
+
+/* Billing layout and form clarity. */
+.billing-record-panel{margin:0 0 16px!important}
+.billing-record-panel .panel-heading{margin-bottom:14px}
+.fee-service-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.billing-subpanel{margin-top:0!important}
+.billing-subpanel .panel-heading{margin-bottom:12px}
+.billing-detail-grid{grid-template-columns:1.1fr .9fr!important}
+#billingTable{display:table!important;width:100%;min-width:1500px;table-layout:fixed}
+#billingTable th,#billingTable td{vertical-align:middle!important}
+#billingTable th:nth-child(1),#billingTable td:nth-child(1){width:92px}
+#billingTable th:nth-child(2),#billingTable td:nth-child(2){width:145px}
+#billingTable th:nth-child(3),#billingTable td:nth-child(3){width:112px}
+#billingTable th:nth-child(4),#billingTable td:nth-child(4){width:170px}
+#billingTable th:nth-child(5),#billingTable td:nth-child(5){width:70px}
+#billingTable th:nth-child(6),#billingTable td:nth-child(6),
+#billingTable th:nth-child(7),#billingTable td:nth-child(7),
+#billingTable th:nth-child(8),#billingTable td:nth-child(8){width:96px}
+#billingTable th:nth-child(9),#billingTable td:nth-child(9){width:105px}
+#billingTable th:nth-child(10),#billingTable td:nth-child(10){width:112px;text-align:center}
+#billingTable th:nth-child(11),#billingTable td:nth-child(11){width:250px;text-align:center}
+#billingTable th:nth-child(10),#billingTable th:nth-child(11){white-space:nowrap}
+.invoice-action-group,.billing-row-actions{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:nowrap;white-space:nowrap;width:100%;min-width:0}
+#billingTable .invoice-action-group button{height:31px;min-height:31px;padding:5px 8px!important;margin:0!important;display:inline-flex;align-items:center;justify-content:center;line-height:1.1;white-space:nowrap}
+#billingTable .invoice-download-btn{width:36px;min-width:36px;font-size:17px!important}
+#billingTable .invoice-share-btn{width:54px;min-width:54px}
+#billingTable .billing-pay-btn{width:108px;min-width:108px}
+#billingTable .billing-edit-btn{width:50px;min-width:50px}
+#billingTable .billing-delete-btn{width:58px;min-width:58px}
+#billingTable .receipt-list-btn{max-width:98px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+@media(max-width:1100px){
+ .calendar-layout{grid-template-columns:minmax(300px,410px) minmax(240px,1fr)!important}
+ .billing-detail-grid{grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:850px){
+ .calendar-layout{grid-template-columns:1fr!important}
+ .calendar-main{max-width:100%}
+ .calendar-agenda{min-height:160px}
+ .agenda-list{max-height:260px}
+ .billing-detail-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:600px){
+ .compliance-calendar{padding:13px!important}
+ .calendar-day{min-height:46px!important;padding:4px 3px!important}
+ .calendar-day-count{font-size:8px!important}
+ .billing-header-actions{display:flex;flex-wrap:wrap;gap:7px}
+ .billing-header-actions button{width:100%;flex:1 1 100%}
+ #billingTable{min-width:1500px}
+}
+</style>
+
 </head>
 
 
@@ -1787,15 +1857,6 @@ button,.new-client-btn{font-size:13px!important}
             <div class="panel-heading"><h3>Recent Work & Follow-ups</h3><button class="small-action" onclick="showSection('tasks')">Open Task Desk</button></div>
             <div id="dashRecentWork" class="empty-state">No work items added yet.</div>
         </div>
-        <div class="panel-card">
-            <h3>Fees Snapshot</h3>
-            <div class="snapshot-grid">
-                <div><span>Total billed</span><strong id="dashBilled">₹0</strong></div>
-                <div><span>Collected</span><strong id="dashCollected">₹0</strong></div>
-                <div><span>Outstanding</span><strong id="dashOutstanding">₹0</strong></div>
-            </div>
-            <button class="small-action" onclick="showSection('billing')">Open Fees & Billing</button>
-        </div>
     </div>
 
     <!-- SINGLE COMPLIANCE / DUE-DATE CALENDAR -->
@@ -1813,7 +1874,7 @@ button,.new-client-btn{font-size:13px!important}
         </div>
         <div class="calendar-layout">
             <div class="calendar-main">
-                <div class="calendar-weekdays"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+                <div class="calendar-weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
                 <div id="calendarGrid" class="calendar-grid"></div>
             </div>
             <aside class="calendar-agenda">
@@ -2015,16 +2076,61 @@ button,.new-client-btn{font-size:13px!important}
 
 <!-- FEES & BILLING -->
 <div id="billing" class="section">
- <div class="section-top"><div><h2>Fees & Billing</h2><p class="section-subtitle">Invoice register, client-wise balances, part-payments and monthly collection analysis.</p></div><div class="billing-header-actions"><button class="secondary-btn" onclick="exportBillingExcel()">Export Billing · Excel</button><button class="secondary-btn" onclick="exportBillingPDF()">Export Billing · PDF</button><button class="new-client-btn" onclick="openFeeForm()">+ RECORD FEE</button></div></div>
- <div class="billing-summary"><div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div><div class="summary-tile"><span>Total received</span><strong id="feeReceived">₹0</strong></div><div class="summary-tile"><span>Outstanding balance</span><strong id="feePending">₹0</strong></div></div>
- <div class="filter-row billing-filters"><input id="billingSearch" type="search" placeholder="Search invoice, client, service, date or amount..." oninput="renderBilling()"><select id="billingFYFilter" onchange="renderBilling()"><option value="">All Financial Years</option></select></div>
- <div class="panel-card billing-subpanel"><div class="panel-heading"><h3>Invoice Register</h3><span class="report-caption">Use Record Payment for additional or part-payments.</span></div><div class="table-wrap"><table id="billingTable" class="modern-table"></table></div></div>
+ <div class="section-top">
+  <div><h2>Fees & Billing</h2><p class="section-subtitle">Invoice register, client-wise balances, part-payments and monthly collection analysis.</p></div>
+  <div class="billing-header-actions">
+   <button class="secondary-btn" onclick="exportBillingExcel()">Export Billing · Excel</button>
+   <button class="secondary-btn" onclick="exportBillingPDF()">Export Billing · PDF</button>
+   <button class="new-client-btn" onclick="openFeeForm()">+ RECORD PROFESSIONAL FEE</button>
+  </div>
+ </div>
+ <div class="billing-summary">
+  <div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div>
+  <div class="summary-tile"><span>Total received</span><strong id="feeReceived">₹0</strong></div>
+  <div class="summary-tile"><span>Outstanding balance</span><strong id="feePending">₹0</strong></div>
+ </div>
+ <div class="filter-row billing-filters">
+  <input id="billingSearch" type="search" placeholder="Search invoice, client, service, date or amount..." oninput="renderBilling()">
+  <select id="billingFYFilter" onchange="renderBilling()"><option value="">All Financial Years</option></select>
+ </div>
+
+ <div class="panel-card form-panel billing-record-panel" id="feeFormPanel" hidden>
+  <div class="panel-heading"><h3 id="feeFormTitle">Record Professional Fee</h3><span class="report-caption">Payments can be entered separately from the Invoice Register.</span></div>
+  <div class="form-grid">
+   <label>Client<select id="feeClient"></select></label>
+   <label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label>
+   <div class="full-field fee-services-field">
+    <div class="fee-service-heading"><strong>Services / Particulars</strong><button type="button" class="small-action" onclick="addFeeServiceLine()">+ ADD SERVICE</button></div>
+    <div id="feeServiceLines"></div>
+   </div>
+   <label>Financial Year (default)<input id="feeFY" placeholder="2026-27"></label>
+   <label>Invoice date<input id="feeDate" type="date"></label>
+   <label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01" readonly></label>
+   <label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label>
+  </div>
+  <div class="form-actions"><button id="saveFeeButton" onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div>
+ </div>
+
+ <div class="panel-card billing-subpanel">
+  <div class="panel-heading"><h3>Invoice Register</h3><span class="report-caption">Download/share invoices or record a full or partial payment.</span></div>
+  <div class="table-wrap"><table id="billingTable" class="modern-table"></table></div>
+ </div>
+
  <div class="billing-detail-grid">
   <div class="panel-card"><div class="panel-heading"><h3>Client-wise Outstanding</h3></div><div class="table-wrap"><table id="clientBalanceTable" class="modern-table"></table></div></div>
-  <div class="panel-card"><div class="panel-heading"><h3>Monthly Collections</h3></div><div class="table-wrap"><table id="monthlyCollectionTable" class="modern-table"></table></div></div>
+  <div class="panel-card"><div class="panel-heading"><h3>Monthly Collection Analysis</h3></div><div class="table-wrap"><table id="monthlyCollectionTable" class="modern-table"></table></div></div>
  </div>
- <div class="panel-card form-panel" id="feeFormPanel" hidden><h3 id="feeFormTitle">Record Professional Fee</h3><div class="form-grid"><label>Client<select id="feeClient"></select></label><label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label><div class="full-field fee-services-field"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><strong>Services / Particulars</strong><button type="button" class="small-action" onclick="addFeeServiceLine()">+ ADD SERVICE</button></div><div id="feeServiceLines"></div></div><label>Financial Year (default)<input id="feeFY" placeholder="2026-27"></label><label>Invoice date<input id="feeDate" type="date"></label><label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01" readonly></label><label>Amount received at invoice stage (₹)<input id="feePaid" type="number" min="0" step="0.01" value="0"></label><label>Payment date<input id="feePaymentDate" type="date"></label><label>Payment mode<select id="feeMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label></div><div class="form-actions"><button id="saveFeeButton" onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div></div>
- <div class="panel-card form-panel payment-form-panel" id="paymentFormPanel" hidden><h3>Record Part-payment</h3><p id="paymentInvoiceInfo" class="section-subtitle"></p><div class="form-grid"><label>Payment amount (₹)<input id="paymentAmount" type="number" min="0.01" step="0.01" placeholder="Enter amount"></label><label>Payment date<input id="paymentDate" type="date"></label><label>Payment mode<select id="paymentMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label>Reference / notes<input id="paymentNotes" placeholder="UTR / receipt reference (optional)"></label></div><div class="form-actions"><button onclick="savePartialPayment()">Save Payment</button><button class="secondary-btn" onclick="closePaymentForm()">Cancel</button></div></div>
+
+ <div class="panel-card form-panel payment-form-panel" id="paymentFormPanel" hidden>
+  <h3>Record Part-payment</h3><p id="paymentInvoiceInfo" class="section-subtitle"></p>
+  <div class="form-grid">
+   <label>Payment amount (₹)<input id="paymentAmount" type="number" min="0.01" step="0.01" placeholder="Enter amount"></label>
+   <label>Payment date<input id="paymentDate" type="date"></label>
+   <label>Payment mode<select id="paymentMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label>
+   <label>Reference / notes<input id="paymentNotes" placeholder="UTR / receipt reference (optional)"></label>
+  </div>
+  <div class="form-actions"><button onclick="savePartialPayment()">Save Payment</button><button class="secondary-btn" onclick="closePaymentForm()">Cancel</button></div>
+ </div>
 </div>
 
 <!-- FOOTER -->
@@ -3922,5 +4028,138 @@ Cancel
 </div>
 
 </div>
+<script id="skc-user-calendar-renderer">
+function renderDueCalendar(){
+  const grid=document.getElementById('calendarGrid');if(!grid)return;
+  const y=advancedCalendarMonth.getFullYear(),m=advancedCalendarMonth.getMonth();
+  const label=advancedCalendarMonth.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  document.getElementById('calendarMonthLabel').textContent=label;
+  const events=getAllCalendarEvents();
+  const monthPrefix=`${y}-${String(m+1).padStart(2,'0')}`;
+  const monthEvents=events.filter(e=>(e.dueDate||'').startsWith(monthPrefix));
+  const openCount=monthEvents.filter(e=>!['Completed','Filed'].includes(e.status)).length;
+  document.getElementById('calendarMonthSummary').textContent=`${monthEvents.length} calendar item${monthEvents.length===1?'':'s'} · ${openCount} open`;
+  const first=new Date(y,m,1),offset=first.getDay(); // Sunday is the first column.
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const cellCount=Math.ceil((offset+daysInMonth)/7)*7;
+  const start=new Date(y,m,1-offset);
+  const today=localDateISO(new Date());
+  const html=[];
+  for(let i=0;i<cellCount;i++){
+    const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),iso=localDateISO(d);
+    const dayEvents=events.filter(e=>e.dueDate===iso);
+    const classes=['calendar-day'];
+    if(d.getMonth()!==m)classes.push('outside-month');
+    if(iso===today)classes.push('is-today');
+    if(iso===advancedSelectedDate)classes.push('is-selected');
+    const dots=[...new Set(dayEvents.map(e=>e._eventClass||eventClass(e.category)))].slice(0,4);
+    html.push(`<button type="button" class="${classes.join(' ')}" onclick="selectCalendarDate('${iso}')"><span class="calendar-day-number">${d.getDate()}</span><span class="calendar-day-dots">${dots.map(c=>`<i class="legend-dot dot-${c}"></i>`).join('')}</span>${dayEvents.length?`<span class="calendar-day-count">${dayEvents.length} item${dayEvents.length===1?'':'s'}</span>`:''}</button>`);
+  }
+  grid.innerHTML=html.join('');
+  const selectedEvents=events.filter(e=>e.dueDate===advancedSelectedDate).sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+  document.getElementById('calendarSelectedDate').textContent=formatDateLong(advancedSelectedDate);
+  document.getElementById('calendarSelectedCount').textContent=`${selectedEvents.length} item${selectedEvents.length===1?'':'s'}`;
+  const agenda=document.getElementById('calendarAgendaList');
+  agenda.innerHTML=selectedEvents.length?selectedEvents.map(e=>{
+    const client=e.client?` · ${escapeHTML(selectedClientName(e.client))}`:'';
+    const dot=e._eventClass||eventClass(e.category);
+    let action='';
+    if(e.source==='task')action=`<button class="task-complete-btn" onclick="completeTask('${e.firebaseKey}')">Complete</button><button class="secondary-btn" onclick="editTask('${e.firebaseKey}')">Edit</button>`;
+    else if(e.source==='work')action=`<button class="secondary-btn" onclick="editWork('${e.firebaseKey}')">Edit work</button><button class="task-complete-btn" onclick="completeWork('${e.firebaseKey}')">Complete</button>`;
+    else if(e.source==='custom')action=`<button class="task-complete-btn" onclick="completeCalendarEvent('${e.firebaseKey}')">Mark done</button>`;
+    return `<div class="agenda-item"><div class="agenda-item-top"><i class="agenda-type-dot dot-${dot}"></i><div><strong>${escapeHTML(e.title||'Reminder')}</strong><small>${escapeHTML(e.category||'Reminder')}${client}</small></div></div>${e.notes?`<p>${escapeHTML(e.notes)}</p>`:''}${action?`<div>${action}</div>`:''}</div>`;
+  }).join(''):'<div class="empty-state">No due dates or pending work scheduled for this day.</div>';
+}
+</script>
+<script id="skc-user-billing-refinements">
+function resetFeeForm(){
+  ['feeClient','feeReference','feeFY','feeDate','feeAmount','feeNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const discount=document.getElementById('feeDiscount');if(discount)discount.value='0';
+  const lines=document.getElementById('feeServiceLines');if(lines)lines.innerHTML='';
+  addFeeServiceLine();syncFeeServiceTotal();
+}
+function openFeeForm(){
+  populateModuleSelects();ensureBillingFields();editingFeeKey=null;resetFeeForm();
+  document.getElementById('feeDate').value=localDateISO(new Date());
+  document.getElementById('feeReference').value=autoReference();
+  document.getElementById('feeReference').readOnly=false;
+  document.getElementById('feeFormTitle').textContent='Record Professional Fee';
+  document.getElementById('saveFeeButton').textContent='Save Fee Record';
+  const panel=document.getElementById('feeFormPanel');panel.hidden=false;
+  panel.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function closeFeeForm(){document.getElementById('feeFormPanel').hidden=true;editingFeeKey=null;}
+function saveFee(){
+  const items=getFeeServiceItems();
+  const amount=items.reduce((sum,x)=>sum+x.amount,0);
+  const discount=Number(document.getElementById('feeDiscount')?.value||0);
+  const net=Math.max(0,amount-discount);
+  const reference=document.getElementById('feeReference').value.trim()||autoReference();
+  const old=editingFeeKey?feeItems.find(x=>x.firebaseKey===editingFeeKey):null;
+  // Invoice creation/editing is separate from receipt entry. Existing payments remain untouched.
+  const retainedPayments=old?getInvoicePayments(old):[];
+  const paid=retainedPayments.reduce((sum,p)=>sum+Number(p.amount||0),0);
+  if(!items.length||items.some(x=>!x.service||x.amount<0)||!amount||discount<0||discount>amount){alert('Enter each service and amount. Check the discount value.');return;}
+  if(paid>net){alert('The revised net invoice amount cannot be lower than payments already recorded.');return;}
+  if(feeItems.some(x=>x.reference===reference&&x.firebaseKey!==editingFeeKey)){alert('This invoice reference already exists. Please enter a unique invoice number.');return;}
+  const d={
+    client:document.getElementById('feeClient').value,
+    reference,items,service:items.map(x=>x.service).join('\n'),
+    financialYear:document.getElementById('feeFY').value.trim()||items[0].financialYear||'',
+    invoiceDate:document.getElementById('feeDate').value,
+    amount,discount,netAmount:net,paid,
+    payments:retainedPayments,
+    paymentDate:old?.paymentDate||'',mode:old?.mode||'',
+    notes:document.getElementById('feeNotes').value.trim(),
+    createdAt:old?.createdAt||Date.now(),updatedAt:Date.now()
+  };
+  const ref=editingFeeKey?moduleRefs.fees.child(editingFeeKey):moduleRefs.fees.push();
+  const wasEditing=!!editingFeeKey;
+  ref.set(d).then(()=>{closeFeeForm();alert(wasEditing?'Fee record updated.':'Professional fee invoice recorded. You can record receipts from the Invoice Register.');}).catch(e=>alert(e.message));
+}
+function editFee(key){
+  const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return;
+  populateModuleSelects();ensureBillingFields();editingFeeKey=key;resetFeeForm();
+  document.getElementById('feeClient').value=x.client||'';
+  document.getElementById('feeReference').value=x.reference||'';
+  document.getElementById('feeFY').value=x.financialYear||'';
+  document.getElementById('feeDate').value=x.invoiceDate||'';
+  document.getElementById('feeNotes').value=x.notes||'';
+  document.getElementById('feeDiscount').value=Number(x.discount||0);
+  document.getElementById('feeServiceLines').innerHTML='';
+  const items=Array.isArray(x.items)&&x.items.length?x.items:String(x.service||'Professional Fees').split('\n').filter(Boolean).map((service,i)=>({service,financialYear:i===0?(x.financialYear||''):'',amount:i===0?Number(x.amount||0):0}));
+  items.forEach(item=>addFeeServiceLine(item));
+  document.getElementById('feeAmount').value=Number(x.amount||0);updateNetBilled();
+  document.getElementById('feeFormTitle').textContent='Edit Professional Fee Invoice';
+  document.getElementById('saveFeeButton').textContent='Update Fee Record';
+  const panel=document.getElementById('feeFormPanel');panel.hidden=false;
+  panel.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function renderBilling(){
+  const table=document.getElementById('billingTable');if(!table)return;
+  refreshBillingFYFilter();
+  const billed=feeItems.reduce((a,x)=>a+getInvoiceNet(x),0);
+  const received=feeItems.reduce((a,x)=>a+getInvoicePaid(x),0);
+  document.getElementById('feeBilled').textContent=money(billed);
+  document.getElementById('feeReceived').textContent=money(received);
+  document.getElementById('feePending').textContent=money(Math.max(0,billed-received));
+  const query=(document.getElementById('billingSearch')?.value||'').trim().toLowerCase();
+  const fy=document.getElementById('billingFYFilter')?.value||'';
+  const rows=[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).filter(x=>{
+    if(fy&&(x.financialYear||'')!==fy)return false;
+    const text=[x.invoiceDate,selectedClientName(x.client),x.reference,x.service,x.financialYear,x.amount,x.discount,x.netAmount,getInvoicePaid(x),getInvoiceOutstanding(x),x.mode,x.notes].join(' ').toLowerCase();
+    return text.includes(query);
+  });
+  table.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>F.Y.</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Receipts</th><th>Invoice</th><th>Action</th></tr></thead><tbody>'+(
+    rows.length?rows.map(x=>{
+      const invoiceActions=`<div class="invoice-action-group"><button class="invoice-download-btn" title="Download PDF" aria-label="Download invoice PDF" onclick="invoicePDF('${x.firebaseKey}')">⤓</button><button class="invoice-share-btn" onclick="shareInvoice('${x.firebaseKey}')">Share</button></div>`;
+      const rowActions=`<div class="billing-row-actions"><button class="billing-pay-btn" onclick="openPaymentForm('${x.firebaseKey}')" ${getInvoiceOutstanding(x)<=0?'disabled':''}>Record Payment</button><button class="secondary-btn billing-edit-btn" onclick="editFee('${x.firebaseKey}')">Edit</button><button class="secondary-btn billing-delete-btn" onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></div>`;
+      return `<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—').replace(/\n/g,'<br>')}</td><td>${escapeHTML(x.financialYear||'—')}</td><td><b>${money(getInvoiceNet(x))}</b></td><td>${money(getInvoicePaid(x))}</td><td class="${getInvoiceOutstanding(x)?'balance-positive':'balance-zero'}">${money(getInvoiceOutstanding(x))}</td><td><button class="secondary-btn receipt-list-btn" onclick="viewInvoicePayments('${x.firebaseKey}')">${getInvoicePayments(x).length} receipt(s)</button></td><td>${invoiceActions}</td><td>${rowActions}</td></tr>`;
+    }).join(''):'<tr><td colspan="11">'+(feeItems.length?'No matching fee records found.':'No fee records added.')+'</td></tr>'
+  )+'</tbody>';
+  renderClientOutstanding();renderMonthlyCollections();
+}
+</script>
+
 </body>
 </html>
