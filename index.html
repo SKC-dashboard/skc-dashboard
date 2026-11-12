@@ -1563,8 +1563,7 @@ button,.new-client-btn{font-size:13px!important}
         <div class="portal-credential-row">
             <label for="portalPassword">Password</label>
             <div class="portal-credential-control">
-                <input id="portalPassword" type="password" readonly>
-                <button type="button" onclick="togglePortalPassword(this)">Show</button>
+                <input id="portalPassword" type="text" readonly autocomplete="off" spellcheck="false">
                 <button type="button" onclick="copyPortalCredential('portalPassword', this)">Copy</button>
             </div>
         </div>
@@ -2159,7 +2158,7 @@ async function openClientPortal(type, firebaseKey){
     document.getElementById("portalModalTitle").textContent =
         type === "gst" ? "GST Portal Password" : "Income Tax Portal Password";
     document.getElementById("portalPassword").value = client.pass || "";
-    document.getElementById("portalPassword").type = "password";
+    document.getElementById("portalPassword").type = "text";
 
     const link = document.getElementById("portalOpenedLink");
     link.href = portalUrl;
@@ -2193,29 +2192,48 @@ function openITRPortal(firebaseKey){
 
 async function copyPortalCredential(inputId, button){
     const input = document.getElementById(inputId);
-    const value = input.value || "";
+    const value = input ? (input.value || "") : "";
     if(!value){
-        alert("No credential is saved for this client.");
+        alert("No password is saved for this client.");
         return;
     }
+
+    let copied = false;
     try{
-        await navigator.clipboard.writeText(value);
+        if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(value);
+            copied = true;
+        }
+    }catch(error){
+        copied = false;
+    }
+
+    // Fallback copies through a temporary textarea; the masked password
+    // input itself is never switched to visible text.
+    if(!copied){
+        const helper = document.createElement("textarea");
+        helper.value = value;
+        helper.setAttribute("readonly", "");
+        helper.style.position = "fixed";
+        helper.style.left = "-9999px";
+        helper.style.top = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        try{
+            copied = document.execCommand("copy");
+        }catch(error){
+            copied = false;
+        }
+        helper.remove();
+    }
+
+    if(copied){
         const oldText = button.textContent;
         button.textContent = "Copied";
-        setTimeout(() => button.textContent = oldText, 1200);
-    }catch(error){
-        input.type = inputId === "portalPassword" ? "text" : "text";
-        input.focus();
-        input.select();
-        alert("Automatic copy was blocked. Press Ctrl+C to copy the selected value.");
+        setTimeout(() => { button.textContent = oldText; }, 1200);
+    }else{
+        alert("Copy was blocked by the browser. Please allow clipboard access and try again.");
     }
-}
-
-function togglePortalPassword(button){
-    const input = document.getElementById("portalPassword");
-    const showing = input.type === "text";
-    input.type = showing ? "password" : "text";
-    button.textContent = showing ? "Show" : "Hide";
 }
 
 function closePortalCredentialModal(){
@@ -2223,8 +2241,18 @@ function closePortalCredentialModal(){
     document.getElementById("portalPassword").value = "";
     document.getElementById("portalCopyStatus").textContent =
         "The portal is opening. Your username will be copied automatically. Copy the password below.";
-    document.getElementById("portalPassword").type = "password";
+    document.getElementById("portalPassword").type = "text";
 }
+
+// Press ESC to close the portal password popup.
+document.addEventListener("keydown", function(event){
+    if(event.key === "Escape"){
+        const modal = document.getElementById("portalCredentialModal");
+        if(modal && modal.classList.contains("show")){
+            closePortalCredentialModal();
+        }
+    }
+});
 
 /* RENDER FIXED */
 function renderGST(){
@@ -2264,7 +2292,9 @@ function renderGST(){
         "
         title="Open GST Portal"
     >
-        🏛️
+        <img src="GST%20LOGO.png" alt="GST Portal"
+             style="width:28px;height:28px;object-fit:contain;vertical-align:middle;"
+             onerror="this.style.display='none';this.parentElement.textContent='GST';">
     </span>
 
 </td>
@@ -2333,7 +2363,9 @@ function renderITR(){
                     style="cursor:pointer;font-size:22px;"
                     title="Open Income Tax Portal and show saved login details"
                     aria-label="Open Income Tax Portal"
-                >🏛️</span>
+                ><img src="ITD%20LOGO.png" alt="Income Tax Department"
+                        style="width:28px;height:28px;object-fit:contain;vertical-align:middle;"
+                        onerror="this.style.display='none';this.parentElement.textContent='ITD';"></span>
             </td>
             <td>${c.trade}</td>
             <td>${c.legal}</td>
