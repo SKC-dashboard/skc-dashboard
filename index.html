@@ -1854,6 +1854,56 @@ button,.new-client-btn{font-size:13px!important}
 .fee-client-hint{font:12px Arial,sans-serif;color:#7c898e;font-weight:400;line-height:1.45}
 @media(max-width:600px){.fee-client-picker{max-width:100%!important;grid-column:1/-1}}
 </style>
+
+<style id="skc-professional-typography-and-single-client-search">
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+:root{
+  --sk-font-ui:'DM Sans','Segoe UI',Arial,sans-serif;
+  --sk-font-display:'Playfair Display',Georgia,serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body,button,input,select,textarea,table{font-family:var(--sk-font-ui)!important;letter-spacing:.01em}
+body{font-size:15px!important;line-height:1.55!important;font-weight:400}
+.header .title{font-family:var(--sk-font-display)!important;font-weight:700!important;letter-spacing:1.6px!important}
+.header .subtitle{font-family:var(--sk-font-ui)!important;font-weight:600!important;letter-spacing:1.15px!important}
+.section h2,.section-top h2,.section>h2,.welcome-strip h2,.panel-heading h3,.panel-card h3,.form-panel h3{
+  font-family:var(--sk-font-display)!important;font-weight:700!important;letter-spacing:-.025em!important
+}
+.section h2,.section-top h2,.section>h2{font-size:clamp(23px,2vw,28px)!important;line-height:1.2!important}
+.welcome-strip h2{font-size:clamp(25px,2.4vw,31px)!important;line-height:1.2!important}
+.panel-heading h3,.panel-card h3,.form-panel h3{font-size:18px!important;line-height:1.3!important}
+.eyebrow{font-family:var(--sk-font-ui)!important;font-size:11px!important;font-weight:800!important;letter-spacing:2.1px!important}
+.section-subtitle{font-family:var(--sk-font-ui)!important;font-size:14px!important;line-height:1.5!important}
+.sidebar a{font-family:var(--sk-font-ui)!important;font-size:14px!important;font-weight:600!important;letter-spacing:.01em}
+.section{font-family:var(--sk-font-ui)!important}
+.dash-card h2{font-family:var(--sk-font-ui)!important;font-size:14px!important;font-weight:700!important;letter-spacing:.01em!important}
+.dash-card h1{font-family:var(--sk-font-ui)!important;font-size:clamp(27px,2.2vw,34px)!important;font-weight:800!important;letter-spacing:-.04em!important}
+.dash-card small,.report-caption,.empty-state{font-family:var(--sk-font-ui)!important;font-size:12px!important;line-height:1.5!important}
+.modern-table{font-family:var(--sk-font-ui)!important;font-size:13px!important}
+.modern-table th{font-family:var(--sk-font-ui)!important;font-size:12px!important;font-weight:800!important;letter-spacing:.035em!important;text-transform:uppercase}
+.modern-table td{font-family:var(--sk-font-ui)!important;font-size:13px!important;line-height:1.45!important}
+.form-grid label,.settings-box label{font-family:var(--sk-font-ui)!important;font-size:13px!important;font-weight:700!important;line-height:1.45!important}
+.section input:not([type=checkbox]),.section select,.section textarea{font-family:var(--sk-font-ui)!important;font-size:14px!important;line-height:1.4!important}
+button,.new-client-btn{font-family:var(--sk-font-ui)!important;font-size:13px!important;font-weight:700!important;letter-spacing:.015em!important}
+/* One searchable client field, following the Settings search-and-select pattern. */
+.fee-client-picker{grid-column:1/-1;max-width:720px!important;gap:8px!important;color:#46575d!important}
+.fee-client-picker .fee-client-search{display:block;width:100%;min-width:0;box-sizing:border-box;padding:13px 15px!important;border:1px solid #d8dfe0!important;border-radius:10px!important;background:#fff!important;color:#24343a!important;font:500 14px var(--sk-font-ui)!important;box-shadow:0 2px 7px rgba(20,35,40,.025)}
+.fee-client-picker .fee-client-search:focus{outline:none;border-color:#b58a3a!important;box-shadow:0 0 0 3px rgba(181,138,58,.13)}
+.fee-client-picker .fee-client-search::placeholder{color:#8a969a;opacity:1}
+@media(min-width:769px){
+ body{font-size:15.5px!important}
+ .section{font-size:15.5px!important}
+ .modern-table th{font-size:12px!important}
+ .modern-table td{font-size:13px!important}
+}
+@media(max-width:600px){
+ body{font-size:14.5px!important}
+ .section h2,.section-top h2,.section>h2{font-size:23px!important}
+ .welcome-strip h2{font-size:23px!important}
+ .modern-table td{font-size:12px!important}
+}
+</style>
+
 </head>
 
 
@@ -1980,7 +2030,7 @@ button,.new-client-btn{font-size:13px!important}
         <button class="new-client-btn" onclick="openClientPopup()">+ NEW CLIENT</button>
     </div>
     <div class="welcome-strip">
-        <div><span class="eyebrow">SK CONSULTANT · PRACTICE OVERVIEW</span><h2>Welcome to your workspace</h2><p>Keep your client register, compliance calendar, tasks and professional fees connected in one workspace.</p></div>
+        <div><span class="eyebrow">PROFESSIONAL DASHBOARD</span><h2>Welcome again</h2></div>
         <div class="today-chip" id="dashboardToday">SK CONSULTANT</div>
     </div>
     <div class="dashboard-cards dashboard-kpis">
@@ -2234,10 +2284,10 @@ button,.new-client-btn{font-size:13px!important}
  <div class="panel-card form-panel billing-record-panel" id="feeFormPanel" hidden>
   <div class="panel-heading"><h3 id="feeFormTitle">Record Professional Fee</h3><span class="report-caption">Payments can be entered separately from the Invoice Register.</span></div>
   <div class="form-grid">
-   <label class="fee-client-picker">Find client by Trade Name / Legal Name / GSTIN / PAN
-    <input id="feeClientSearch" class="fee-client-search" type="search" placeholder="Type trade name, legal name, GSTIN or PAN..." autocomplete="off" oninput="filterFeeClientOptions()">
-    <select id="feeClient" required onchange="syncFeeClientSearch()"><option value="">Select client from the matching list</option></select>
-    <small class="fee-client-hint">Type any identifying detail above, then select the correct client name from the dropdown.</small>
+   <label class="fee-client-picker">Client selection — Search Trade Name / Legal Name / GSTIN / PAN
+    <input id="feeClientSearch" class="fee-client-search" type="search" list="feeClientOptions" placeholder="Search and select client..." autocomplete="off" required oninput="selectFeeClientFromSearch()" onchange="selectFeeClientFromSearch()">
+    <datalist id="feeClientOptions"></datalist>
+    <select id="feeClient" required aria-hidden="true" tabindex="-1" style="display:none"><option value="">Select client</option></select>
    </label>
    <label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label>
    <div class="full-field fee-services-field">
@@ -2282,19 +2332,20 @@ button,.new-client-btn{font-size:13px!important}
             <h2>SK CONSULTANT</h2>
             <p>Advocate Mohamad Faizan Shaikh</p>
             <p>Enrollment No.: G/3018/2025</p>
-            <p>GST & Income Tax Practice</p>
+            <p>Tax Professional</p>
         </div>
 
         <div class="footer-middle">
             <h3>CONTACT</h3>
-            <p>+91 9173321079</p>
+            <p>+91 91733 21079</p>
         </div>
 
         <div class="footer-right">
             <h3>OFFICE ADDRESS</h3>
-            <p>7/4284, Suthar Faliya</p>
-            <p>Galemandi, Mahidharpura</p>
-            <p>Surat - 395003</p>
+            <p>228, Times World,</p>
+            <p>Opp. Atlanta Shopping Center,</p>
+            <p>Althan Canal Road</p>
+            <p>Surat- 395 017</p>
         </div>
 
     </div>
@@ -4326,6 +4377,81 @@ function renderBilling(){
   )+'</tbody>';
   renderClientOutstanding();renderMonthlyCollections();
 }
+</script>
+
+
+<script id="skc-fee-client-single-box-search">
+function feeClientSearchBlob(c){
+  return [c.trade,c.tradeName,c.legal,c.legalName,c.name,c.gstin,c.pan,c.group,c._type]
+    .filter(Boolean).join(' ').toLocaleLowerCase();
+}
+function feeClientOptionLabel(c){
+  const primary=clientLabel(c);
+  const legal=c.legalName||c.legal||'';
+  const identifier=c._type==='GST'?(c.gstin||''):(c.pan||'');
+  const extras=[legal&&legal.toLocaleLowerCase()!==primary.toLocaleLowerCase()?legal:'',identifier,c._type]
+    .filter(Boolean);
+  return primary+(extras.length?' — '+extras.join(' | '):'');
+}
+function fillFeeClientSelect(preserveValue=true){
+  const select=document.getElementById('feeClient');
+  const search=document.getElementById('feeClientSearch');
+  const datalist=document.getElementById('feeClientOptions');
+  if(!select||!search||!datalist)return;
+  const old=preserveValue?select.value:'';
+  const clients=allPracticeClients().sort((a,b)=>clientLabel(a).localeCompare(clientLabel(b),'en',{sensitivity:'base'}));
+  select.innerHTML='<option value="">Select client</option>';
+  datalist.innerHTML='';
+  clients.forEach(c=>{
+    const key=c._type+'|'+c.firebaseKey;
+    const label=feeClientOptionLabel(c);
+    const hiddenOption=document.createElement('option');
+    hiddenOption.value=key;
+    hiddenOption.textContent=label;
+    select.appendChild(hiddenOption);
+    const suggestion=document.createElement('option');
+    suggestion.value=label;
+    suggestion.dataset.key=key;
+    datalist.appendChild(suggestion);
+  });
+  if(old&&clients.some(c=>c._type+'|'+c.firebaseKey===old)){
+    select.value=old;
+    syncFeeClientSearch();
+  }else{
+    select.value='';
+    if(!preserveValue)search.value='';
+  }
+}
+function selectFeeClientFromSearch(){
+  const search=document.getElementById('feeClientSearch');
+  const datalist=document.getElementById('feeClientOptions');
+  const select=document.getElementById('feeClient');
+  if(!search||!datalist||!select)return;
+  const value=search.value.trim().toLocaleLowerCase();
+  select.value='';
+  if(!value)return;
+  const options=[...datalist.options];
+  let match=options.find(o=>o.value.toLocaleLowerCase()===value);
+  if(!match){
+    const matches=options.filter(o=>o.value.toLocaleLowerCase().includes(value));
+    if(matches.length===1)match=matches[0];
+  }
+  if(!match){
+    const clients=allPracticeClients().filter(c=>feeClientSearchBlob(c).includes(value));
+    if(clients.length===1)match=options.find(o=>o.dataset.key===clients[0]._type+'|'+clients[0].firebaseKey);
+  }
+  if(match)select.value=match.dataset.key;
+}
+function syncFeeClientSearch(){
+  const select=document.getElementById('feeClient');
+  const search=document.getElementById('feeClientSearch');
+  const datalist=document.getElementById('feeClientOptions');
+  if(!select||!search||!datalist)return;
+  if(!select.value){search.value='';return;}
+  const option=[...datalist.options].find(o=>o.dataset.key===select.value);
+  if(option)search.value=option.value;
+}
+function filterFeeClientOptions(){selectFeeClientFromSearch();}
 </script>
 
 </body>
