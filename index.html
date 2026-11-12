@@ -2235,18 +2235,26 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
 <option value="itr">ITR</option>
 </select>
 
-<input
-    id="settingsClientSearch"
-    type="search"
-    list="settingsClientOptions"
-    placeholder="Type client / trade name / GSTIN / PAN to search..."
-    autocomplete="off"
-    onchange="selectSettingsClientFromSearch()"
-    oninput="selectSettingsClientFromSearch()"
-    style="width:100%;margin:10px 0;padding:12px;border:1px solid #ccd4d8;border-radius:8px;box-sizing:border-box;"
->
-<datalist id="settingsClientOptions"></datalist>
-<select id="clientSelect" onchange="syncSettingsClientSearch();loadClientDetails()" style="display:none"></select>
+<div class="fee-client-picker settings-client-picker">
+    <label for="settingsClientSearch">Client selection — Search Trade Name / Legal Name / GSTIN / PAN</label>
+    <input
+        id="settingsClientSearch"
+        class="fee-client-search"
+        type="search"
+        placeholder="Start typing a trade name, legal name, GSTIN or PAN..."
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-haspopup="listbox"
+        aria-controls="settingsClientDropdown"
+        aria-expanded="false"
+        oninput="selectSettingsClientFromSearch()"
+        onfocus="showSettingsClientDropdown()"
+        onkeydown="handleSettingsClientSearchKeydown(event)"
+        onblur="hideSettingsClientDropdownSoon()"
+    >
+    <div id="settingsClientDropdown" class="fee-client-results" role="listbox" aria-label="Matching clients" hidden></div>
+</div>
+<select id="clientSelect" onchange="syncSettingsClientSearch();loadClientDetails()" style="display:none" aria-hidden="true" tabindex="-1"></select>
 
 
         <input id="edit_trade" placeholder="Trade Name">
@@ -4588,6 +4596,198 @@ function setupFeeClientLiveSearch(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupFeeClientLiveSearch);
 else setupFeeClientLiveSearch();
+</script>
+
+
+<style id="skc-settings-search-match-fee-style">
+/* Settings client picker intentionally shares the exact visual language of Record Professional Fee. */
+.settings-client-picker{position:relative!important;display:flex!important;flex-direction:column!important;gap:8px!important;width:100%!important;max-width:720px!important;margin:10px 0 16px!important;color:#46575d!important;z-index:6}
+.settings-client-picker>label{display:block!important;margin:0!important;font-family:var(--sk-font-ui)!important;font-size:12.5px!important;font-weight:700!important;line-height:1.45!important;color:#46575d!important}
+.settings-client-picker .fee-client-search{display:block;width:100%;min-width:0;box-sizing:border-box;padding:13px 15px!important;border:1px solid #d8dfe0!important;border-radius:10px!important;background:#fff!important;color:#24343a!important;font:500 14px var(--sk-font-ui)!important;box-shadow:0 2px 7px rgba(20,35,40,.025);transition:border-color .16s ease,box-shadow .16s ease}
+.settings-client-picker .fee-client-search:focus{outline:none!important;border-color:#b58a3a!important;box-shadow:0 0 0 3px rgba(181,138,58,.13)!important}
+.settings-client-picker .fee-client-search::placeholder{color:#89969b;opacity:1}
+.settings-client-picker .fee-client-search.fee-client-selected{border-color:#b58a3a!important;background:#fffdf8!important}
+.settings-client-picker .fee-client-results{position:absolute!important;top:100%;left:0;right:0;z-index:5100;max-height:310px;overflow-y:auto;margin-top:4px;background:#fff;border:1px solid #dfe4e5;border-radius:11px;box-shadow:0 14px 34px rgba(18,34,40,.16);padding:5px}
+.settings-client-picker .fee-client-results[hidden]{display:none!important}
+.settings-client-picker .fee-client-results-meta{padding:8px 10px;color:#8a762f;font-size:11px!important;font-weight:800!important;letter-spacing:.035em!important;text-transform:uppercase;border-bottom:1px solid #eef0ef}
+.settings-client-picker .fee-client-option{display:flex!important;width:100%;flex-direction:column;align-items:flex-start;gap:2px;margin:2px 0;padding:9px 11px!important;background:#fff!important;color:#25363c!important;border:0!important;border-radius:7px!important;text-align:left!important;cursor:pointer!important;transform:none!important}
+.settings-client-picker .fee-client-option:hover,.settings-client-picker .fee-client-option.is-active{background:#f7f2e7!important;color:#17252b!important;transform:none!important}
+.settings-client-picker .fee-client-option-name{font-size:13px!important;font-weight:800!important;line-height:1.35!important}
+.settings-client-picker .fee-client-option-meta{font-size:11px!important;font-weight:500!important;line-height:1.4!important;color:#7a878c!important;overflow-wrap:anywhere}
+.settings-client-picker .fee-client-no-results,.settings-client-picker .fee-client-more{padding:12px 10px;font-size:12px!important;line-height:1.45!important;color:#78868b!important}
+@media(max-width:768px){.settings-client-picker{max-width:100%!important}.settings-client-picker .fee-client-results{max-height:260px}}
+</style>
+
+<script id="skc-settings-live-client-search">
+/* Settings searchable dropdown: same interaction and styling as Record Professional Fee.
+   The hidden select retains the original Firebase key expected by loadClientDetails/updateClient. */
+window.settingsClientMatches=[];
+window.settingsClientActiveIndex=-1;
+
+function settingsClientList(){
+  const type=document.getElementById('typeSelect')?.value||'gst';
+  const list=type==='gst'?gstClients:itrClients;
+  return [...list].map(c=>({...c,_type:type.toUpperCase()}))
+    .sort((a,b)=>clientLabel(a).localeCompare(clientLabel(b),'en',{sensitivity:'base'}));
+}
+function settingsClientSearchBlob(c){
+  return [c.trade,c.tradeName,c.legal,c.legalName,c.name,c.gstin,c.pan,c.group,c._type]
+    .filter(Boolean).join(' ').toLocaleLowerCase();
+}
+function settingsClientOptionLabel(c){
+  const primary=clientLabel(c);
+  const legal=c.legalName||c.legal||'';
+  const identifier=c._type==='GST'?(c.gstin||''):(c.pan||'');
+  const extras=[legal&&legal.toLocaleLowerCase()!==primary.toLocaleLowerCase()?legal:'',identifier,c._type]
+    .filter(Boolean);
+  return primary+(extras.length?' — '+extras.join(' | '):'');
+}
+function settingsClientMeta(c){
+  const legal=c.legalName||c.legal||'';
+  const identifier=c._type==='GST'?(c.gstin||''):(c.pan||'');
+  return [legal&&legal!==clientLabel(c)?legal:'',identifier,c._type==='GST'?'GST client':'ITR client']
+    .filter(Boolean).join(' · ');
+}
+function loadSettingsClients(){
+  const type=document.getElementById('typeSelect')?.value||'gst';
+  const select=document.getElementById('clientSelect');
+  const search=document.getElementById('settingsClientSearch');
+  if(!select||!search)return;
+  const previousKey=select.value;
+  const previousQuery=search.value;
+  const list=settingsClientList();
+  select.innerHTML='<option value="">Select Client</option>';
+  list.forEach(c=>{
+    const option=document.createElement('option');
+    option.value=c.firebaseKey;
+    option.textContent=settingsClientOptionLabel(c);
+    select.appendChild(option);
+  });
+  const selected=list.find(c=>c.firebaseKey===previousKey);
+  if(selected){
+    select.value=selected.firebaseKey;
+    search.value=settingsClientOptionLabel(selected);
+    search.classList.add('fee-client-selected');
+    closeSettingsClientDropdown();
+    loadClientDetails();
+  }else{
+    select.value='';
+    search.value=previousQuery;
+    search.classList.remove('fee-client-selected');
+    clearSettingsFields();
+    if(document.activeElement===search)renderSettingsClientDropdown();
+    else closeSettingsClientDropdown();
+  }
+  window.lastSettingsClientType=type;
+}
+function renderSettingsClientDropdown(){
+  const search=document.getElementById('settingsClientSearch');
+  const dropdown=document.getElementById('settingsClientDropdown');
+  if(!search||!dropdown)return;
+  const query=search.value.trim().toLocaleLowerCase();
+  const tokens=query.split(/\s+/).filter(Boolean);
+  window.settingsClientMatches=settingsClientList().filter(c=>{
+    const blob=settingsClientSearchBlob(c);
+    return !tokens.length||tokens.every(token=>blob.includes(token));
+  });
+  window.settingsClientActiveIndex=-1;
+  const visible=window.settingsClientMatches.slice(0,18);
+  const count=window.settingsClientMatches.length;
+  let html=`<div class="fee-client-results-meta">${query?`${count} matching client${count===1?'':'s'}`:`${count} ${document.getElementById('typeSelect')?.value==='gst'?'GST':'ITR'} clients · Start typing to narrow the list`}</div>`;
+  if(!count){
+    html+='<div class="fee-client-no-results">No matching client found. Check the name, GSTIN or PAN.</div>';
+  }else{
+    html+=visible.map((c,i)=>`<button type="button" class="fee-client-option" role="option" aria-selected="false" data-client-key="${escapeHTML(c.firebaseKey)}" data-result-index="${i}"><span class="fee-client-option-name">${escapeHTML(clientLabel(c))}</span><span class="fee-client-option-meta">${escapeHTML(settingsClientMeta(c))}</span></button>`).join('');
+    if(count>visible.length)html+=`<div class="fee-client-more">Showing the first ${visible.length} matches. Type more letters to narrow the list.</div>`;
+  }
+  dropdown.innerHTML=html;
+  dropdown.hidden=false;
+  search.setAttribute('aria-expanded','true');
+}
+function selectSettingsClientFromSearch(){
+  const select=document.getElementById('clientSelect');
+  const search=document.getElementById('settingsClientSearch');
+  if(!select||!search)return;
+  const current=settingsClientList().find(c=>c.firebaseKey===select.value);
+  const currentLabel=current?settingsClientOptionLabel(current):'';
+  if(search.value.trim()!==currentLabel){
+    select.value='';
+    search.classList.remove('fee-client-selected');
+    clearSettingsFields();
+  }
+  renderSettingsClientDropdown();
+}
+function showSettingsClientDropdown(){renderSettingsClientDropdown();}
+function closeSettingsClientDropdown(){
+  const dropdown=document.getElementById('settingsClientDropdown');
+  const search=document.getElementById('settingsClientSearch');
+  if(dropdown)dropdown.hidden=true;
+  if(search)search.setAttribute('aria-expanded','false');
+  window.settingsClientActiveIndex=-1;
+}
+function hideSettingsClientDropdownSoon(){window.setTimeout(()=>closeSettingsClientDropdown(),150);}
+function selectSettingsClientOption(key){
+  const select=document.getElementById('clientSelect');
+  const search=document.getElementById('settingsClientSearch');
+  if(!select||!search)return;
+  const client=settingsClientList().find(c=>c.firebaseKey===key);
+  if(!client)return;
+  select.value=client.firebaseKey;
+  search.value=settingsClientOptionLabel(client);
+  search.classList.add('fee-client-selected');
+  closeSettingsClientDropdown();
+  loadClientDetails();
+}
+function syncSettingsClientSearch(){
+  const select=document.getElementById('clientSelect');
+  const search=document.getElementById('settingsClientSearch');
+  if(!select||!search)return;
+  const client=settingsClientList().find(c=>c.firebaseKey===select.value);
+  if(client){search.value=settingsClientOptionLabel(client);search.classList.add('fee-client-selected');}
+  else{search.value='';search.classList.remove('fee-client-selected');}
+}
+function updateSettingsClientActiveOption(){
+  const dropdown=document.getElementById('settingsClientDropdown');
+  if(!dropdown)return;
+  [...dropdown.querySelectorAll('.fee-client-option')].forEach((option,index)=>{
+    const active=index===window.settingsClientActiveIndex;
+    option.classList.toggle('is-active',active);
+    option.setAttribute('aria-selected',active?'true':'false');
+    if(active)option.scrollIntoView({block:'nearest'});
+  });
+}
+function handleSettingsClientSearchKeydown(event){
+  const dropdown=document.getElementById('settingsClientDropdown');
+  if(!dropdown)return;
+  const total=Math.min(window.settingsClientMatches.length,18);
+  if(event.key==='ArrowDown'){
+    event.preventDefault();
+    if(dropdown.hidden)renderSettingsClientDropdown();
+    if(total){window.settingsClientActiveIndex=Math.min(total-1,window.settingsClientActiveIndex+1);updateSettingsClientActiveOption();}
+  }else if(event.key==='ArrowUp'){
+    event.preventDefault();
+    if(total){window.settingsClientActiveIndex=Math.max(0,window.settingsClientActiveIndex-1);updateSettingsClientActiveOption();}
+  }else if(event.key==='Enter'){
+    if(!dropdown.hidden&&window.settingsClientActiveIndex>=0&&window.settingsClientMatches[window.settingsClientActiveIndex]){
+      event.preventDefault();selectSettingsClientOption(window.settingsClientMatches[window.settingsClientActiveIndex].firebaseKey);
+    }else if(!dropdown.hidden&&total===1){
+      event.preventDefault();selectSettingsClientOption(window.settingsClientMatches[0].firebaseKey);
+    }
+  }else if(event.key==='Escape'){closeSettingsClientDropdown();}
+}
+function setupSettingsClientLiveSearch(){
+  const dropdown=document.getElementById('settingsClientDropdown');
+  if(!dropdown||dropdown.dataset.bound==='yes')return;
+  dropdown.dataset.bound='yes';
+  dropdown.addEventListener('mousedown',event=>event.preventDefault());
+  dropdown.addEventListener('click',event=>{
+    const option=event.target.closest('.fee-client-option');
+    if(option)selectSettingsClientOption(option.dataset.clientKey);
+  });
+  loadSettingsClients();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupSettingsClientLiveSearch);
+else setupSettingsClientLiveSearch();
 </script>
 
 </body>
