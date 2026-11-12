@@ -1946,6 +1946,54 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
 @media(max-width:768px){body{font-size:14px!important}.section h2,.section-top h2,.section>h2{font-size:23px!important}.modern-table th{font-size:10.5px!important}.modern-table td{font-size:11.5px!important}.fee-client-picker{max-width:100%!important}.fee-client-results{max-height:260px}}
 </style>
 
+
+<style id="skc-gst-news-ui">
+.gst-news-page-heading{align-items:center!important}
+.gst-news-heading-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.gst-news-status-panel{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(115deg,#17252b,#263d45);color:#fff;border-radius:14px;padding:17px 20px;margin:18px 0}
+.gst-news-status-copy{display:flex;align-items:center;gap:13px;min-width:0}
+.gst-news-status-copy strong{display:block;font-size:14px;font-weight:800;letter-spacing:.01em}
+.gst-news-status-copy p{margin:3px 0 0;color:#d2dadd;font-size:12px;line-height:1.45}
+.gst-news-status-icon{display:flex;align-items:center;justify-content:center;min-width:44px;height:44px;border-radius:11px;background:rgba(214,180,111,.15);border:1px solid rgba(214,180,111,.42);color:#e4c27e;font-size:10px;font-weight:900;letter-spacing:.08em}
+.gst-news-status-meta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;text-align:right;white-space:nowrap}
+.gst-news-sync-badge{display:inline-flex;align-items:center;border:1px solid rgba(214,180,111,.45);background:rgba(214,180,111,.13);color:#f0d9a7;border-radius:30px;padding:5px 10px;font-size:10px;font-weight:800;letter-spacing:.04em}
+.gst-news-status-meta small{font-size:11px;color:#d3dcdf}
+.gst-news-filter-panel{display:grid;grid-template-columns:minmax(220px,1.7fr) repeat(3,minmax(150px,1fr));gap:12px;align-items:end;background:#fff;border:1px solid var(--sk-line);border-radius:13px;padding:15px;margin:16px 0}
+.gst-news-filter-panel>div{min-width:0}
+.gst-news-filter-panel label{display:block;margin:0 0 6px;color:#5f6d72;font-size:11px;font-weight:800;letter-spacing:.025em}
+.gst-news-filter-panel input,.gst-news-filter-panel select{width:100%;min-width:0;box-sizing:border-box}
+.gst-news-feed-heading{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:22px 0 12px}
+.gst-news-feed-heading h3{margin:0;font-size:18px;font-weight:850;letter-spacing:-.02em;color:var(--sk-ink)}
+.gst-news-feed-heading p{margin:4px 0 0;color:var(--sk-muted);font-size:12px}
+.gst-news-sorted-label{font-size:11px;font-weight:700;color:#8c6d32;white-space:nowrap}
+.gst-news-feed{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.gst-news-card{display:flex;flex-direction:column;min-width:0;background:#fff;border:1px solid var(--sk-line);border-radius:13px;padding:16px 17px;box-shadow:0 4px 13px rgba(20,35,40,.025);transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.gst-news-card:hover{transform:translateY(-2px);border-color:#d8c49a;box-shadow:0 10px 22px rgba(20,35,40,.07)}
+.gst-news-card-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.gst-news-category{display:inline-flex;align-items:center;border-radius:30px;background:#f7f0e2;color:#87672c;padding:5px 9px;font-size:10px;font-weight:850;letter-spacing:.025em}
+.gst-news-date{color:#78868b;font-size:11px;font-weight:600}
+.gst-news-card h4{font-size:15px;font-weight:800;line-height:1.45;letter-spacing:-.012em;color:#1d2d33;margin:0 0 8px;overflow-wrap:anywhere}
+.gst-news-excerpt{margin:0;color:#68777d;font-size:12px;line-height:1.55;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.gst-news-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:13px}
+.gst-news-source-name{font-size:10.5px;font-weight:750;color:#718087;overflow-wrap:anywhere}
+.gst-news-read-link{color:#89682c!important;font-size:11px!important;font-weight:850!important;text-decoration:none!important;white-space:nowrap}
+.gst-news-read-link:hover{text-decoration:underline!important}
+.gst-news-new{display:inline-block;margin-left:6px;border-radius:20px;background:#e9f4ed;color:#31734a;padding:3px 6px;font-size:9px;font-weight:900;vertical-align:2px}
+.gst-news-empty{grid-column:1/-1;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;text-align:center;min-height:170px;padding:24px;background:#fff;border:1px dashed #d8dfe0;border-radius:13px;color:#718087}
+.gst-news-empty strong{font-size:14px;color:#24363c}
+.gst-news-empty span{font-size:12px;max-width:560px;line-height:1.5}
+.gst-news-load-more-wrap{display:flex;justify-content:center;margin:18px 0}
+.gst-news-source-note{margin-top:22px;padding:16px 18px;background:#fff;border:1px solid var(--sk-line);border-radius:12px}
+.gst-news-source-note>strong{display:block;margin-bottom:9px;font-size:12px;font-weight:850;color:#25363c}
+.gst-news-source-links{display:flex;gap:9px 17px;flex-wrap:wrap}
+.gst-news-source-links a{color:#8a6729!important;font-size:11px;font-weight:750;text-decoration:none}
+.gst-news-source-links a:hover{text-decoration:underline}
+.gst-news-source-note p{font-size:11px;color:#7b888d;line-height:1.55;margin:12px 0 0}
+.gst-news-heading-actions button:disabled{opacity:.55;cursor:wait}
+@media(max-width:1000px){.gst-news-filter-panel{grid-template-columns:repeat(2,minmax(0,1fr))}.gst-news-feed{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.gst-news-page-heading{align-items:flex-start!important}.gst-news-heading-actions{width:100%;justify-content:stretch}.gst-news-heading-actions button{flex:1}.gst-news-status-panel{align-items:flex-start;flex-direction:column}.gst-news-status-meta{align-items:flex-start;text-align:left}.gst-news-filter-panel{grid-template-columns:1fr}.gst-news-feed{grid-template-columns:1fr}.gst-news-feed-heading{align-items:flex-start;flex-direction:column}.gst-news-card{padding:14px}.gst-news-card h4{font-size:14px}}
+</style>
+
 </head>
 
 
@@ -2039,6 +2087,9 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
     <a onclick="showSection('dashboard')">▦ &nbsp; Dashboard</a>
     <a onclick="showSection('gst')">▤ &nbsp; GST Clients</a>
     <a onclick="showSection('itr')">▤ &nbsp; ITR Clients</a>
+    <div class="nav-caption">GST &amp; COMPLIANCE</div>
+    <a onclick="openComplianceCalendar()">▦ &nbsp; Compliance &amp; Due-date Calendar</a>
+    <a onclick="showSection('gstNews')">▤ &nbsp; GST News &amp; Updates</a>
     <div class="nav-caption">PRACTICE MANAGEMENT</div>
     
     <a onclick="showSection('documents')">▧ &nbsp; Document Register</a>
@@ -2068,11 +2119,11 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
 <!-- DASHBOARD -->
 <div id="dashboard" class="section">
     <div class="section-top">
-        <div><h2>Professional Dashboard</h2><p class="section-subtitle">A live overview of clients, compliance work, collections and upcoming statutory dates.</p></div>
+        <div><h2>Practice Dashboard</h2><p class="section-subtitle">A live overview of clients, compliance work, collections and upcoming statutory dates.</p></div>
         <button class="new-client-btn" onclick="openClientPopup()">+ NEW CLIENT</button>
     </div>
     <div class="welcome-strip">
-        <div><h2>Welcome Again  !</h2></div>
+        <div><span class="eyebrow">PROFESSIONAL DASHBOARD</span><h2>Welcome again</h2></div>
         <div class="today-chip" id="dashboardToday">SK CONSULTANT</div>
     </div>
     <div class="dashboard-cards dashboard-kpis">
@@ -2126,6 +2177,100 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
             <label class="full-field">Notes<textarea id="calendarEventNotes" rows="2" placeholder="Reference, return period or action required"></textarea></label>
         </div>
         <div class="form-actions"><button onclick="saveCalendarEvent()">Save Reminder</button><button class="secondary-btn" onclick="closeCalendarEventForm()">Cancel</button></div>
+    </div>
+</div>
+
+<!-- GST NEWS & UPDATES: official-source feed synced by the scheduled GitHub Action -->
+<div id="gstNews" class="section">
+    <div class="section-top gst-news-page-heading">
+        <div>
+            <h2>GST News &amp; Updates</h2>
+            <p class="section-subtitle">Official advisories, notifications, circulars and GST Council announcements in one place.</p>
+        </div>
+        <div class="gst-news-heading-actions">
+            <button type="button" class="secondary-btn" onclick="resetGSTNewsFilters()">Reset Filters</button>
+            <button type="button" onclick="refreshGSTNews()">↻ Refresh Feed</button>
+        </div>
+    </div>
+
+    <div class="gst-news-status-panel">
+        <div class="gst-news-status-copy">
+            <span class="gst-news-status-icon">NEWS</span>
+            <div>
+                <strong>Official Government Source Monitor</strong>
+                <p id="gstNewsSyncText">Connecting to the GST news feed…</p>
+            </div>
+        </div>
+        <div class="gst-news-status-meta">
+            <span id="gstNewsSyncBadge" class="gst-news-sync-badge">Checking feed</span>
+            <small id="gstNewsLastSync">Last sync: not available</small>
+        </div>
+    </div>
+
+    <div class="gst-news-filter-panel">
+        <div class="gst-news-search-wrap">
+            <label for="gstNewsSearch">Search GST updates</label>
+            <input id="gstNewsSearch" type="search" placeholder="Search title, notification number, keyword…" oninput="filterGSTNews()" autocomplete="off">
+        </div>
+        <div>
+            <label for="gstNewsCategory">Category</label>
+            <select id="gstNewsCategory" onchange="filterGSTNews()">
+                <option value="">All categories</option>
+                <option value="GSTN Advisory">GSTN Advisory</option>
+                <option value="CBIC Notification">CBIC Notification</option>
+                <option value="CBIC Circular">CBIC Circular</option>
+                <option value="GST Council Update">GST Council Update</option>
+                <option value="CBIC Press Release">CBIC Press Release</option>
+                <option value="DGGI Enforcement">DGGI Enforcement</option>
+                <option value="Other GST Update">Other GST Update</option>
+            </select>
+        </div>
+        <div>
+            <label for="gstNewsSource">Official source</label>
+            <select id="gstNewsSource" onchange="filterGSTNews()">
+                <option value="">All official sources</option>
+                <option value="gstn">GST Portal (GSTN)</option>
+                <option value="cbic_tip">CBIC Tax Information Portal</option>
+                <option value="cbic">CBIC</option>
+                <option value="gstcouncil">GST Council</option>
+                <option value="gstcouncil_press">GST Council Press Releases</option>
+                <option value="dggi">DGGI</option>
+            </select>
+        </div>
+        <div>
+            <label for="gstNewsPeriod">Publication period</label>
+            <select id="gstNewsPeriod" onchange="filterGSTNews()">
+                <option value="all">Any date</option>
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="365">Last 12 months</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="gst-news-feed-heading">
+        <div>
+            <h3>Latest Updates</h3>
+            <p id="gstNewsResultSummary">Loading official updates…</p>
+        </div>
+        <span class="gst-news-sorted-label">Newest published first</span>
+    </div>
+    <div id="gstNewsFeed" class="gst-news-feed" aria-live="polite">
+        <div class="gst-news-empty"><strong>Loading GST updates</strong><span>Fetching the latest items saved from official government sources.</span></div>
+    </div>
+    <div class="gst-news-load-more-wrap"><button id="gstNewsLoadMore" type="button" class="secondary-btn" onclick="showMoreGSTNews()" hidden>Load More Updates</button></div>
+
+    <div class="gst-news-source-note">
+        <strong>Official source links</strong>
+        <div class="gst-news-source-links">
+            <a href="https://www.gst.gov.in/newsandupdates" target="_blank" rel="noopener">GST Portal (GSTN)</a>
+            <a href="https://taxinformation.cbic.gov.in/" target="_blank" rel="noopener">CBIC Tax Information Portal</a>
+            <a href="https://www.cbic.gov.in/" target="_blank" rel="noopener">CBIC</a>
+            <a href="https://www.gstcouncil.gov.in/en/what-s-new" target="_blank" rel="noopener">GST Council</a>
+            <a href="https://dggi.cbic.gov.in/dggi-ui/news" target="_blank" rel="noopener">DGGI</a>
+        </div>
+        <p>Daily automatic sync is scheduled for approximately 9:00 AM India time through GitHub Actions. The Refresh Feed button reloads the latest data already synced to Firebase; it does not start a new government-site fetch. Always open and verify the original notification, circular or advisory before relying on it for compliance or litigation.</p>
     </div>
 </div>
 
@@ -4788,6 +4933,154 @@ function setupSettingsClientLiveSearch(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupSettingsClientLiveSearch);
 else setupSettingsClientLiveSearch();
+</script>
+
+
+<script id="skc-gst-news-feed">
+/* GST News & Updates
+   Feed data is collected by the scheduled GitHub Action and stored in Firebase.
+   The browser only reads the feed; no source-site scraping or secret credentials run here. */
+let gstNewsItems=[];
+let gstNewsSyncStatus={};
+let gstNewsVisibleLimit=18;
+let gstNewsListenerReady=false;
+const GST_NEWS_SOURCE_HOME={
+  gstn:'https://www.gst.gov.in/newsandupdates',
+  cbic_tip:'https://taxinformation.cbic.gov.in/',
+  cbic:'https://www.cbic.gov.in/',
+  gstcouncil:'https://www.gstcouncil.gov.in/en/what-s-new',
+  gstcouncil_press:'https://www.gstcouncil.gov.in/en/press-release',
+  dggi:'https://dggi.cbic.gov.in/dggi-ui/news'
+};
+
+function gstNewsFormatDate(value){
+  if(!value)return 'Date not shown by source';
+  const d=/^\d{4}-\d{2}-\d{2}$/.test(String(value))?new Date(String(value)+'T00:00:00'):new Date(value);
+  if(Number.isNaN(d.getTime()))return 'Date not shown by source';
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function gstNewsPublishedTimestamp(item){
+  if(Number(item.publishedAt)>0)return Number(item.publishedAt);
+  const s=String(item.publishedDate||'');
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)){const t=Date.parse(s+'T00:00:00Z');return Number.isNaN(t)?0:t;}
+  return 0;
+}
+function gstNewsTimestamp(item){return gstNewsPublishedTimestamp(item)||Number(item.syncedAt||0);}
+function gstNewsSafeURL(item){
+  const candidate=String(item.url||GST_NEWS_SOURCE_HOME[item.sourceKey]||'');
+  try{
+    const u=new URL(candidate);
+    const host=u.hostname.toLowerCase();
+    const allowed=['gst.gov.in','tutorial.gst.gov.in','taxinformation.cbic.gov.in','cbic.gov.in','gstcouncil.gov.in','dggi.cbic.gov.in'];
+    if(u.protocol!=='https:'||!allowed.some(d=>host===d||host.endsWith('.'+d)))return GST_NEWS_SOURCE_HOME[item.sourceKey]||'https://www.gst.gov.in/newsandupdates';
+    return u.href;
+  }catch(e){return GST_NEWS_SOURCE_HOME[item.sourceKey]||'https://www.gst.gov.in/newsandupdates';}
+}
+function gstNewsIsNew(item){
+  const time=gstNewsPublishedTimestamp(item);if(!time)return false;
+  const age=Date.now()-time;return age>=0&&age<=7*24*60*60*1000;
+}
+function getFilteredGSTNews(){
+  const q=(document.getElementById('gstNewsSearch')?.value||'').trim().toLocaleLowerCase();
+  const category=document.getElementById('gstNewsCategory')?.value||'';
+  const source=document.getElementById('gstNewsSource')?.value||'';
+  const days=document.getElementById('gstNewsPeriod')?.value||'all';
+  const cutoff=days==='all'?0:Date.now()-Number(days)*24*60*60*1000;
+  return [...gstNewsItems].filter(item=>{
+    const searchable=[item.title,item.summary,item.source,item.category,item.notificationNumber,item.sourceKey].filter(Boolean).join(' ').toLocaleLowerCase();
+    if(q&&!searchable.includes(q))return false;
+    if(category&&item.category!==category)return false;
+    if(source&&item.sourceKey!==source)return false;
+    const time=gstNewsPublishedTimestamp(item);
+    if(cutoff&&time&&time<cutoff)return false;
+    return true;
+  }).sort((a,b)=>gstNewsTimestamp(b)-gstNewsTimestamp(a));
+}
+function renderGSTNews(){
+  const feed=document.getElementById('gstNewsFeed');if(!feed)return;
+  const all=getFilteredGSTNews();
+  const visible=all.slice(0,gstNewsVisibleLimit);
+  const summary=document.getElementById('gstNewsResultSummary');
+  if(summary)summary.textContent=`${all.length} update${all.length===1?'':'s'} found · ${gstNewsItems.length} total in feed`;
+  const load=document.getElementById('gstNewsLoadMore');
+  if(load)load.hidden=all.length<=visible.length;
+  if(!visible.length){
+    const hasAny=gstNewsItems.length>0;
+    feed.innerHTML=`<div class="gst-news-empty"><strong>${hasAny?'No matching GST updates':'No GST updates have been synced yet'}</strong><span>${hasAny?'Try another search term or reset the filters.':'The daily sync runs from GitHub Actions. Check the setup guide and Firebase sync status if this is a new installation.'}</span></div>`;
+    return;
+  }
+  feed.innerHTML=visible.map(item=>{
+    const title=escapeHTML(item.title||'GST update');
+    const summaryText=escapeHTML(item.summary||'Open the official source for the full advisory, notification or circular.');
+    const category=escapeHTML(item.category||'Other GST Update');
+    const date=escapeHTML(gstNewsFormatDate(item.publishedDate||item.publishedAt));
+    const source=escapeHTML(item.source||'Official government source');
+    const url=escapeHTML(gstNewsSafeURL(item));
+    const fresh=gstNewsIsNew(item)?'<span class="gst-news-new">NEW</span>':'';
+    return `<article class="gst-news-card"><div class="gst-news-card-meta"><span class="gst-news-category">${category}</span><span class="gst-news-date">${date}${fresh}</span></div><h4>${title}</h4><p class="gst-news-excerpt">${summaryText}</p><div class="gst-news-card-bottom"><span class="gst-news-source-name">${source}</span><a class="gst-news-read-link" href="${url}" target="_blank" rel="noopener noreferrer">Read official update ↗</a></div></article>`;
+  }).join('');
+}
+function filterGSTNews(){gstNewsVisibleLimit=18;renderGSTNews();}
+function resetGSTNewsFilters(){
+  ['gstNewsSearch','gstNewsCategory','gstNewsSource'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const period=document.getElementById('gstNewsPeriod');if(period)period.value='all';
+  gstNewsVisibleLimit=18;renderGSTNews();
+}
+function showMoreGSTNews(){gstNewsVisibleLimit+=18;renderGSTNews();}
+function renderGSTNewsSyncStatus(){
+  const badge=document.getElementById('gstNewsSyncBadge');
+  const text=document.getElementById('gstNewsSyncText');
+  const last=document.getElementById('gstNewsLastSync');
+  if(!badge||!text||!last)return;
+  const time=Number(gstNewsSyncStatus.lastSyncAt||0);
+  const date=time?new Date(time).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true,timeZone:'Asia/Kolkata'}):'';
+  const sources=gstNewsSyncStatus.sourceResults||{};
+  const total=Object.keys(sources).length;
+  const ok=Object.values(sources).filter(x=>x&&x.status==='ok').length;
+  if(time){
+    badge.textContent=gstNewsSyncStatus.runStatus==='partial'?'Partial sync':'Daily sync active';
+    text.textContent=`${Number(gstNewsSyncStatus.itemCount||gstNewsItems.length)} update(s) stored · ${ok||total} source(s) reached successfully`;
+    last.textContent='Last successful sync: '+date+' IST';
+  }else{
+    badge.textContent='Awaiting first sync';
+    text.textContent='The feed is ready. Complete the GitHub Actions and Firebase setup to begin daily collection.';
+    last.textContent='Last sync: not available';
+  }
+}
+function attachGSTNewsListeners(){
+  if(gstNewsListenerReady)return;
+  gstNewsListenerReady=true;
+  db.ref('gstNewsUpdates').on('value',snapshot=>{
+    const raw=snapshot.val()||{};
+    gstNewsItems=Object.keys(raw).map(key=>({...raw[key],firebaseKey:key}));
+    renderGSTNews();renderGSTNewsSyncStatus();
+  },error=>{
+    console.error('GST news feed read failed:',error);
+    const feed=document.getElementById('gstNewsFeed');
+    if(feed)feed.innerHTML='<div class="gst-news-empty"><strong>Could not load GST news</strong><span>Firebase read access was denied or the network is unavailable. Check the database rules and connection.</span></div>';
+  });
+  db.ref('gstNewsSyncStatus').on('value',snapshot=>{
+    gstNewsSyncStatus=snapshot.val()||{};renderGSTNewsSyncStatus();
+  },error=>console.warn('GST news sync status unavailable:',error));
+}
+function refreshGSTNews(){
+  const button=document.querySelector('#gstNews button[onclick="refreshGSTNews()"]');
+  if(button){button.disabled=true;button.textContent='Refreshing…';}
+  Promise.all([db.ref('gstNewsUpdates').once('value'),db.ref('gstNewsSyncStatus').once('value')])
+    .then(([items,status])=>{
+      const raw=items.val()||{};gstNewsItems=Object.keys(raw).map(key=>({...raw[key],firebaseKey:key}));
+      gstNewsSyncStatus=status.val()||{};renderGSTNews();renderGSTNewsSyncStatus();
+      if(button)button.textContent='✓ Feed Reloaded';
+    })
+    .catch(error=>{console.error(error);alert('Could not reload the GST news feed: '+error.message);if(button)button.textContent='↻ Refresh Feed';})
+    .finally(()=>{if(button){button.disabled=false;window.setTimeout(()=>{button.textContent='↻ Refresh Feed';},1800);}});
+}
+function openComplianceCalendar(){
+  showSection('dashboard');
+  window.setTimeout(()=>{const el=document.getElementById('complianceCalendar');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},120);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attachGSTNewsListeners);
+else attachGSTNewsListeners();
 </script>
 
 </body>
