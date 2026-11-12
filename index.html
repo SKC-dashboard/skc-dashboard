@@ -1904,6 +1904,48 @@ button,.new-client-btn{font-family:var(--sk-font-ui)!important;font-size:13px!im
 }
 </style>
 
+
+<style id="skc-unified-typography-and-live-client-dropdown">
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+:root{--sk-font-ui:'DM Sans','Segoe UI',Arial,sans-serif;--sk-type-ink:#17252b;--sk-type-muted:#68777d}
+/* Use one consistent typeface throughout every module, including the header and footer. */
+html,body,body *{font-family:var(--sk-font-ui)!important}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{font-size:15px!important;line-height:1.55!important;font-weight:400!important;color:var(--sk-type-ink)}
+.header .title{font-size:clamp(25px,3vw,38px)!important;font-weight:800!important;letter-spacing:.10em!important;line-height:1.15!important}
+.header .subtitle{font-size:12px!important;font-weight:700!important;letter-spacing:.12em!important;line-height:1.4!important}
+.section h2,.section-top h2,.section>h2{font-size:clamp(23px,2vw,27px)!important;line-height:1.22!important;font-weight:800!important;letter-spacing:-.035em!important;color:#17252b}
+.welcome-strip h2{font-size:clamp(24px,2.4vw,30px)!important;line-height:1.2!important;font-weight:800!important;letter-spacing:-.035em!important}
+.panel-heading h3,.panel-card h3,.form-panel h3{font-size:17px!important;line-height:1.35!important;font-weight:800!important;letter-spacing:-.02em!important}
+.section-subtitle,.report-caption{font-size:13px!important;line-height:1.5!important;font-weight:500!important;color:var(--sk-type-muted)}
+.sidebar a{font-size:14px!important;font-weight:650!important;letter-spacing:.005em!important}
+.section{font-size:14px!important}
+.modern-table{font-size:13px!important}
+.modern-table th{font-size:11.5px!important;line-height:1.35!important;font-weight:800!important;letter-spacing:.045em!important}
+.modern-table td{font-size:12.5px!important;line-height:1.45!important;font-weight:500!important}
+.form-grid label,.settings-box label{font-size:12.5px!important;line-height:1.45!important;font-weight:700!important}
+.section input:not([type=checkbox]),.section select,.section textarea{font-size:14px!important;line-height:1.4!important;font-weight:500!important}
+button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;font-weight:750!important;letter-spacing:.01em!important}
+.footer,.footer *{font-size:13px;line-height:1.55}
+.footer h2,.footer h3{font-size:16px!important;font-weight:800!important;letter-spacing:.01em!important}
+.card-icon,.eyebrow{font-weight:800!important;letter-spacing:.1em!important}
+.fee-client-picker{position:relative!important;display:flex!important;flex-direction:column!important;gap:8px!important;grid-column:1/-1!important;max-width:720px!important;color:#46575d!important;z-index:5}
+.fee-client-picker .fee-client-search{display:block;width:100%;min-width:0;box-sizing:border-box;padding:13px 15px!important;border:1px solid #d8dfe0!important;border-radius:10px!important;background:#fff!important;color:#24343a!important;font-size:14px!important;font-weight:500!important;box-shadow:0 2px 7px rgba(20,35,40,.025);transition:border-color .16s ease,box-shadow .16s ease}
+.fee-client-picker .fee-client-search:focus{outline:none!important;border-color:#b58a3a!important;box-shadow:0 0 0 3px rgba(181,138,58,.13)!important}
+.fee-client-picker .fee-client-search::placeholder{color:#89969b;opacity:1}
+.fee-client-picker .fee-client-search.fee-client-selected{border-color:#b58a3a!important;background:#fffdf8!important}
+.fee-client-results{position:absolute!important;top:100%;left:0;right:0;z-index:5000;max-height:310px;overflow-y:auto;margin-top:4px;background:#fff;border:1px solid #dfe4e5;border-radius:11px;box-shadow:0 14px 34px rgba(18,34,40,.16);padding:5px}
+.fee-client-results[hidden]{display:none!important}
+.fee-client-results-meta{padding:8px 10px;color:#8a762f;font-size:11px!important;font-weight:800!important;letter-spacing:.035em!important;text-transform:uppercase;border-bottom:1px solid #eef0ef}
+.fee-client-option{display:flex!important;width:100%;flex-direction:column;align-items:flex-start;gap:2px;margin:2px 0;padding:9px 11px!important;background:#fff!important;color:#25363c!important;border:0!important;border-radius:7px!important;text-align:left!important;cursor:pointer!important;transform:none!important}
+.fee-client-option:hover,.fee-client-option.is-active{background:#f7f2e7!important;color:#17252b!important;transform:none!important}
+.fee-client-option-name{font-size:13px!important;font-weight:800!important;line-height:1.35!important}
+.fee-client-option-meta{font-size:11px!important;font-weight:500!important;line-height:1.4!important;color:#7a878c!important;overflow-wrap:anywhere}
+.fee-client-no-results,.fee-client-more{padding:12px 10px;font-size:12px!important;line-height:1.45!important;color:#78868b!important}
+@media(min-width:769px){.modern-table th{font-size:11.5px!important}.modern-table td{font-size:12.5px!important}}
+@media(max-width:768px){body{font-size:14px!important}.section h2,.section-top h2,.section>h2{font-size:23px!important}.modern-table th{font-size:10.5px!important}.modern-table td{font-size:11.5px!important}.fee-client-picker{max-width:100%!important}.fee-client-results{max-height:260px}}
+</style>
+
 </head>
 
 
@@ -2285,8 +2327,8 @@ button,.new-client-btn{font-family:var(--sk-font-ui)!important;font-size:13px!im
   <div class="panel-heading"><h3 id="feeFormTitle">Record Professional Fee</h3><span class="report-caption">Payments can be entered separately from the Invoice Register.</span></div>
   <div class="form-grid">
    <label class="fee-client-picker">Client selection — Search Trade Name / Legal Name / GSTIN / PAN
-    <input id="feeClientSearch" class="fee-client-search" type="search" list="feeClientOptions" placeholder="Search and select client..." autocomplete="off" required oninput="selectFeeClientFromSearch()" onchange="selectFeeClientFromSearch()">
-    <datalist id="feeClientOptions"></datalist>
+    <input id="feeClientSearch" class="fee-client-search" type="search" placeholder="Start typing a client name, legal name, GSTIN or PAN..." autocomplete="off" required aria-autocomplete="list" aria-haspopup="listbox" aria-controls="feeClientDropdown" aria-expanded="false" oninput="selectFeeClientFromSearch()" onfocus="showFeeClientDropdown()" onkeydown="handleFeeClientSearchKeydown(event)" onblur="hideFeeClientDropdownSoon()">
+    <div id="feeClientDropdown" class="fee-client-results" role="listbox" aria-label="Matching clients" hidden></div>
     <select id="feeClient" required aria-hidden="true" tabindex="-1" style="display:none"><option value="">Select client</option></select>
    </label>
    <label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label>
@@ -2332,20 +2374,19 @@ button,.new-client-btn{font-family:var(--sk-font-ui)!important;font-size:13px!im
             <h2>SK CONSULTANT</h2>
             <p>Advocate Mohamad Faizan Shaikh</p>
             <p>Enrollment No.: G/3018/2025</p>
-            <p>Tax Professional</p>
+            <p>GST & Income Tax Practice</p>
         </div>
 
         <div class="footer-middle">
             <h3>CONTACT</h3>
-            <p>+91 91733 21079</p>
+            <p>+91 9173321079</p>
         </div>
 
         <div class="footer-right">
             <h3>OFFICE ADDRESS</h3>
-            <p>228, Times World,</p>
-            <p>Opp. Atlanta Shopping Center,</p>
-            <p>Althan Canal Road</p>
-            <p>Surat- 395 017</p>
+            <p>7/4284, Suthar Faliya</p>
+            <p>Galemandi, Mahidharpura</p>
+            <p>Surat - 395003</p>
         </div>
 
     </div>
@@ -4380,7 +4421,13 @@ function renderBilling(){
 </script>
 
 
-<script id="skc-fee-client-single-box-search">
+<script id="skc-fee-client-live-dropdown-search">
+/* Live client search for Record Professional Fee.
+   Filters immediately on every keystroke; the selected Firebase key remains
+   stored in the existing hidden #feeClient select for compatibility. */
+window.feeClientMatches = [];
+window.feeClientActiveIndex = -1;
+
 function feeClientSearchBlob(c){
   return [c.trade,c.tradeName,c.legal,c.legalName,c.name,c.gstin,c.pan,c.group,c._type]
     .filter(Boolean).join(' ').toLocaleLowerCase();
@@ -4393,26 +4440,24 @@ function feeClientOptionLabel(c){
     .filter(Boolean);
   return primary+(extras.length?' — '+extras.join(' | '):'');
 }
+function feeClientMeta(c){
+  const legal=c.legalName||c.legal||'';
+  const identifier=c._type==='GST'?(c.gstin||''):(c.pan||'');
+  return [legal&&legal!==clientLabel(c)?legal:'',identifier,c._type==='GST'?'GST client':'ITR client']
+    .filter(Boolean).join(' · ');
+}
 function fillFeeClientSelect(preserveValue=true){
   const select=document.getElementById('feeClient');
   const search=document.getElementById('feeClientSearch');
-  const datalist=document.getElementById('feeClientOptions');
-  if(!select||!search||!datalist)return;
+  if(!select||!search)return;
   const old=preserveValue?select.value:'';
   const clients=allPracticeClients().sort((a,b)=>clientLabel(a).localeCompare(clientLabel(b),'en',{sensitivity:'base'}));
   select.innerHTML='<option value="">Select client</option>';
-  datalist.innerHTML='';
   clients.forEach(c=>{
-    const key=c._type+'|'+c.firebaseKey;
-    const label=feeClientOptionLabel(c);
-    const hiddenOption=document.createElement('option');
-    hiddenOption.value=key;
-    hiddenOption.textContent=label;
-    select.appendChild(hiddenOption);
-    const suggestion=document.createElement('option');
-    suggestion.value=label;
-    suggestion.dataset.key=key;
-    datalist.appendChild(suggestion);
+    const option=document.createElement('option');
+    option.value=c._type+'|'+c.firebaseKey;
+    option.textContent=feeClientOptionLabel(c);
+    select.appendChild(option);
   });
   if(old&&clients.some(c=>c._type+'|'+c.firebaseKey===old)){
     select.value=old;
@@ -4420,38 +4465,129 @@ function fillFeeClientSelect(preserveValue=true){
   }else{
     select.value='';
     if(!preserveValue)search.value='';
+    search.classList.remove('fee-client-selected');
+    closeFeeClientDropdown();
   }
 }
-function selectFeeClientFromSearch(){
+function renderFeeClientDropdown(){
   const search=document.getElementById('feeClientSearch');
-  const datalist=document.getElementById('feeClientOptions');
+  const dropdown=document.getElementById('feeClientDropdown');
+  if(!search||!dropdown)return;
+  const query=search.value.trim().toLocaleLowerCase();
+  const clients=allPracticeClients().sort((a,b)=>clientLabel(a).localeCompare(clientLabel(b),'en',{sensitivity:'base'}));
+  const tokens=query.split(/\s+/).filter(Boolean);
+  window.feeClientMatches=clients.filter(c=>{
+    const blob=feeClientSearchBlob(c);
+    return !tokens.length||tokens.every(token=>blob.includes(token));
+  });
+  window.feeClientActiveIndex=-1;
+  const visible=window.feeClientMatches.slice(0,18);
+  const count=window.feeClientMatches.length;
+  let html=`<div class="fee-client-results-meta">${query?`${count} matching client${count===1?'':'s'}`:`${count} clients · Start typing to narrow the list`}</div>`;
+  if(!count){
+    html+='<div class="fee-client-no-results">No matching client found. Check the name, GSTIN or PAN.</div>';
+  }else{
+    html+=visible.map((c,i)=>{
+      const key=c._type+'|'+c.firebaseKey;
+      return `<button type="button" class="fee-client-option" role="option" aria-selected="false" data-client-key="${escapeHTML(key)}" data-result-index="${i}"><span class="fee-client-option-name">${escapeHTML(clientLabel(c))}</span><span class="fee-client-option-meta">${escapeHTML(feeClientMeta(c)||c._type)}</span></button>`;
+    }).join('');
+    if(count>visible.length)html+=`<div class="fee-client-more">Showing the first ${visible.length} matches. Type more letters to narrow the list.</div>`;
+  }
+  dropdown.innerHTML=html;
+  dropdown.hidden=false;
+  search.setAttribute('aria-expanded','true');
+}
+function showFeeClientDropdown(){
+  renderFeeClientDropdown();
+}
+function closeFeeClientDropdown(){
+  const dropdown=document.getElementById('feeClientDropdown');
+  const search=document.getElementById('feeClientSearch');
+  if(dropdown)dropdown.hidden=true;
+  if(search)search.setAttribute('aria-expanded','false');
+  window.feeClientActiveIndex=-1;
+}
+function hideFeeClientDropdownSoon(){
+  window.setTimeout(()=>closeFeeClientDropdown(),150);
+}
+function selectFeeClientOption(key){
   const select=document.getElementById('feeClient');
-  if(!search||!datalist||!select)return;
-  const value=search.value.trim().toLocaleLowerCase();
+  const search=document.getElementById('feeClientSearch');
+  if(!select||!search)return;
+  const client=allPracticeClients().find(c=>c._type+'|'+c.firebaseKey===key);
+  if(!client)return;
+  select.value=key;
+  search.value=feeClientOptionLabel(client);
+  closeFeeClientDropdown();
+  search.classList.add('fee-client-selected');
+}
+function selectFeeClientFromSearch(){
+  const select=document.getElementById('feeClient');
+  const search=document.getElementById('feeClientSearch');
+  if(!select||!search)return;
   select.value='';
-  if(!value)return;
-  const options=[...datalist.options];
-  let match=options.find(o=>o.value.toLocaleLowerCase()===value);
-  if(!match){
-    const matches=options.filter(o=>o.value.toLocaleLowerCase().includes(value));
-    if(matches.length===1)match=matches[0];
-  }
-  if(!match){
-    const clients=allPracticeClients().filter(c=>feeClientSearchBlob(c).includes(value));
-    if(clients.length===1)match=options.find(o=>o.dataset.key===clients[0]._type+'|'+clients[0].firebaseKey);
-  }
-  if(match)select.value=match.dataset.key;
+  search.classList.remove('fee-client-selected');
+  renderFeeClientDropdown();
 }
 function syncFeeClientSearch(){
   const select=document.getElementById('feeClient');
   const search=document.getElementById('feeClientSearch');
-  const datalist=document.getElementById('feeClientOptions');
-  if(!select||!search||!datalist)return;
-  if(!select.value){search.value='';return;}
-  const option=[...datalist.options].find(o=>o.dataset.key===select.value);
-  if(option)search.value=option.value;
+  if(!select||!search)return;
+  if(!select.value){search.value='';search.classList.remove('fee-client-selected');return;}
+  const client=allPracticeClients().find(c=>c._type+'|'+c.firebaseKey===select.value);
+  if(client){search.value=feeClientOptionLabel(client);search.classList.add('fee-client-selected');}
+}
+function handleFeeClientSearchKeydown(event){
+  const dropdown=document.getElementById('feeClientDropdown');
+  if(!dropdown)return;
+  const total=Math.min(window.feeClientMatches.length,18);
+  if(event.key==='ArrowDown'){
+    event.preventDefault();
+    if(dropdown.hidden)renderFeeClientDropdown();
+    if(total){window.feeClientActiveIndex=Math.min(total-1,window.feeClientActiveIndex+1);updateFeeClientActiveOption();}
+  }else if(event.key==='ArrowUp'){
+    event.preventDefault();
+    if(total){window.feeClientActiveIndex=Math.max(0,window.feeClientActiveIndex-1);updateFeeClientActiveOption();}
+  }else if(event.key==='Enter'){
+    if(!dropdown.hidden&&window.feeClientActiveIndex>=0&&window.feeClientMatches[window.feeClientActiveIndex]){
+      event.preventDefault();
+      const c=window.feeClientMatches[window.feeClientActiveIndex];
+      selectFeeClientOption(c._type+'|'+c.firebaseKey);
+    }else if(!dropdown.hidden&&total===1){
+      event.preventDefault();
+      const c=window.feeClientMatches[0];
+      selectFeeClientOption(c._type+'|'+c.firebaseKey);
+    }
+  }else if(event.key==='Escape'){
+    closeFeeClientDropdown();
+  }
+}
+function updateFeeClientActiveOption(){
+  const dropdown=document.getElementById('feeClientDropdown');
+  if(!dropdown)return;
+  const options=[...dropdown.querySelectorAll('.fee-client-option')];
+  options.forEach((option,index)=>{
+    const active=index===window.feeClientActiveIndex;
+    option.classList.toggle('is-active',active);
+    option.setAttribute('aria-selected',active?'true':'false');
+    if(active)option.scrollIntoView({block:'nearest'});
+  });
 }
 function filterFeeClientOptions(){selectFeeClientFromSearch();}
+function setupFeeClientLiveSearch(){
+  const dropdown=document.getElementById('feeClientDropdown');
+  const search=document.getElementById('feeClientSearch');
+  if(!dropdown||!search||dropdown.dataset.bound==='yes')return;
+  dropdown.dataset.bound='yes';
+  dropdown.addEventListener('mousedown',event=>event.preventDefault());
+  dropdown.addEventListener('click',event=>{
+    const option=event.target.closest('.fee-client-option');
+    if(option)selectFeeClientOption(option.dataset.clientKey);
+  });
+  fillFeeClientSelect(true);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupFeeClientLiveSearch);
+else setupFeeClientLiveSearch();
 </script>
 
 </body>
