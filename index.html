@@ -2673,33 +2673,96 @@ async function getSavedPaymentQR(){
  const qrURL='https://raw.githubusercontent.com/SKC-dashboard/skc-dashboard/main/PAYMENT%20QR.PNG';
  return await invoiceImageData(qrURL);
 }
+async function getInvoiceLogo(){
+ const logoURL='https://raw.githubusercontent.com/SKC-dashboard/skc-dashboard/main/logo.png';
+ return await invoiceImageData(logoURL);
+}
 async function invoiceImageData(url){
  if(!url)return null;
  try{
   const response=await fetch(url,{mode:'cors',cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);
   const blob=await response.blob();const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});
   const type=(blob.type||'').toLowerCase();return {data,format:type.includes('png')?'PNG':type.includes('webp')?'WEBP':'JPEG'};
- }catch(e){console.warn('QR image load failed:',e);return null;}
+ }catch(e){console.warn('Invoice image load failed:',e);return null;}
 }
 async function buildInvoicePDF(x){
  if(!window.jspdf?.jsPDF){alert('PDF library could not load. Check internet connection and try again.');return null;}
- const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'mm',format:'a4'}),net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0))),paid=Number(x.paid||0),client=invoiceClientData(x.client);
-
- doc.setTextColor(15,15,15);doc.setFont('helvetica','bold');doc.setFontSize(22);doc.text('SK CONSULTANT',105,18,{align:'center'});doc.setFontSize(11);doc.text('ADV. MOHAMAD FAIZAN SHAIKH',105,25,{align:'center'});
- doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('228, Times World, Opp. Atlanta Shopping Center, Althan Canal Road - 395017',105,31,{align:'center'});doc.text('Mo.No. +91 9173321079 | Email: skconsultancy0720@gmail.com',105,36,{align:'center'});doc.setDrawColor(25,25,25);doc.setLineWidth(.5);doc.line(14,41,196,41);
- doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('INVOICE',105,51,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Inv no: '+(x.reference||''),14,61);doc.text('Date: '+(x.invoiceDate||''),140,61);
- let y=72;[['Trade Name',client.trade],['Legal Name',client.legal],['PAN',client.pan],['GSTIN',client.gstin]].forEach(([label,value])=>{doc.setFont('helvetica','bold');doc.text(label+':',14,y);doc.setFont('helvetica','normal');doc.text(String(value||'—').slice(0,75),43,y);y+=7;});
- y+=7;const left=14,right=196;doc.setFillColor(238,238,235);doc.rect(left,y-6,right-left,10,'F');doc.setFont('helvetica','bold');doc.setFontSize(9);
- doc.text('Sr. No.',17,y);doc.text('DETAILS',38,y);doc.text('F.Y.',145,y,{align:'center'});doc.text('Amount (₹)',192,y,{align:'right'});doc.setDrawColor(120,120,120);doc.line(left,y+5,right,y+5);y+=13;
+ const {jsPDF}=window.jspdf;
+ const doc=new jsPDF({unit:'mm',format:'a4'});
+ const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));
+ const paid=Number(x.paid||0),client=invoiceClientData(x.client);
+ const PAGE_W=210,LEFT=14,RIGHT=196,CONTENT_W=RIGHT-LEFT;
+ const navy=[22,48,67],gold=[190,145,45],muted=[95,105,112],line=[218,224,228];
+ const moneyText=n=>Number(n||0).toFixed(2);
+ const drawHeader=async()=>{
+  // Clean modern masthead with the repository logo in the top-left corner.
+  doc.setFillColor(248,250,251);doc.rect(0,0,PAGE_W,43,'F');
+  const logo=await getInvoiceLogo();
+  if(logo){try{doc.addImage(logo.data,logo.format,LEFT,9,23,23,undefined,'FAST');}catch(e){console.warn('Invoice logo embed failed:',e);}}
+  doc.setTextColor(...navy);doc.setFont('helvetica','bold');doc.setFontSize(21);doc.text('SK CONSULTANT',105,17,{align:'center'});
+  doc.setFontSize(10);doc.text('ADV. MOHAMAD FAIZAN SHAIKH',105,24,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8);
+  doc.setTextColor(65,75,82);
+  doc.text('228, Times World, Opp. Atlanta Shopping Center, Althan Canal Road - 395017',105,31,{align:'center'});
+  doc.text('Mo.No. +91 9173321079  |  Email: skconsultancy0720@gmail.com',105,36,{align:'center'});
+  doc.setDrawColor(...gold);doc.setLineWidth(.8);doc.line(LEFT,43,RIGHT,43);
+ };
+ await drawHeader();
+ doc.setTextColor(...navy);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text('INVOICE',105,54,{align:'center'});
+ doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(35,45,52);
+ doc.text('Invoice No.: '+(x.reference||''),LEFT,65);
+ doc.text('Date: '+(x.invoiceDate||''),RIGHT,65,{align:'right'});
+ // Client particulars
+ let y=77;
+ const details=[['Trade Name',client.trade],['Legal Name',client.legal],['PAN',client.pan],['GSTIN',client.gstin]];
+ details.forEach(([label,value])=>{
+  doc.setFont('helvetica','bold');doc.setFontSize(8.7);doc.setTextColor(...navy);doc.text(label+':',LEFT,y);
+  doc.setFont('helvetica','normal');doc.setTextColor(45,52,58);doc.text(String(value||'—').slice(0,90),43,y);y+=6;
+ });
+ y+=5;
  const items=Array.isArray(x.items)&&x.items.length?x.items:String(x.service||'Professional Fees').split('\n').filter(Boolean).map((service,i)=>({service,financialYear:i===0?(x.financialYear||''):'',amount:i===0?Number(x.amount||0):0}));
- doc.setFont('helvetica','normal');doc.setFontSize(9);
- items.forEach((item,i)=>{const wrapped=doc.splitTextToSize(String(item.service||'—'),95),fy=String(item.financialYear||x.financialYear||''),amt=Number(item.amount||0);doc.text(String(i+1),17,y);doc.text(wrapped,38,y);doc.text(fy,145,y);doc.text(amt.toFixed(2),192,y,{align:'right'});y+=Math.max(10,wrapped.length*4.5);doc.setDrawColor(220,220,220);doc.line(left,y-4,right,y-4);if(y>215){doc.addPage();y=20;}});
- y+=2;doc.setFont('helvetica','normal');doc.text('Less: Discount',38,y);doc.text(Number(x.discount||0).toFixed(2),192,y,{align:'right'});y+=8;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.line(120,y-5,196,y-5);doc.text('TOTAL',145,y);doc.text(net.toFixed(2),192,y,{align:'right'});
- y+=8;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('Amount Received: '+paid.toFixed(2),14,y);doc.text('Balance Due: '+(net-paid).toFixed(2),110,y);
- y+=15;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('Bank Details:',14,y);y+=7;doc.setFont('helvetica','normal');doc.setFontSize(8.5);[['Bank Name','IDFC FIRST BANK'],['Account Name','SHAIKH MOHAMMAD FAIZAN MOHAMMAD ZAKIR'],['Account Number','10265164677'],['IFSC','IDFB0042261'],['MICR','395751002']].forEach(([a,b])=>{doc.text(a+':',14,y);doc.text(b,48,y);y+=5;});
- const qr=await getSavedPaymentQR();if(qr){try{const qrY=Math.min(Math.max(y-24,205),235);doc.addImage(qr.data,qr.format,153,qrY,30,30);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text('Scan to Pay',168,qrY+33,{align:'center'});}catch(e){console.error('QR embed failed:',e);}}else{console.error('Repository payment QR could not be loaded; check PAYMENT QR.PNG in GitHub main branch.');}
- // Signature photo intentionally excluded from invoice PDF.
- doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('For SK CONSULTANT',192,Math.min(y+32,280),{align:'right'});doc.setFont('helvetica','normal');doc.text('Authorised Signature',192,Math.min(y+37,285),{align:'right'});
+ const drawTableHeader=()=>{
+  doc.setFillColor(...navy);doc.roundedRect(LEFT,y-5,CONTENT_W,10,1.5,1.5,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(255,255,255);
+  doc.text('Sr. No.',LEFT+3,y+1);doc.text('DETAILS',LEFT+23,y+1);doc.text('F.Y.',145,y+1,{align:'center'});doc.text('Amount',RIGHT-3,y+1,{align:'right'});
+  y+=11;
+ };
+ drawTableHeader();
+ doc.setFont('helvetica','normal');doc.setFontSize(8.8);doc.setTextColor(35,45,52);
+ items.forEach((item,i)=>{
+  const wrapped=doc.splitTextToSize(String(item.service||'—'),91);
+  const fy=String(item.financialYear||x.financialYear||'');
+  const rowH=Math.max(10,wrapped.length*4.5+4);
+  if(y+rowH>188){doc.addPage();y=20;drawTableHeader();doc.setFont('helvetica','normal');doc.setFontSize(8.8);doc.setTextColor(35,45,52);}
+  doc.text(String(i+1),LEFT+3,y+1);
+  doc.text(wrapped,LEFT+23,y+1);
+  doc.text(fy,145,y+1,{align:'center'});
+  doc.text(moneyText(item.amount),RIGHT-3,y+1,{align:'right'});
+  y+=rowH;doc.setDrawColor(...line);doc.setLineWidth(.25);doc.line(LEFT,y-2,RIGHT,y-2);
+ });
+ // Totals and payment summary stay in the content area, never under the QR.
+ y+=3;
+ if(y+32>190){doc.addPage();y=24;}
+ doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(45,52,58);
+ doc.text('Less: Discount',LEFT+23,y);doc.text(moneyText(x.discount),RIGHT-3,y,{align:'right'});
+ y+=8;doc.setDrawColor(...gold);doc.setLineWidth(.45);doc.line(128,y-5,RIGHT,y-5);
+ doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...navy);
+ doc.text('TOTAL',145,y,{align:'center'});doc.text(moneyText(net),RIGHT-3,y,{align:'right'});
+ y+=9;doc.setFont('helvetica','normal');doc.setFontSize(8.8);doc.setTextColor(45,52,58);
+ doc.text('Amount Received: '+moneyText(paid),LEFT,y);
+ doc.text('Balance Due: '+moneyText(net-paid),105,y);
+ y+=13;
+ if(y+35>205){doc.addPage();y=22;}
+ doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(...navy);doc.text('Bank Details',LEFT,y);y+=7;
+ doc.setFont('helvetica','normal');doc.setFontSize(8.2);doc.setTextColor(45,52,58);
+ [['Bank Name','IDFC FIRST BANK'],['Account Name','SHAIKH MOHAMMAD FAIZAN MOHAMMAD ZAKIR'],['Account Number','10265164677'],['IFSC','IDFB0042261'],['MICR','395751002']].forEach(([a,b])=>{doc.setFont('helvetica','bold');doc.text(a+':',LEFT,y);doc.setFont('helvetica','normal');doc.text(b,48,y);y+=5.2;});
+ // Reserve a fixed footer zone on every final page. QR and signature cannot collide.
+ const qr=await getSavedPaymentQR();
+ if(qr){try{doc.addImage(qr.data,qr.format,160,235,27,27,undefined,'FAST');doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(70,75,80);doc.text('Scan to Pay',173.5,265,{align:'center'});}catch(e){console.error('QR embed failed:',e);}}
+ else{console.error('Repository payment QR could not be loaded; check PAYMENT QR.PNG in GitHub main branch.');}
+ // Text-only authorisation; no signature photograph is embedded.
+ doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...navy);doc.text('For SK CONSULTANT',RIGHT,281,{align:'right'});
+ doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text('Authorised Signature',RIGHT,286,{align:'right'});
  return doc;
 }
 async function invoicePDF(key){const x=feeItems.find(a=>a.firebaseKey===key);if(!x)return alert('Invoice record not found.');const doc=await buildInvoicePDF(x);if(doc)doc.save((x.reference||'SKC_Invoice')+'.pdf');}
