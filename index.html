@@ -156,22 +156,73 @@ function loadUploadClients(){
 
 }
 function loadSettingsClients(){
-    let type = document.getElementById("typeSelect").value;
-    let select = document.getElementById("clientSelect");
+    const type = document.getElementById("typeSelect").value;
+    const select = document.getElementById("clientSelect");
+    const search = document.getElementById("settingsClientSearch");
+    const datalist = document.getElementById("settingsClientOptions");
 
-    select.innerHTML = `
-    <option value="">Select Client</option>
-`;
+    select.innerHTML = '<option value="">Select Client</option>';
+    datalist.innerHTML = "";
+    search.value = "";
 
-    let list = (type === "gst") ? gstClients : itrClients;
+    const list = (type === "gst") ? gstClients : itrClients;
+    const sorted = [...list].sort((a,b) =>
+        (a.trade || a.tradeName || a.legal || a.legalName || "")
+        .localeCompare(
+            (b.trade || b.tradeName || b.legal || b.legalName || ""),
+            "en",
+            {sensitivity:"base"}
+        )
+    );
 
-    list.forEach((c, i) => {
-        let option = document.createElement("option");
-        option.value = c.firebaseKey;
-        option.text = c.trade;
+    sorted.forEach(c => {
+        const key = c.firebaseKey;
+        const trade = c.trade || c.tradeName || c.name || "";
+        const legal = c.legal || c.legalName || "";
+        const identifier = type === "gst" ? (c.gstin || "") : (c.pan || "");
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = trade;
         select.appendChild(option);
+
+        const suggestion = document.createElement("option");
+        suggestion.value = [trade, legal, identifier].filter(Boolean).join(" — ");
+        suggestion.dataset.key = key;
+        datalist.appendChild(suggestion);
     });
-      loadClientDetails();
+
+    loadClientDetails();
+}
+
+function selectSettingsClientFromSearch(){
+    const search = document.getElementById("settingsClientSearch");
+    const datalist = document.getElementById("settingsClientOptions");
+    const select = document.getElementById("clientSelect");
+    const value = search.value.trim().toLocaleLowerCase();
+
+    const options = [...datalist.options];
+    let match = options.find(o => o.value.toLocaleLowerCase() === value);
+
+    // Also allow a unique partial match by trade name, legal name, GSTIN or PAN.
+    if(!match && value){
+        const matches = options.filter(o => o.value.toLocaleLowerCase().includes(value));
+        if(matches.length === 1) match = matches[0];
+    }
+
+    if(match){
+        select.value = match.dataset.key;
+        loadClientDetails();
+    }else if(!value){
+        select.value = "";
+        clearSettingsFields();
+    }
+}
+
+function syncSettingsClientSearch(){
+    const select = document.getElementById("clientSelect");
+    const datalist = document.getElementById("settingsClientOptions");
+    const option = [...datalist.options].find(o => o.dataset.key === select.value);
+    document.getElementById("settingsClientSearch").value = option ? option.value : "";
 }
 function loadClientDetails(){
 
@@ -1047,18 +1098,21 @@ table {
 
 /* GST LOGIN COLUMN SMALL */
 #gstTable th:first-child,
-#gstTable td:first-child{
-    width: 55px;
-    min-width: 55px;
-    max-width: 55px;
-    text-align: center;
-}
-
+#gstTable td:first-child,
 #itrTable th:first-child,
 #itrTable td:first-child{
-    width:55px;
-    min-width:55px;
-    max-width:55px;
+    width:58px;
+    min-width:58px;
+    max-width:58px;
+    text-align:center;
+}
+#gstTable th:nth-child(2),
+#gstTable td:nth-child(2),
+#itrTable th:nth-child(2),
+#itrTable td:nth-child(2){
+    width:58px;
+    min-width:58px;
+    max-width:58px;
     text-align:center;
 }
 
@@ -1503,18 +1557,9 @@ button,.new-client-btn{font-size:13px!important}
 <div id="portalCredentialModal" class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="portalModalTitle">
     <div class="portal-modal-card">
         <h3 id="portalModalTitle">Portal Login Details</h3>
-        <p class="portal-modal-note">
-            The portal opens in a new tab. For security reasons, this dashboard cannot directly
-            fill fields on a separate government website. Use the copy buttons below to paste
-            the credentials into the portal.
+        <p class="portal-modal-note" id="portalCopyStatus">
+            The portal is opening. Your username will be copied automatically. Copy the password below.
         </p>
-        <div class="portal-credential-row">
-            <label for="portalUsername">Username / User ID</label>
-            <div class="portal-credential-control">
-                <input id="portalUsername" type="text" readonly>
-                <button type="button" onclick="copyPortalCredential('portalUsername', this)">Copy</button>
-            </div>
-        </div>
         <div class="portal-credential-row">
             <label for="portalPassword">Password</label>
             <div class="portal-credential-control">
@@ -1772,7 +1817,18 @@ button,.new-client-btn{font-size:13px!important}
 <option value="itr">ITR</option>
 </select>
 
-<select id="clientSelect" onchange="loadClientDetails()"></select> <!-- ✅ ADD HERE -->
+<input
+    id="settingsClientSearch"
+    type="search"
+    list="settingsClientOptions"
+    placeholder="Type client / trade name / GSTIN / PAN to search..."
+    autocomplete="off"
+    onchange="selectSettingsClientFromSearch()"
+    oninput="selectSettingsClientFromSearch()"
+    style="width:100%;margin:10px 0;padding:12px;border:1px solid #ccd4d8;border-radius:8px;box-sizing:border-box;"
+>
+<datalist id="settingsClientOptions"></datalist>
+<select id="clientSelect" onchange="syncSettingsClientSearch();loadClientDetails()" style="display:none"></select>
 
 
         <input id="edit_trade" placeholder="Trade Name">
@@ -1828,7 +1884,7 @@ button,.new-client-btn{font-size:13px!important}
 </div>
 
 <!-- FEES & BILLING -->
-<div id="billing" class="section"><div class="section-top"><div><h2>Fees & Billing</h2><p class="section-subtitle">Record professional fees, receipts and outstanding balances.</p></div><button class="new-client-btn" onclick="openFeeForm()">+ RECORD FEE</button></div><div class="billing-summary"><div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div><div class="summary-tile"><span>Received</span><strong id="feeReceived">₹0</strong></div><div class="summary-tile"><span>Outstanding</span><strong id="feePending">₹0</strong></div></div><div class="table-wrap"><table id="billingTable" class="modern-table"></table></div><div class="panel-card form-panel" id="feeFormPanel" hidden><h3 id="feeFormTitle">Record Professional Fee</h3><div class="form-grid"><label>Client<select id="feeClient"></select></label><label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label><div class="full-field fee-services-field"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><strong>Services / Particulars</strong><button type="button" class="small-action" onclick="addFeeServiceLine()">+ ADD SERVICE</button></div><div id="feeServiceLines"></div></div><label>Financial Year (default)<input id="feeFY" placeholder="2026-27"></label><label>Invoice date<input id="feeDate" type="date"></label><label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01" readonly></label><label>Amount received (₹)<input id="feePaid" type="number" min="0" step="0.01" value="0"></label><label>Payment date<input id="feePaymentDate" type="date"></label><label>Payment mode<select id="feeMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label></div><div class="form-actions"><button id="saveFeeButton" onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div></div></div>
+<div id="billing" class="section"><div class="section-top"><div><h2>Fees & Billing</h2><p class="section-subtitle">Record professional fees, receipts and outstanding balances.</p></div><button class="new-client-btn" onclick="openFeeForm()">+ RECORD FEE</button></div><div class="billing-summary"><div class="summary-tile"><span>Total billed</span><strong id="feeBilled">₹0</strong></div><div class="summary-tile"><span>Received</span><strong id="feeReceived">₹0</strong></div><div class="summary-tile"><span>Outstanding</span><strong id="feePending">₹0</strong></div></div><div class="filter-row" style="margin:16px 0 10px;"><input id="billingSearch" type="search" placeholder="Search invoice, client, service, date or amount..." oninput="renderBilling()" style="width:100%;max-width:520px;"></div><div class="table-wrap"><table id="billingTable" class="modern-table"></table></div><div class="panel-card form-panel" id="feeFormPanel" hidden><h3 id="feeFormTitle">Record Professional Fee</h3><div class="form-grid"><label>Client<select id="feeClient"></select></label><label>Invoice / reference<input id="feeReference" placeholder="Invoice no. / reference"></label><div class="full-field fee-services-field"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><strong>Services / Particulars</strong><button type="button" class="small-action" onclick="addFeeServiceLine()">+ ADD SERVICE</button></div><div id="feeServiceLines"></div></div><label>Financial Year (default)<input id="feeFY" placeholder="2026-27"></label><label>Invoice date<input id="feeDate" type="date"></label><label>Amount billed (₹)<input id="feeAmount" type="number" min="0" step="0.01" readonly></label><label>Amount received (₹)<input id="feePaid" type="number" min="0" step="0.01" value="0"></label><label>Payment date<input id="feePaymentDate" type="date"></label><label>Payment mode<select id="feeMode"><option>Bank Transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Other</option></select></label><label class="full-field">Notes<textarea id="feeNotes" rows="2"></textarea></label></div><div class="form-actions"><button id="saveFeeButton" onclick="saveFee()">Save Fee Record</button><button class="secondary-btn" onclick="closeFeeForm()">Cancel</button></div></div></div>
 
 <!-- FOOTER -->
 <div class="footer">
@@ -2060,7 +2116,33 @@ const PORTAL_URLS = {
     itr: "https://eportal.incometax.gov.in/iec/foservices/#/login"
 };
 
-function openClientPortal(type, firebaseKey){
+async function copyPortalUsernameAutomatically(username){
+    if(!username) return false;
+
+    // Clipboard API works on the HTTPS GitHub Pages dashboard.
+    try{
+        await navigator.clipboard.writeText(username);
+        return true;
+    }catch(error){
+        // Legacy fallback for browsers that deny Clipboard API access.
+        try{
+            const helper = document.createElement("textarea");
+            helper.value = username;
+            helper.setAttribute("readonly", "");
+            helper.style.position = "fixed";
+            helper.style.opacity = "0";
+            document.body.appendChild(helper);
+            helper.select();
+            const copied = document.execCommand("copy");
+            helper.remove();
+            return copied;
+        }catch(fallbackError){
+            return false;
+        }
+    }
+}
+
+async function openClientPortal(type, firebaseKey){
     const list = type === "gst" ? gstClients : itrClients;
     const client = list.find(c => c.firebaseKey === firebaseKey);
 
@@ -2070,19 +2152,35 @@ function openClientPortal(type, firebaseKey){
     }
 
     const portalUrl = PORTAL_URLS[type];
+
+    // Open synchronously from the click so the browser does not block the new tab.
     const portalTab = window.open(portalUrl, "_blank");
 
     document.getElementById("portalModalTitle").textContent =
-        type === "gst" ? "GST Portal Login Details" : "Income Tax Portal Login Details";
-    document.getElementById("portalUsername").value = client.user || "";
+        type === "gst" ? "GST Portal Password" : "Income Tax Portal Password";
     document.getElementById("portalPassword").value = client.pass || "";
     document.getElementById("portalPassword").type = "password";
 
     const link = document.getElementById("portalOpenedLink");
     link.href = portalUrl;
-    link.textContent = portalTab ? "Portal opened in a new tab" : "Open portal";
+    link.textContent = portalTab ? "Portal opened in a new tab" : "Click here to open portal";
 
     document.getElementById("portalCredentialModal").classList.add("show");
+
+    const status = document.getElementById("portalCopyStatus");
+    if(!client.user){
+        status.textContent = "No username is saved for this client. Only the saved password is shown below.";
+    }else{
+        status.textContent = "Copying username to clipboard...";
+        const copied = await copyPortalUsernameAutomatically(client.user);
+        status.textContent = copied
+            ? "Username copied! Go to the portal and paste it in the username field. Copy the password below."
+            : "The browser blocked automatic username copying. Check clipboard permissions and try the portal link again. Copy the password below.";
+    }
+
+    if(!client.pass){
+        status.textContent += " No password is saved for this client.";
+    }
 }
 
 function openGSTPortal(firebaseKey){
@@ -2122,8 +2220,9 @@ function togglePortalPassword(button){
 
 function closePortalCredentialModal(){
     document.getElementById("portalCredentialModal").classList.remove("show");
-    document.getElementById("portalUsername").value = "";
     document.getElementById("portalPassword").value = "";
+    document.getElementById("portalCopyStatus").textContent =
+        "The portal is opening. Your username will be copied automatically. Copy the password below.";
     document.getElementById("portalPassword").type = "password";
 }
 
@@ -2133,6 +2232,7 @@ function renderGST(){
     document.getElementById("gstTable").innerHTML = `
 
     <tr>
+        <th>Sr. No.</th>
         <th>GST</th>
         <th>Trade Name</th>
         <th>Legal Name</th>
@@ -2151,6 +2251,7 @@ function renderGST(){
 .map((c,i)=>`
 
         <tr>
+            <td style="text-align:center;font-weight:700;">${i+1}</td>
 
             <!-- GST LOGIN BUTTON -->
             <td style="text-align:center;">
@@ -2207,6 +2308,7 @@ function renderITR(){
     document.getElementById("itrTable").innerHTML = `
 
     <tr>
+        <th>Sr. No.</th>
         <th>ITR</th>
         <th>Trade Name</th>
         <th>Legal Name</th>
@@ -2224,6 +2326,7 @@ function renderITR(){
     .map((c,i)=>`
 
         <tr>
+            <td style="text-align:center;font-weight:700;">${i+1}</td>
             <td style="text-align:center;">
                 <span
                     onclick='openITRPortal(${JSON.stringify(c.firebaseKey)})'
@@ -2799,10 +2902,33 @@ function editFee(key){
 }
 function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});}
 function renderBilling(){
- const t=document.getElementById('billingTable');if(!t)return;let billed=0,received=0;
- feeItems.forEach(x=>{billed+=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));received+=Number(x.paid||0);});
- document.getElementById('feeBilled').textContent=money(billed);document.getElementById('feeReceived').textContent=money(received);document.getElementById('feePending').textContent=money(billed-received);
- t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>Gross</th><th>Discount</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Invoice</th><th>Action</th></tr></thead><tbody>'+(feeItems.length?[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||'')).map(x=>{const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));return `<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—').replace(/\n/g,'<br>')}</td><td>${money(x.amount)}</td><td>${money(x.discount||0)}</td><td><b>${money(net)}</b></td><td>${money(x.paid)}</td><td>${money(net-Number(x.paid||0))}</td><td><button title="Download PDF" onclick="invoicePDF('${x.firebaseKey}')">⤓</button><button onclick="shareInvoice('${x.firebaseKey}')">Share</button></td><td><button onclick="editFee('${x.firebaseKey}')">Edit</button><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`}).join(''):'<tr><td colspan="11">No fee records added.</td></tr>')+'</tbody>';
+ const t=document.getElementById('billingTable');if(!t)return;
+ let billed=0,received=0;
+ feeItems.forEach(x=>{
+  billed+=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));
+  received+=Number(x.paid||0);
+ });
+ document.getElementById('feeBilled').textContent=money(billed);
+ document.getElementById('feeReceived').textContent=money(received);
+ document.getElementById('feePending').textContent=money(billed-received);
+
+ const query=(document.getElementById('billingSearch')?.value||'').trim().toLocaleLowerCase();
+ const sorted=[...feeItems].sort((a,b)=>(b.invoiceDate||'').localeCompare(a.invoiceDate||''));
+ const filtered=sorted.filter(x=>{
+  const searchable=[
+   x.invoiceDate,selectedClientName(x.client),x.reference,x.service,
+   x.amount,x.discount,x.netAmount,x.paid,
+   Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)))-Number(x.paid||0),
+   x.mode,x.notes
+  ].join(' ').toLocaleLowerCase();
+  return searchable.includes(query);
+ });
+
+ t.innerHTML='<thead><tr><th>Invoice date</th><th>Client</th><th>Invoice No.</th><th>Service</th><th>Gross</th><th>Discount</th><th>Net billed</th><th>Received</th><th>Balance</th><th>Invoice</th><th>Action</th></tr></thead><tbody>'+
+ (filtered.length?filtered.map(x=>{
+  const net=Number(x.netAmount??(Number(x.amount||0)-Number(x.discount||0)));
+  return `<tr><td>${escapeHTML(x.invoiceDate||'—')}</td><td>${escapeHTML(selectedClientName(x.client))}</td><td>${escapeHTML(x.reference||'—')}</td><td>${escapeHTML(x.service||'—').replace(/\n/g,'<br>')}</td><td>${money(x.amount)}</td><td>${money(x.discount||0)}</td><td><b>${money(net)}</b></td><td>${money(x.paid)}</td><td>${money(net-Number(x.paid||0))}</td><td><button title="Download PDF" onclick="invoicePDF('${x.firebaseKey}')">⤓</button><button onclick="shareInvoice('${x.firebaseKey}')">Share</button></td><td><button onclick="editFee('${x.firebaseKey}')">Edit</button><button onclick="removeModuleRecord('fees','${x.firebaseKey}')">Delete</button></td></tr>`;
+ }).join(''):'<tr><td colspan="11">'+(feeItems.length?'No matching fee records found.':'No fee records added.')+'</td></tr>')+'</tbody>';
 }
 function removeModuleRecord(type,key){if(!confirm('Delete this record? This action cannot be undone.'))return;moduleRefs[type].child(key).remove().catch(e=>alert(e.message));}
 function updatePracticeDashboard(){const el=id=>document.getElementById(id);if(!el('dashWorkCount'))return;el('dashWorkCount').textContent=[...workItems,...taskItems].filter(x=>!['Completed','Filed'].includes(x.status)).length;el('dashTaskCount').textContent=[...workItems,...taskItems].filter(x=>!['Completed','Filed'].includes(x.status)).length;const outstanding=feeItems.reduce((a,x)=>a+Math.max(0,Number(x.amount||0)-Number(x.discount||0)-Number(x.paid||0)),0);const outstandingEl=el('dashOutstanding');if(outstandingEl)outstandingEl.textContent=money(outstanding);const recent=[...workItems].sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0)).slice(0,4);const recentEl=el('dashRecentWork');if(recentEl)recentEl.innerHTML=recent.length?recent.map(x=>`<div class="mini-row"><strong>${escapeHTML(x.category)}</strong><span>${escapeHTML(selectedClientName(x.client))}</span><small>${escapeHTML(x.status||'Pending')}</small></div>`).join(''):'No work items added yet.';}
