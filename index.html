@@ -2087,12 +2087,12 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
     <a onclick="showSection('dashboard')">▦ &nbsp; Dashboard</a>
     <a onclick="showSection('gst')">▤ &nbsp; GST Clients</a>
     <a onclick="showSection('itr')">▤ &nbsp; ITR Clients</a>
+    <a onclick="showSection('clientManager')">♙ &nbsp; Client Manager</a>
     <div class="nav-caption">GST &amp; COMPLIANCE</div>
     <a onclick="openComplianceCalendar()">▦ &nbsp; Compliance &amp; Due-date Calendar</a>
     <a onclick="showSection('gstNews')">▤ &nbsp; GST News &amp; Updates</a>
     <div class="nav-caption">PRACTICE MANAGEMENT</div>
     
-    <a onclick="showSection('documents')">▧ &nbsp; Document Register</a>
     <a onclick="showSection('tasks')">☑ &nbsp; Task Management Desk</a>
     <a onclick="showSection('billing')">₹ &nbsp; Fees & Billing</a>
     <div class="nav-caption">ADMINISTRATION</div>
@@ -2354,6 +2354,16 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
     </div>
 </div>
 
+<!-- CLIENT MANAGER -->
+<div id="clientManager" class="section">
+ <div class="section-top"><div><h2>Client Manager</h2><p class="section-subtitle">One searchable directory for GST, ITR and temporary / other clients, with client-wise invoices, receipts and balances.</p></div><button class="new-client-btn" onclick="openClientPopup()">＋ Add New Client</button></div>
+ <div class="panel-card">
+  <div class="filter-row"><input id="clientManagerSearch" type="search" placeholder="Search client name, GSTIN, PAN, phone or category..." oninput="renderClientManager()"><select id="clientManagerType" onchange="renderClientManager()"><option value="">All client types</option><option value="GST">GST</option><option value="ITR">ITR</option><option value="Other">Other</option></select></div>
+  <div class="table-wrap"><table class="modern-table" id="clientManagerTable"><thead><tr><th>Client</th><th>Type</th><th>Identifier</th><th>Contact</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+ </div>
+ <div class="panel-card" id="clientLedgerPanel"><div class="panel-heading"><div><h3 id="clientLedgerTitle">Client-wise Ledger</h3><p class="section-subtitle">Invoices, receipts and outstanding balance for the selected client.</p></div></div><div class="billing-summary"><div class="summary-tile"><span>Total invoiced</span><strong id="ledgerBilled">₹0.00</strong></div><div class="summary-tile"><span>Total received</span><strong id="ledgerReceived">₹0.00</strong></div><div class="summary-tile"><span>Outstanding</span><strong id="ledgerOutstanding">₹0.00</strong></div></div><div class="table-wrap"><table class="modern-table"><thead><tr><th>Date</th><th>Invoice / Receipt</th><th>Particulars</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead><tbody id="clientLedgerRows"><tr><td colspan="6">Select a client to view ledger.</td></tr></tbody></table></div></div>
+</div>
+
 <!-- UPLOAD (UNCHANGED STRUCTURE) -->
 <div id="upload" class="section">
     <h2>Upload Files</h2>
@@ -2361,6 +2371,7 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
 <select id="uploadType" onchange="loadUploadClients()">
 <option value="gst">GST Client</option>
 <option value="itr">ITR Client</option>
+<option value="other">Other Client</option>
 </select>
 
 <select id="uploadClientSelect"></select> <!-- ✅ ADD HERE -->
@@ -2433,9 +2444,6 @@ button,.new-client-btn{font-size:12.5px!important;line-height:1.35!important;fon
 </div>
 </div>
 
-
-<!-- DOCUMENT REGISTER -->
-<div id="documents" class="section"><div class="section-top"><div><h2>Document Register</h2><p class="section-subtitle">Search uploaded client documents and open the existing upload workspace.</p></div><button class="new-client-btn" onclick="showSection('upload')">+ UPLOAD DOCUMENT</button></div><div class="panel-card"><p>Documents uploaded through the existing Upload Files section continue to be stored in your current Firebase Storage structure. Use the filters below to find a client record, then open Upload Files to view, download or share the stored documents.</p><div class="form-grid"><label>Client type<select id="docType"><option value="gst">GST Client</option><option value="itr">ITR Client</option></select></label><label>Client<select id="docClient"></select></label></div><div class="form-actions"><button onclick="openSelectedDocuments()">Open Client Documents</button></div></div></div>
 
 <!-- UNIFIED TASK MANAGEMENT DESK -->
 <div id="tasks" class="section">
@@ -4329,6 +4337,7 @@ GST Client
 <option value="itr">
 ITR Client
 </option>
+<option value="other">Other Client</option>
 
 </select>
 
@@ -5081,6 +5090,143 @@ function openComplianceCalendar(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attachGSTNewsListeners);
 else attachGSTNewsListeners();
+</script>
+
+
+<script id="skc-client-manager-and-sync-upgrade">
+/* Unified client records: legacy GST/ITR paths remain unchanged; Other uses its own path. */
+let otherClients=[];
+let selectedLedgerClient='';
+let skcFirebaseOnline=false;
+db.ref('gstClients').on('value',()=>renderClientManager());
+db.ref('itrClients').on('value',()=>renderClientManager());
+db.ref('practiceFeeRecords').on('value',()=>{if(selectedLedgerClient)showClientLedger(selectedLedgerClient);});
+db.ref('otherClients').on('value',snap=>{
+ const raw=snap.val()||{};
+ otherClients=Object.keys(raw).map(key=>({...raw[key],firebaseKey:key}));
+ if(typeof populateModuleSelects==='function')populateModuleSelects();
+ renderClientManager();
+ if(typeof updatePracticeDashboard==='function')updatePracticeDashboard();
+ loadUploadClients();
+},err=>console.error('Other-client listener failed:',err));
+db.ref('.info/connected').on('value',snap=>{
+ skcFirebaseOnline=!!snap.val();
+ const el=document.getElementById('firebaseSyncStatus');
+ if(el){el.textContent=skcFirebaseOnline?'● Cloud connected · changes sync automatically':'● Offline · waiting to reconnect';el.style.color=skcFirebaseOnline?'#8ed6a8':'#ffbd83';}
+});
+function allPracticeClients(){
+ return [...gstClients.map(c=>({...c,_type:'GST'})),...itrClients.map(c=>({...c,_type:'ITR'})),...otherClients.map(c=>({...c,_type:'Other'}))];
+}
+function clientLabel(c){return c.tradeName||c.trade||c.legalName||c.legal||c.name||'Unnamed client';}
+function selectedClientName(value){
+ if(!value)return '—';
+ const [type,key]=value.split('|');
+ const list=type==='GST'?gstClients:type==='ITR'?itrClients:otherClients;
+ const c=list.find(x=>x.firebaseKey===key);
+ return c?clientLabel({...c,_type:type}):'Client record';
+}
+function updatePopupPlaceholder(){
+ const type=document.getElementById('popupType')?.value||'gst';
+ const extra=document.getElementById('popup_extra');
+ if(extra){extra.placeholder=type==='gst'?'GSTIN':type==='itr'?'PAN':'Contact number / Reference (optional)';extra.style.display='';}
+ const freq=document.getElementById('popup_frequency');
+ if(freq)freq.style.display=type==='gst'?'block':'none';
+ ['popup_user','popup_pass'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=type==='other'?'none':'';});
+}
+function savePopupClient(){
+ const type=document.getElementById('popupType').value;
+ const trade=document.getElementById('popup_trade').value.trim();
+ const legal=document.getElementById('popup_legal').value.trim();
+ const group=document.getElementById('popup_group').value.trim();
+ if(!trade){alert('Enter the client name.');return;}
+ const data={trade,legal,group,createdAt:Date.now(),active:true};
+ let path='otherClients';
+ if(type==='gst'){
+  const gstin=document.getElementById('popup_extra').value.trim();
+  if(!gstin){alert('Trade Name and GSTIN required');return;}
+  Object.assign(data,{gstin,user:document.getElementById('popup_user').value.trim(),pass:document.getElementById('popup_pass').value,frequency:document.getElementById('popup_frequency')?.value||'Monthly'});path='gstClients';
+ }else if(type==='itr'){
+  const pan=document.getElementById('popup_extra').value.trim();
+  if(!pan){alert('Trade Name and PAN required');return;}
+  Object.assign(data,{pan,user:document.getElementById('popup_user').value.trim(),pass:document.getElementById('popup_pass').value});path='itrClients';
+ }else{
+  Object.assign(data,{contact:document.getElementById('popup_extra').value.trim()});
+ }
+ db.ref(path).push(data).then(()=>{alert('Client saved successfully.');closeClientPopup();['popup_trade','popup_legal','popup_extra','popup_group','popup_user','popup_pass'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}).catch(e=>alert('Could not save client: '+e.message));
+}
+function renderClientManager(){
+ const body=document.querySelector('#clientManagerTable tbody');if(!body)return;
+ const q=(document.getElementById('clientManagerSearch')?.value||'').trim().toLowerCase();
+ const type=document.getElementById('clientManagerType')?.value||'';
+ const rows=allPracticeClients().filter(c=>(!type||c._type===type)&&[clientLabel(c),c.legal,c.legalName,c.gstin,c.pan,c.contact,c.group,c._type].filter(Boolean).join(' ').toLowerCase().includes(q)).sort((a,b)=>clientLabel(a).localeCompare(clientLabel(b)));
+ body.innerHTML=rows.length?rows.map(c=>{const id=c._type+'|'+c.firebaseKey;const ident=c._type==='GST'?(c.gstin||'—'):c._type==='ITR'?(c.pan||'—'):(c.contact||'—');return `<tr><td><strong>${escapeHTML(clientLabel(c))}</strong><br><small>${escapeHTML(c.legal||c.legalName||'')}</small></td><td>${c._type}</td><td>${escapeHTML(ident)}</td><td>${escapeHTML(c.contact||'—')}</td><td><button onclick="showClientLedger('${id}')">View Ledger</button></td></tr>`;}).join(''):'<tr><td colspan="5">No matching clients found.</td></tr>';
+}
+function showClientLedger(value){
+ selectedLedgerClient=value;
+ const name=selectedClientName(value);
+ document.getElementById('clientLedgerTitle').textContent='Ledger · '+name;
+ const invoices=(feeItems||[]).filter(x=>x.client===value);
+ let events=[];
+ invoices.forEach(inv=>{
+  events.push({date:inv.invoiceDate||inv.date||'',ref:inv.reference||'Invoice',particulars:(inv.services||[]).map(x=>x.service||x.name).filter(Boolean).join(', ')||inv.service||'Professional fees',debit:getInvoiceNet(inv),credit:0});
+  getInvoicePayments(inv).forEach(p=>events.push({date:p.date||p.paymentDate||'',ref:p.reference||'Receipt',particulars:p.mode||p.notes||'Payment received',debit:0,credit:Number(p.amount||0)}));
+ });
+ events.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+ let balance=0,billed=0,received=0;
+ const tbody=document.getElementById('clientLedgerRows');
+ tbody.innerHTML=events.length?events.map(e=>{balance+=e.debit-e.credit;billed+=e.debit;received+=e.credit;return `<tr><td>${escapeHTML(e.date||'—')}</td><td>${escapeHTML(e.ref)}</td><td>${escapeHTML(e.particulars)}</td><td>${e.debit?money(e.debit):'—'}</td><td>${e.credit?money(e.credit):'—'}</td><td>${money(balance)}</td></tr>`;}).join(''):'<tr><td colspan="6">No invoices or receipts recorded for this client yet.</td></tr>';
+ document.getElementById('ledgerBilled').textContent=money(billed);
+ document.getElementById('ledgerReceived').textContent=money(received);
+ document.getElementById('ledgerOutstanding').textContent=money(Math.max(0,billed-received));
+ document.getElementById('clientLedgerPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function loadUploadClients(){
+ const type=document.getElementById('uploadType')?.value||'gst',select=document.getElementById('uploadClientSelect');if(!select)return;
+ const old=select.value,list=type==='gst'?gstClients:type==='itr'?itrClients:otherClients;
+ select.innerHTML=list.map(c=>`<option value="${c.firebaseKey}">${escapeHTML(clientLabel(c))}${type==='gst'&&c.gstin?' ('+escapeHTML(c.gstin)+')':type==='itr'&&c.pan?' ('+escapeHTML(c.pan)+')':''}</option>`).join('');
+ if([...select.options].some(o=>o.value===old))select.value=old;
+ if(select.value)loadFiles();
+}
+function loadFiles(){
+ const type=document.getElementById('uploadType')?.value||'gst',key=document.getElementById('uploadClientSelect')?.value;
+ if(!key)return;
+ const list=type==='gst'?gstClients:type==='itr'?itrClients:otherClients;
+ const client=list.find(c=>c.firebaseKey===key);if(!client)return;
+ const fileList=document.getElementById('fileList');if(!fileList)return;
+ fileList.innerHTML='<li>Loading…</li>';
+ db.ref('files/'+type+'/'+key).once('value').then(snap=>{
+  const data=snap.val()||{};fileList.innerHTML='';
+  const heading=document.createElement('li');heading.textContent='Files of : '+clientLabel(client);fileList.appendChild(heading);
+  if(!Object.keys(data).length){const li=document.createElement('li');li.textContent='No files uploaded';fileList.appendChild(li);return;}
+  Object.entries(data).forEach(([fileKey,file])=>{const li=document.createElement('li');li.innerHTML=`<a href="${escapeHTML(file.url)}" target="_blank" rel="noopener">${escapeHTML(file.name)}</a><div><button onclick="downloadFile('${escapeHTML(file.url)}','${escapeHTML(file.name)}')">Download</button> <button onclick="shareFile('${escapeHTML(file.url)}','${escapeHTML(file.name)}')">Share</button> <button onclick="deleteFile('${type}','${key}','${escapeHTML(file.url)}')">Delete</button></div>`;fileList.appendChild(li);});
+ }).catch(e=>{fileList.textContent='Could not load files: '+e.message;});
+}
+function uploadFile(){
+ const file=document.getElementById('fileInput')?.files[0],type=document.getElementById('uploadType').value,key=document.getElementById('uploadClientSelect').value;
+ if(!file){alert('Select a file first.');return;}if(file.size>20*1024*1024){alert('File too large. Maximum 20 MB.');return;}
+ const list=type==='gst'?gstClients:type==='itr'?itrClients:otherClients,client=list.find(c=>c.firebaseKey===key);
+ if(!client){alert('Select a client.');return;}
+ const btn=document.getElementById('uploadBtn');btn.disabled=true;btn.textContent='Uploading…';
+ const path=type+'/'+key+'/'+Date.now()+'_'+file.name;
+ storage.ref().child(path).put(file).then(task=>task.ref.getDownloadURL()).then(url=>db.ref('files/'+type+'/'+key).push({name:file.name,url,date:new Date().toLocaleString()})).then(()=>{alert('Uploaded successfully.');document.getElementById('fileInput').value='';loadFiles();}).catch(e=>alert('Upload failed: '+e.message)).finally(()=>{btn.disabled=false;btn.textContent='Upload';});
+}
+function invoiceClientData(value){
+ if(!value)return {};
+ const [type,key]=value.split('|');
+ const list=type==='GST'?gstClients:type==='ITR'?itrClients:otherClients;
+ const c=list.find(z=>z.firebaseKey===key)||{};
+ const gstin=c.gstin||'',pan=c.pan||(gstin.length>=12?gstin.substring(2,12):'');
+ return {trade:c.trade||c.tradeName||c.name||'',legal:c.legal||c.legalName||c.name||'',pan,gstin};
+}
+function showSection(id){
+ if(typeof hideAllRevealedPasswords==='function')hideAllRevealedPasswords();
+ localStorage.setItem('activeSection',id);
+ document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+ const target=document.getElementById(id);if(target)target.classList.add('active');
+ if(id==='clientManager')renderClientManager();
+ if(window.innerWidth<=768){const side=document.getElementById('sidebar'),overlay=document.getElementById('overlay');side?.classList.remove('show');side?.classList.add('hide');if(overlay)overlay.style.display='none';}
+}
+document.addEventListener('DOMContentLoaded',()=>{renderClientManager();loadUploadClients();});
 </script>
 
 </body>
