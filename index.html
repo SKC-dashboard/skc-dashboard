@@ -5425,5 +5425,91 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
+<!-- SK CONSULTANT WARM BEIGE THEME: visual-only update; all existing modules and data logic remain unchanged. -->
+<style id="skc-warm-beige-theme">
+:root{
+  --sk-bg:#F3EBDD;
+  --sk-soft:#F8F2E7;
+  --sk-white:#FCF8F0;
+  --sk-line:#E5D9C6;
+  --sk-muted:#766D60;
+  --sk-ink:#26251F;
+  --sk-gold:#B58A3A;
+  --sk-gold-light:#F2E6CF;
+  --skc-ink:#26251F;
+  --skc-muted:#766D60;
+  --skc-line:#E5D9C6;
+  --skc-soft:#F8F2E7;
+}
+html,body{background:#F3EBDD!important;color:#26251F}
+.main{background:#F3EBDD!important}
+.section{background:transparent!important}
+.section h2,.section-top h2,.section h3,.panel-card h3{color:#302A20}
+.section-subtitle{color:#766D60!important}
+/* Main cards and dashboard surfaces */
+.dash-card,.panel-card,.settings-box,.summary-tile,.analytics-tile,
+.table-wrap,.calendar-agenda,.compliance-calendar,.export-panel,
+.gst-news-filter-panel,.gst-news-card,.gst-news-empty,.gst-news-source-note,
+.reports-visual-grid .panel-card,.snapshot-grid>div{
+  background:#FCF8F0!important;
+  border-color:#E5D9C6!important;
+}
+.dash-card{box-shadow:0 5px 18px rgba(68,51,25,.045)!important}
+.dash-card:hover{box-shadow:0 12px 24px rgba(68,51,25,.09)!important}
+.card-icon{background:#F2E6CF!important;color:#896629!important}
+/* Inputs use a warm off-white so they remain distinct from the beige page */
+.section input:not([type=checkbox]),.section select,.section textarea,
+.settings-box input,.settings-box select,
+#gst input,#itr input,.filter-row input,.filter-row select,
+.fee-service-row input,.fee-service-row select{
+  background:#FFFCF6!important;
+  border-color:#DED1BC!important;
+  color:#302A20!important;
+}
+.section input::placeholder,.section textarea::placeholder{color:#958A78!important}
+/* Table surfaces */
+.modern-table,.modern-table td,.modern-table tbody{background:#FFFCF6!important}
+.modern-table th{background:#EFE4D2!important;color:#514632!important;border-color:#E5D9C6!important}
+.modern-table td{border-color:#EDE3D4!important;color:#383329!important}
+.modern-table tr:hover td{background:#F7EFDF!important}
+th,td{border-color:#E5D9C6}
+/* Calendar */
+.calendar-toolbar{border-color:#E5D9C6!important}
+.calendar-weekdays span{color:#766D60!important}
+.calendar-day{background:#FFFCF6!important;border-color:#E8DECF!important;color:#302A20!important}
+.calendar-day.outside-month{background:#F0E8DB!important;color:#A69A87!important}
+.calendar-day.is-today{background:#FBF2DF!important}
+.calendar-day.is-selected{background:#F0E2C6!important;border-color:#B58A3A!important}
+.calendar-agenda{background:#F9F3E8!important}
+/* Billing and form panels */
+.form-panel,.form-panel:not([hidden]),.fee-service-row{background:transparent}
+.summary-tile span,.analytics-tile span,.report-caption,.calendar-summary-label{color:#766D60!important}
+.snapshot-grid>div{background:#F7F0E4!important;border-color:#E8DECF!important}
+/* Ledger popup */
+.skc-modal-card,.portal-modal-card,.portal-credential-control input{
+  background:#FCF8F0!important;
+  border-color:#E5D9C6!important;
+}
+.skc-modal-card{color:#302A20}
+.skc-modal-heading h2{color:#302A20!important}
+/* GST news status panel and update cards */
+.gst-news-card{box-shadow:0 4px 15px rgba(68,51,25,.035)!important}
+.gst-news-source-note{background:#F8F2E7!important}
+.gst-news-source-note>strong{color:#302A20!important}
+.gst-news-excerpt,.gst-news-source-note p{color:#766D60!important}
+/* Search/filter and light secondary blocks */
+.filter-row{color:#514632}
+.empty-state{color:#817665!important}
+/* Preserve the existing black/navy navigation, header and gold action colours */
+.header,.sidebar{background:#080B0D!important}
+.welcome-strip{background:linear-gradient(115deg,#17252b,#263d45)!important}
+/* Footer stays dark for visual balance */
+.footer{background:#0A0A0A!important}
+@media(max-width:600px){
+  html,body,.main{background:#F3EBDD!important}
+  .panel-card,.dash-card,.summary-tile{background:#FCF8F0!important}
+}
+</style>
+
 </body>
 </html>
