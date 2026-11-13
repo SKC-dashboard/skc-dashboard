@@ -5307,16 +5307,24 @@ function renderClientManager(){
 
 function financeClientTotals(client){
  const clientId=client._type+'|'+client.firebaseKey;
+ // Receipts are stored with their invoice in practiceFeeRecords.payments.
+ // getInvoicePayments() also recognises older single-payment records saved in `paid`.
  const invoices=(feeItems||[]).filter(x=>x.client===clientId);
+ const receiptCount=invoices.reduce((count,x)=>count+(typeof getInvoicePayments==='function'?getInvoicePayments(x).length:(Number(x.paid||0)>0?1:0)),0);
  const billed=invoices.reduce((sum,x)=>sum+(typeof getInvoiceNet==='function'?getInvoiceNet(x):Number(x.netAmount??x.amount??0)),0);
  const received=invoices.reduce((sum,x)=>sum+(typeof getInvoicePaid==='function'?getInvoicePaid(x):Number(x.paid||0)),0);
- return {billed,received,outstanding:Math.max(0,billed-received),invoices:invoices.length};
+ const hasInvoice=invoices.length>0;
+ const hasReceipt=receiptCount>0;
+ return {billed,received,outstanding:Math.max(0,billed-received),invoices:invoices.length,receipts:receiptCount,hasInvoice,hasReceipt,hasActivity:hasInvoice||hasReceipt};
 }
 function renderFinanceLedger(){
  const body=document.querySelector('#financeLedgerTable tbody');if(!body)return;
  const search=(document.getElementById('financeSearch')?.value||'').trim().toLowerCase();
  const type=document.getElementById('financeTypeFilter')?.value||'';
- const clients=allPracticeClients().filter(c=>(!type||c._type===type)&&[clientLabel(c),c.legal,c.legalName,clientPAN(c),c.gstin,c.group,clientContact(c),c._type].filter(Boolean).join(' ').toLowerCase().includes(search));
+ // Finance is an activity register, not a full client register: hide every client
+ // that has no invoice and no receipt/payment record.
+ const financeClients=allPracticeClients().filter(c=>financeClientTotals(c).hasActivity);
+ const clients=financeClients.filter(c=>(!type||c._type===type)&&[clientLabel(c),c.legal,c.legalName,clientPAN(c),c.gstin,c.group,clientContact(c),c._type].filter(Boolean).join(' ').toLowerCase().includes(search));
  const totals=clients.reduce((a,c)=>{const t=financeClientTotals(c);a.billed+=t.billed;a.received+=t.received;a.outstanding+=t.outstanding;return a;},{billed:0,received:0,outstanding:0});
  const el=id=>document.getElementById(id);
  if(el('financeTotalBilled'))el('financeTotalBilled').textContent=money(totals.billed);
@@ -5325,7 +5333,7 @@ function renderFinanceLedger(){
  body.innerHTML=clients.length?clients.map((c,i)=>{
   const t=financeClientTotals(c),id=c._type+'|'+c.firebaseKey;
   return `<tr><td>${i+1}</td><td><strong>${escapeHTML(clientLabel(c))}</strong><br><small>${escapeHTML(c.legal||c.legalName||'')}</small></td><td>${c._type}</td><td>${money(t.billed)}</td><td>${money(t.received)}</td><td class="${t.outstanding?'balance-positive':'balance-zero'}">${money(t.outstanding)}</td><td><button type="button" onclick="showClientLedger('${id}')">View Ledger</button></td></tr>`;
- }).join(''):'<tr><td colspan="7">No clients match this filter.</td></tr>';
+ }).join(''):financeClients.length?'<tr><td colspan="7">No finance clients match this filter.</td></tr>':'<tr><td colspan="7">No invoices or receipts have been recorded yet.</td></tr>';
 }
 
 function closeClientLedgerModal(){const modal=document.getElementById('clientLedgerModal');if(modal)modal.classList.remove('show');}
@@ -5425,90 +5433,81 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
-<!-- SK CONSULTANT WARM BEIGE THEME: visual-only update; all existing modules and data logic remain unchanged. -->
-<style id="skc-warm-beige-theme">
+<!-- SK CONSULTANT WHEAT & SANDSTONE THEME: visual-only update. -->
+<style id="skc-wheat-sandstone-theme">
 :root{
-  --sk-bg:#F3EBDD;
-  --sk-soft:#F8F2E7;
-  --sk-white:#FCF8F0;
-  --sk-line:#E5D9C6;
-  --sk-muted:#766D60;
-  --sk-ink:#26251F;
-  --sk-gold:#B58A3A;
-  --sk-gold-light:#F2E6CF;
-  --skc-ink:#26251F;
-  --skc-muted:#766D60;
-  --skc-line:#E5D9C6;
-  --skc-soft:#F8F2E7;
+  --sk-bg:#E4D4B3;
+  --sk-soft:#E9DDBF;
+  --sk-white:#EFE3C7;
+  --sk-line:#CDBB96;
+  --sk-muted:#756A55;
+  --sk-ink:#332B20;
+  --sk-gold:#A77D35;
+  --sk-gold-light:#E4D1A8;
+  --skc-ink:#332B20;
+  --skc-muted:#756A55;
+  --skc-line:#CDBB96;
+  --skc-soft:#E9DDBF;
 }
-html,body{background:#F3EBDD!important;color:#26251F}
-.main{background:#F3EBDD!important}
+html,body{background:#E4D4B3!important;color:#332B20!important}
+body,.main{background:#E4D4B3!important}
 .section{background:transparent!important}
-.section h2,.section-top h2,.section h3,.panel-card h3{color:#302A20}
-.section-subtitle{color:#766D60!important}
-/* Main cards and dashboard surfaces */
+.section h2,.section-top h2,.section h3,.panel-card h3{color:#332B20!important}
+.section-subtitle,.report-caption,.calendar-summary-label{color:#756A55!important}
+/* Wheat-toned surfaces: intentionally deeper and more natural than white/cream cards. */
 .dash-card,.panel-card,.settings-box,.summary-tile,.analytics-tile,
 .table-wrap,.calendar-agenda,.compliance-calendar,.export-panel,
 .gst-news-filter-panel,.gst-news-card,.gst-news-empty,.gst-news-source-note,
 .reports-visual-grid .panel-card,.snapshot-grid>div{
-  background:#FCF8F0!important;
-  border-color:#E5D9C6!important;
+  background:#EFE3C7!important;
+  border-color:#CDBB96!important;
 }
-.dash-card{box-shadow:0 5px 18px rgba(68,51,25,.045)!important}
-.dash-card:hover{box-shadow:0 12px 24px rgba(68,51,25,.09)!important}
-.card-icon{background:#F2E6CF!important;color:#896629!important}
-/* Inputs use a warm off-white so they remain distinct from the beige page */
+.dash-card{box-shadow:0 5px 18px rgba(67,49,22,.07)!important}
+.dash-card:hover{box-shadow:0 12px 24px rgba(67,49,22,.14)!important}
+.card-icon,.status-pill,.gst-news-category{background:#E2D0A8!important;color:#6F5120!important}
+/* Input fields are lighter wheat to remain visually distinct from the panels. */
 .section input:not([type=checkbox]),.section select,.section textarea,
-.settings-box input,.settings-box select,
-#gst input,#itr input,.filter-row input,.filter-row select,
-.fee-service-row input,.fee-service-row select{
-  background:#FFFCF6!important;
-  border-color:#DED1BC!important;
-  color:#302A20!important;
+.settings-box input,.settings-box select,#gst input,#itr input,
+.filter-row input,.filter-row select,.fee-service-row input,.fee-service-row select,
+.gst-news-filter-panel input,.gst-news-filter-panel select{
+  background:#F5ECD8!important;border-color:#CDBB96!important;color:#332B20!important;
 }
-.section input::placeholder,.section textarea::placeholder{color:#958A78!important}
-/* Table surfaces */
-.modern-table,.modern-table td,.modern-table tbody{background:#FFFCF6!important}
-.modern-table th{background:#EFE4D2!important;color:#514632!important;border-color:#E5D9C6!important}
-.modern-table td{border-color:#EDE3D4!important;color:#383329!important}
-.modern-table tr:hover td{background:#F7EFDF!important}
-th,td{border-color:#E5D9C6}
+.section input::placeholder,.section textarea::placeholder{color:#8D8067!important}
+/* Tables */
+.modern-table,.modern-table td,.modern-table tbody,table{background:#F2E7CF!important}
+.modern-table th,thead th{background:#DCC99F!important;color:#4F4027!important;border-color:#CDBB96!important}
+.modern-table td{border-color:#E2D4B7!important;color:#3B3327!important}
+.modern-table tr:hover td{background:#E9D9B6!important}
+th,td{border-color:#D6C4A0!important}
 /* Calendar */
-.calendar-toolbar{border-color:#E5D9C6!important}
-.calendar-weekdays span{color:#766D60!important}
-.calendar-day{background:#FFFCF6!important;border-color:#E8DECF!important;color:#302A20!important}
-.calendar-day.outside-month{background:#F0E8DB!important;color:#A69A87!important}
-.calendar-day.is-today{background:#FBF2DF!important}
-.calendar-day.is-selected{background:#F0E2C6!important;border-color:#B58A3A!important}
-.calendar-agenda{background:#F9F3E8!important}
-/* Billing and form panels */
-.form-panel,.form-panel:not([hidden]),.fee-service-row{background:transparent}
-.summary-tile span,.analytics-tile span,.report-caption,.calendar-summary-label{color:#766D60!important}
-.snapshot-grid>div{background:#F7F0E4!important;border-color:#E8DECF!important}
-/* Ledger popup */
-.skc-modal-card,.portal-modal-card,.portal-credential-control input{
-  background:#FCF8F0!important;
-  border-color:#E5D9C6!important;
-}
-.skc-modal-card{color:#302A20}
-.skc-modal-heading h2{color:#302A20!important}
-/* GST news status panel and update cards */
-.gst-news-card{box-shadow:0 4px 15px rgba(68,51,25,.035)!important}
-.gst-news-source-note{background:#F8F2E7!important}
-.gst-news-source-note>strong{color:#302A20!important}
-.gst-news-excerpt,.gst-news-source-note p{color:#766D60!important}
-/* Search/filter and light secondary blocks */
-.filter-row{color:#514632}
-.empty-state{color:#817665!important}
-/* Preserve the existing black/navy navigation, header and gold action colours */
+.calendar-toolbar{border-color:#CDBB96!important}
+.calendar-weekdays span{color:#756A55!important}
+.calendar-day{background:#F2E7CF!important;border-color:#D8C7A5!important;color:#332B20!important}
+.calendar-day.outside-month{background:#E2D6BC!important;color:#9B8E74!important}
+.calendar-day.is-today{background:#E9D8B1!important}
+.calendar-day.is-selected{background:#DCC493!important;border-color:#A77D35!important}
+.calendar-agenda{background:#E9DDBF!important}
+.snapshot-grid>div{background:#E7D8B7!important;border-color:#D5C39D!important}
+.summary-tile span,.analytics-tile span{color:#756A55!important}
+/* Ledger and portal dialogs */
+.skc-modal-card,.portal-modal-card{background:#EFE3C7!important;border:1px solid #CDBB96!important;color:#332B20!important}
+.skc-modal-heading h2{color:#332B20!important}
+.portal-credential-control input{background:#F5ECD8!important;border-color:#CDBB96!important}
+/* GST news cards and supporting copy */
+.gst-news-card{box-shadow:0 4px 15px rgba(67,49,22,.06)!important}
+.gst-news-source-note{background:#E9DDBF!important}
+.gst-news-source-note>strong,.gst-news-card h4{color:#332B20!important}
+.gst-news-excerpt,.gst-news-source-note p{color:#756A55!important}
+.gst-news-empty{color:#756A55!important}
+/* Soft secondary blocks and borders */
+.empty-state{color:#756A55!important}
+.panel-card,.settings-box,.summary-tile,.analytics-tile,.table-wrap{box-shadow:0 4px 14px rgba(67,49,22,.045)}
+/* Preserve SK Consultant's charcoal identity and muted metallic gold highlights. */
 .header,.sidebar{background:#080B0D!important}
 .welcome-strip{background:linear-gradient(115deg,#17252b,#263d45)!important}
-/* Footer stays dark for visual balance */
 .footer{background:#0A0A0A!important}
-@media(max-width:600px){
-  html,body,.main{background:#F3EBDD!important}
-  .panel-card,.dash-card,.summary-tile{background:#FCF8F0!important}
-}
+.new-client-btn,button{border-color:#9A712E!important}
+@media(max-width:600px){html,body,.main{background:#E4D4B3!important}.panel-card,.dash-card,.summary-tile{background:#EFE3C7!important}}
 </style>
 
 </body>
