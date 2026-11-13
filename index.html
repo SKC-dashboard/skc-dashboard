@@ -5433,81 +5433,103 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
-<!-- SK CONSULTANT WHEAT & SANDSTONE THEME: visual-only update. -->
-<style id="skc-wheat-sandstone-theme">
+<!-- SK CONSULTANT LINEN, SAGE & SOFT WHEAT THEME: visual-only update. -->
+<style id="skc-linen-sage-theme">
 :root{
-  --sk-bg:#E4D4B3;
-  --sk-soft:#E9DDBF;
-  --sk-white:#EFE3C7;
-  --sk-line:#CDBB96;
-  --sk-muted:#756A55;
-  --sk-ink:#332B20;
-  --sk-gold:#A77D35;
-  --sk-gold-light:#E4D1A8;
-  --skc-ink:#332B20;
-  --skc-muted:#756A55;
-  --skc-line:#CDBB96;
-  --skc-soft:#E9DDBF;
+  --sk-bg:#F3F1E9;
+  --sk-soft:#F7F6F0;
+  --sk-white:#FAF9F5;
+  --sk-line:#DDD9CC;
+  --sk-muted:#747F78;
+  --sk-ink:#26342F;
+  --sk-gold:#A7864F;
+  --sk-gold-light:#EEE8DA;
+  --skc-ink:#26342F;
+  --skc-muted:#747F78;
+  --skc-line:#DDD9CC;
+  --skc-soft:#F7F6F0;
+  --skc-green:#778879;
 }
-html,body{background:#E4D4B3!important;color:#332B20!important}
-body,.main{background:#E4D4B3!important}
+html,body{background:#F3F1E9!important;color:#26342F!important}
+body,.main{background:#F3F1E9!important}
 .section{background:transparent!important}
-.section h2,.section-top h2,.section h3,.panel-card h3{color:#332B20!important}
-.section-subtitle,.report-caption,.calendar-summary-label{color:#756A55!important}
-/* Wheat-toned surfaces: intentionally deeper and more natural than white/cream cards. */
+.section h2,.section-top h2,.section h3,.panel-card h3{color:#26342F!important}
+.section-subtitle,.report-caption,.calendar-summary-label{color:#747F78!important}
+/* Light, low-contrast surfaces: linen page with softly tinted stone/sage panels. */
 .dash-card,.panel-card,.settings-box,.summary-tile,.analytics-tile,
 .table-wrap,.calendar-agenda,.compliance-calendar,.export-panel,
 .gst-news-filter-panel,.gst-news-card,.gst-news-empty,.gst-news-source-note,
 .reports-visual-grid .panel-card,.snapshot-grid>div{
-  background:#EFE3C7!important;
-  border-color:#CDBB96!important;
+  background:#FAF9F5!important;
+  border-color:#DDD9CC!important;
 }
-.dash-card{box-shadow:0 5px 18px rgba(67,49,22,.07)!important}
-.dash-card:hover{box-shadow:0 12px 24px rgba(67,49,22,.14)!important}
-.card-icon,.status-pill,.gst-news-category{background:#E2D0A8!important;color:#6F5120!important}
-/* Input fields are lighter wheat to remain visually distinct from the panels. */
+.dash-card{box-shadow:0 4px 16px rgba(38,52,47,.045)!important}
+.dash-card:hover{box-shadow:0 9px 22px rgba(38,52,47,.075)!important}
+.card-icon,.status-pill,.gst-news-category{
+  background:#EEE8DA!important;color:#806B45!important;border-color:#DED4BE!important;
+}
+/* The welcome strip becomes a light sage-stone banner so its title remains readable. */
+.welcome-strip{
+  background:linear-gradient(112deg,#E5E9E0 0%,#ECE9DF 58%,#F0EBDD 100%)!important;
+  border:1px solid #D9DCCF!important;
+  box-shadow:0 5px 18px rgba(38,52,47,.035)!important;
+}
+.welcome-strip h2{color:#26342F!important}
+.welcome-strip p{color:#68756E!important}
+.welcome-strip .eyebrow{color:#947541!important}
+.welcome-strip .today-chip{color:#56645D!important;border-color:#C9CEC3!important;background:rgba(255,255,255,.34)!important}
+/* Inputs: almost-white, with soft stone borders and clear focus. */
 .section input:not([type=checkbox]),.section select,.section textarea,
 .settings-box input,.settings-box select,#gst input,#itr input,
 .filter-row input,.filter-row select,.fee-service-row input,.fee-service-row select,
 .gst-news-filter-panel input,.gst-news-filter-panel select{
-  background:#F5ECD8!important;border-color:#CDBB96!important;color:#332B20!important;
+  background:#FDFCF9!important;border-color:#DCDDD3!important;color:#26342F!important;
 }
-.section input::placeholder,.section textarea::placeholder{color:#8D8067!important}
+.section input::placeholder,.section textarea::placeholder{color:#929A93!important}
+.section input:focus,.section select:focus,.section textarea:focus{
+  border-color:#B7A47D!important;box-shadow:0 0 0 3px rgba(167,134,79,.10)!important;
+}
 /* Tables */
-.modern-table,.modern-table td,.modern-table tbody,table{background:#F2E7CF!important}
-.modern-table th,thead th{background:#DCC99F!important;color:#4F4027!important;border-color:#CDBB96!important}
-.modern-table td{border-color:#E2D4B7!important;color:#3B3327!important}
-.modern-table tr:hover td{background:#E9D9B6!important}
-th,td{border-color:#D6C4A0!important}
-/* Calendar */
-.calendar-toolbar{border-color:#CDBB96!important}
-.calendar-weekdays span{color:#756A55!important}
-.calendar-day{background:#F2E7CF!important;border-color:#D8C7A5!important;color:#332B20!important}
-.calendar-day.outside-month{background:#E2D6BC!important;color:#9B8E74!important}
-.calendar-day.is-today{background:#E9D8B1!important}
-.calendar-day.is-selected{background:#DCC493!important;border-color:#A77D35!important}
-.calendar-agenda{background:#E9DDBF!important}
-.snapshot-grid>div{background:#E7D8B7!important;border-color:#D5C39D!important}
-.summary-tile span,.analytics-tile span{color:#756A55!important}
+.modern-table,.modern-table td,.modern-table tbody,table{background:#FAF9F5!important}
+.modern-table th,thead th{background:#EAEAE2!important;color:#536057!important;border-color:#DDD9CC!important}
+.modern-table td{border-color:#E9E7DE!important;color:#35423B!important}
+.modern-table tr:hover td{background:#F1F1E9!important}
+th,td{border-color:#E1DED4!important}
+/* Calendar: gentle sage for today and muted wheat for selected dates. */
+.calendar-toolbar{border-color:#DDD9CC!important}
+.calendar-weekdays span{color:#78827B!important}
+.calendar-day{background:#FAF9F5!important;border-color:#E3E1D8!important;color:#26342F!important}
+.calendar-day.outside-month{background:#F0F0E9!important;color:#A0A79F!important}
+.calendar-day.is-today{background:#EAF0E8!important;box-shadow:inset 0 0 0 1px #AEBBAE!important}
+.calendar-day.is-selected{background:#EEE8DA!important;border-color:#B7A47D!important}
+.calendar-agenda{background:#F8F8F2!important}
+.snapshot-grid>div{background:#F1F2EB!important;border-color:#E0E2D8!important}
+.summary-tile span,.analytics-tile span{color:#747F78!important}
 /* Ledger and portal dialogs */
-.skc-modal-card,.portal-modal-card{background:#EFE3C7!important;border:1px solid #CDBB96!important;color:#332B20!important}
-.skc-modal-heading h2{color:#332B20!important}
-.portal-credential-control input{background:#F5ECD8!important;border-color:#CDBB96!important}
+.skc-modal-card,.portal-modal-card{background:#FAF9F5!important;border:1px solid #DCD9CE!important;color:#26342F!important}
+.skc-modal-heading h2{color:#26342F!important}
+.portal-credential-control input{background:#FDFCF9!important;border-color:#DCDDD3!important}
 /* GST news cards and supporting copy */
-.gst-news-card{box-shadow:0 4px 15px rgba(67,49,22,.06)!important}
-.gst-news-source-note{background:#E9DDBF!important}
-.gst-news-source-note>strong,.gst-news-card h4{color:#332B20!important}
-.gst-news-excerpt,.gst-news-source-note p{color:#756A55!important}
-.gst-news-empty{color:#756A55!important}
-/* Soft secondary blocks and borders */
-.empty-state{color:#756A55!important}
-.panel-card,.settings-box,.summary-tile,.analytics-tile,.table-wrap{box-shadow:0 4px 14px rgba(67,49,22,.045)}
-/* Preserve SK Consultant's charcoal identity and muted metallic gold highlights. */
-.header,.sidebar{background:#080B0D!important}
-.welcome-strip{background:linear-gradient(115deg,#17252b,#263d45)!important}
-.footer{background:#0A0A0A!important}
-.new-client-btn,button{border-color:#9A712E!important}
-@media(max-width:600px){html,body,.main{background:#E4D4B3!important}.panel-card,.dash-card,.summary-tile{background:#EFE3C7!important}}
+.gst-news-card{box-shadow:0 3px 13px rgba(38,52,47,.04)!important}
+.gst-news-source-note{background:#F1F2EB!important}
+.gst-news-source-note>strong,.gst-news-card h4{color:#26342F!important}
+.gst-news-excerpt,.gst-news-source-note p{color:#747F78!important}
+.gst-news-empty{color:#747F78!important}
+/* Supporting blocks, file list, and secondary content */
+.empty-state{color:#7B857E!important}
+.panel-card,.settings-box,.summary-tile,.analytics-tile,.table-wrap{box-shadow:0 3px 13px rgba(38,52,47,.035)!important}
+#fileList li{background:#FAF9F5!important;border-color:#DDD9CC!important}
+#fileList li a{color:#344139!important}
+.mini-row{border-color:#E8E7DE!important}
+/* Retain the signature charcoal brand only in the masthead, navigation and footer. */
+.header,.sidebar{background:#11191A!important}
+.footer{background:#11191A!important}
+.new-client-btn,button{border-color:#A7864F!important}
+@media(max-width:600px){
+  html,body,.main{background:#F3F1E9!important}
+  .panel-card,.dash-card,.summary-tile{background:#FAF9F5!important}
+  .welcome-strip{background:linear-gradient(112deg,#E5E9E0,#F0EBDD)!important}
+}
 </style>
 
 </body>
